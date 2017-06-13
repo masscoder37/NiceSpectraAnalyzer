@@ -3,6 +3,7 @@
  */
 
 //set atomic masses here
+    //reference for all the other classes
 public class AtomicMasses {
     private static final Double H_MASS =  1.007825032;
     private static final Double PROTON = 1.00727647;
