@@ -76,6 +76,18 @@ public class SumFormula {
         return joinedFormula;
     }
 
+    public static SumFormula sumFormulaSubstractor (SumFormula a, SumFormula b){
+        int newH = a.quantH - b.quantH;
+        int newC = a.quantC - b.quantC;
+        int newN = a.quantN - b.quantN;
+        int newO = a.quantO - b.quantO;
+        int newS = a.quantS - b.quantS;
+        String strFormula = "H"+newH+"C"+newC+"N"+newN+"O"+newO+"S"+newS;
+        SumFormula joinedFormula = new SumFormula(strFormula);
+        return joinedFormula;
+
+    }
+
 
     //getters
     public String getSumFormula(){

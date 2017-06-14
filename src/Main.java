@@ -1,4 +1,6 @@
+import java.io.File;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 /**
  * Created by Michael Stadlmeier on 6/13/2017.
@@ -8,12 +10,19 @@ public class Main {
     public static void main(String[] args) {
         DecimalFormat fiveDec = new DecimalFormat("0.00000");
 
+        String filePath = "C:\\Anwendungen\\IntelliJProjects\\NiceSpectraAnalyzer\\NiceSpectraAnalyzer\\Aminoacids_list.csv";
+        File aminoAcids = new File(filePath);
+        ArrayList<AminoAcid> aminoAcidsList = new ArrayList<>();
+        aminoAcidsList = CSVReader.aminoAcidParse(aminoAcids);
 
-        String testFormula = "C10H1O8S3";
-        SumFormula resultFormula = new SumFormula(testFormula);
-        double formulaMass = resultFormula.getExactMass();
-        System.out.println("Sum formula: "+resultFormula.getSumFormula());
-        System.out.println("Exact mass: "+fiveDec.format(formulaMass));
+        SumFormula a = new SumFormula(aminoAcidsList.get(0).getSumFormula().getSumFormula());
+        SumFormula b = new SumFormula(aminoAcidsList.get(5).getSumFormula().getSumFormula());
+        System.out.println("a: "+a.getSumFormula());
+        System.out.println("b: "+b.getSumFormula());
+        System.out.println("a+b: "+SumFormula.sumFormulaJoiner(a, b).getSumFormula());
+        System.out.println("a+b mass: "+SumFormula.sumFormulaJoiner(a, b).getExactMass());
+        System.out.println("a+b: "+SumFormula.sumFormulaSubstractor(a, b).getSumFormula());
+        System.out.println("a+b mass: "+SumFormula.sumFormulaSubstractor(a, b).getExactMass());
 
 
     }
