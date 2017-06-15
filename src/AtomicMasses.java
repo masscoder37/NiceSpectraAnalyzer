@@ -11,6 +11,7 @@ public class AtomicMasses {
     private static final Double O_MASS =  15.99491462;
     private static final Double N_MASS = 14.00307400;
     private static final Double S_MASS = 31.97207117;
+    private static final Double Na_MASS =  22.9897693;
 
     public static Double getHMASS(){
         return H_MASS;
@@ -28,4 +29,5 @@ public class AtomicMasses {
     public static Double getSMASS(){
         return S_MASS;
     }
+    public static Double getNaMASS(){return  Na_MASS;}
 }

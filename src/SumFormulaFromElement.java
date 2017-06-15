@@ -10,49 +10,76 @@ public class SumFormulaFromElement {
     private double[] isotopicDistribution;
 
     public SumFormulaFromElement(String formulaIn){
-        ArrayList<Element> elements = new ArrayList<>();
+        this.elements = new ArrayList<>();
+        this.sumFormula = formulaIn;
+        int length = formulaIn.length();
+        //create String[] with length = 2 and elementName in [0] and elementQuantity in [1]
+        String[] toElementAdder = new String[2];
+        String elementName = "";
+        String elementNumber = "";
+        //loop through complete string
+        for (int a = 0; a<length;a++){
+            //check if char is UpperCaseLetter and begins new element Name
+            if (formulaIn.charAt(a)>= 'A' && formulaIn.charAt(a)<='Z'){
+                //if there already is a upper case letter in elementName, then parse previous ElementName to elementAdder
+                if (!elementName.isEmpty())
+                {
+                    toElementAdder[0] = elementName;
+                    toElementAdder[1] = elementNumber; //if elementNumber is empty, e.g. in C H4, then elementAdder will take care of that
+                    elementAdder(toElementAdder);
+                    elementName= "";
+                    elementNumber="";
+                    toElementAdder[0]= "";
+                    toElementAdder[1]="";
 
-        char element = 0;
-        String number = "";
-        //this arrayList will be used to set the parameters
-        ArrayList<String[]> elementList = new ArrayList<>();
-        //go through every character in the formula
-        for (int i = 0; i < formulaIn.length(); i++) {
-            //if char is a upper case letter
-            if (formulaIn.charAt(i) >= 'A' && formulaIn.charAt(i) < 'a') {
-                //if element isn't zero, that means second iteration
-                if (element != 0) {
-                    String[] elementNumber = new String[2];
-                    elementNumber[0] = "" + element;
-                    //if number is empty then 1, else number; only happens if element is letter and
-                    elementNumber[1] = number.isEmpty() ? "1" : number;
-                    elementList.add(elementNumber);
                 }
-                //reset the number and set the element to new value;
-                number = "";
-                element = formulaIn.charAt(i);
-            } else //if the char isn't an element, add the number here to the other number or the empty string
-                number += formulaIn.charAt(i);
+                elementName += formulaIn.charAt(a);
+
+            }
+            //check for lower case letters
+            if (formulaIn.charAt(a)>='a'&& formulaIn.charAt(a)<='z'){
+                elementName += formulaIn.charAt(a);
+            }
+            if (formulaIn.charAt(a) == '+'){
+                elementName += formulaIn.charAt(a);
+            }
+            //check for numbers
+            if (formulaIn.charAt(a)>='0'&&formulaIn.charAt(a)<='9'){
+                elementNumber += formulaIn.charAt(a);
+            }
         }
-        //at the end of the loop, flush last element into array list
-        String[] elementNumber = new String[2];
-        elementNumber[0] = "" + element;
-        elementNumber[1] = number.isEmpty() ? "1" : number;
-        elementList.add(elementNumber);
+        //flush remaining list to element Adder
+        toElementAdder[0] = elementName;
+        toElementAdder[1] = elementNumber; //if elementNumber is empty, e.g. in C H4, then elementAdder will take care of that
+        elementAdder(toElementAdder);
 
-
-        for(String[] elementQuantity : elementList) {
-            int quantity = 0;
-            try {quantity = Integer.parseInt(elementQuantity[1]);
-            }
-            catch (NumberFormatException e) {
-                throw new IllegalArgumentException("This is not a number: " + elementQuantity[1]);
-            }
-            for (int i = 0; i<quantity;i++)
-            elements.add(new Element(elementQuantity[0]));
-
+        for (Element element : this.elements){
+            this.exactMass += element.getElementMass();
         }
 
 
     }
+
+private void elementAdder(String[] elementQuantity){
+        if (elementQuantity.length != 2)
+            throw new IllegalArgumentException("elementQuantity was formated incorrectly! Length: "+elementQuantity.length);
+        int quantity = 0;
+        String element = elementQuantity[0];
+        if (elementQuantity[1].isEmpty())
+            elementQuantity[1] = "1";
+        try {
+            quantity = Integer.parseInt(elementQuantity[1]);
+        } catch (IllegalArgumentException e){
+            throw new IllegalArgumentException("This is not a number: "+elementQuantity[1]);
+        }
+        for (int i = 0; i<quantity;i++){
+            Element e = new Element(""+elementQuantity[0]);
+            this.elements.add(e);
+        }
+}
+
+public String getSumFormula(){return this.sumFormula;}
+public double getExactMass(){return this.exactMass;}
+public ArrayList<Element> getElements(){return this.elements;}
+
 }

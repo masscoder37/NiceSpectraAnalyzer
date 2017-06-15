@@ -49,6 +49,8 @@ public class Peptide {
 
     private ArrayList<FragmentIon> bIonBuilder(){
         ArrayList<FragmentIon> bIons = new ArrayList<>();
+        SumFormula bIonFormula = new SumFormula("");
+
 
 
 

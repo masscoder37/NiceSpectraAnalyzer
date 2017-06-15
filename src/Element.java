@@ -6,12 +6,12 @@ import java.util.NoSuchElementException;
 
 //Element class
 public class Element {
-    private String element;
+    private String elementName;
     private double elementMass;
 
     public Element(String elementName){
-        this.element = elementName;
-        elementChooser(this.element);
+        this.elementName = elementName;
+        elementChooser(this.elementName);
     }
 
     private void elementChooser(String elementName) {
@@ -32,10 +32,18 @@ public class Element {
                 case "S":
                     this.elementMass = AtomicMasses.getSMASS();
                     break;
+                case "H+":
+                    this.elementMass = AtomicMasses.getPROTON();
+                    break;
+                case "Na":
+                    this.elementMass = AtomicMasses.getNaMASS();
+break;
                 default:
                     throw new NoSuchElementException("Element unknown: " + elementName);
 
             }
+}
 
-
+public double getElementMass(){return this.elementMass;}
+public String getElementName(){return this.elementName;}
 }

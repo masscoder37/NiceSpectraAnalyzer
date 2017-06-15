@@ -42,16 +42,16 @@ public class Ion {
             this.massToCharge = (exactMassIn + AtomicMasses.getPROTON()*chargeIn)/chargeIn;
         }
     }
-    //mass and sumformula known
+    //sumformula known
     public Ion(double exactMassIn, String sumFormulaIn) {
-        this.exactMass = exactMassIn;
         this.formula = new SumFormula(sumFormulaIn);
+        this.exactMass = this.formula.getExactMass();
         this.chargeStateKnown = false;
     }
-    //mass, sumFormula and charge known
+    //sumFormula and charge known
     public Ion(double exactMassIn, String sumFormulaIn, int chargeIn) {
-        this.exactMass = exactMassIn;
         this.formula = new SumFormula(sumFormulaIn);
+        this.exactMass = this.formula.getExactMass();
         this.charge = chargeIn;
         if (chargeIn == 0) {
             this.chargeStateKnown = false;
@@ -63,14 +63,15 @@ public class Ion {
         }
     }
 
-    public Ion (SumFormula sumFormulaIn){
 
-    }
+
+
 
     public double getExactMass(){return this.exactMass;}
     public int getCharge(){return this.charge;}
     public boolean getChargeStatus(){return this.chargeStateKnown;}
     public double getMToZ(){return this.massToCharge;}
+    public SumFormula getFormula(){ return this.formula;}
 
 
 
