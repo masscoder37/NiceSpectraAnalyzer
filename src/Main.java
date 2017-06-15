@@ -1,4 +1,3 @@
-import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
@@ -13,19 +12,10 @@ public class Main {
         /*String filePath = "C:\\Anwendungen\\IntelliJProjects\\NiceSpectraAnalyzer\\NiceSpectraAnalyzer\\Aminoacids_list.csv";
         File aminoAcids = new File(filePath);
         ArrayList<AminoAcid> aminoAcidsList = new ArrayList<>();
-        aminoAcidsList = CSVReader.aminoAcidParse(aminoAcids);
-
-        SumFormula a = new SumFormula(aminoAcidsList.get(0).getSumFormula().getSumFormula());
-        SumFormula b = new SumFormula(aminoAcidsList.get(5).getSumFormula().getSumFormula());
-        System.out.println("a: "+a.getSumFormula());
-        System.out.println("b: "+b.getSumFormula());
-        System.out.println("a+b: "+SumFormula.sumFormulaJoiner(a, b).getSumFormula());
-        System.out.println("a+b mass: "+SumFormula.sumFormulaJoiner(a, b).getExactMass());
-        System.out.println("a+b: "+SumFormula.sumFormulaSubstractor(a, b).getSumFormula());
-        System.out.println("a+b mass: "+SumFormula.sumFormulaSubstractor(a, b).getExactMass());*/
+        aminoAcidsList = CSVReader.aminoAcidParse(aminoAcids);*/
 
         String testFormula = "HH+2ON3";
-        SumFormulaFromElement test = new SumFormulaFromElement(testFormula);
+        SumFormula test = new SumFormula(testFormula);
         System.out.println("Formula: "+test.getSumFormula());
         System.out.println("Exact mass: "+fiveDec.format(test.getExactMass()));
         ArrayList<Element> elements = test.getElements();
