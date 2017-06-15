@@ -21,7 +21,7 @@ public class SumFormula {
     //constructor for SumFormula
     //only gets String
     //sets the respective parameters (quantity of elements, exactMass, isotopic distribution)
-    public SumFormula(String formulaIn){
+    public SumFormula(String formulaIn) {
         this.sumFormula = formulaIn;
 
         //this sets the SumFormula String to a useful format
@@ -36,7 +36,7 @@ public class SumFormula {
                 //if element isn't zero, that means second iteration
                 if (element != 0) {
                     String[] elementNumber = new String[2];
-                    elementNumber[0] = ""+element;
+                    elementNumber[0] = "" + element;
                     //if number is empty then 1, else number; only happens if element is letter and
                     elementNumber[1] = number.isEmpty() ? "1" : number;
                     elementList.add(elementNumber);
@@ -49,7 +49,7 @@ public class SumFormula {
         }
         //at the end of the loop, flush last element into array list
         String[] elementNumber = new String[2];
-        elementNumber[0] = ""+element;
+        elementNumber[0] = "" + element;
         elementNumber[1] = number.isEmpty() ? "1" : number;
         elementList.add(elementNumber);
 
@@ -61,43 +61,43 @@ public class SumFormula {
                 AtomicMasses.getNMASS() * this.quantN +
                 AtomicMasses.getOMASS() * this.quantO +
                 AtomicMasses.getSMASS() * this.quantS;
-                // still to do: implement isotopic distribution
+        // still to do: implement isotopic distribution
     }
 
     //gives the sum of 2 sum formulas
-    public static SumFormula sumFormulaJoiner (SumFormula a, SumFormula b){
+    public static SumFormula sumFormulaJoiner(SumFormula a, SumFormula b) {
         int newH = a.quantH + b.quantH;
         int newC = a.quantC + b.quantC;
         int newN = a.quantN + b.quantN;
         int newO = a.quantO + b.quantO;
         int newS = a.quantS + b.quantS;
-        String strFormula = "H"+newH+"C"+newC+"N"+newN+"O"+newO+"S"+newS;
+        String strFormula = "H" + newH + "C" + newC + "N" + newN + "O" + newO + "S" + newS;
         SumFormula joinedFormula = new SumFormula(strFormula);
         return joinedFormula;
     }
 
-    public static SumFormula sumFormulaSubstractor (SumFormula a, SumFormula b){
+    public static SumFormula sumFormulaSubstractor(SumFormula a, SumFormula b) {
         int newH = a.quantH - b.quantH;
         int newC = a.quantC - b.quantC;
         int newN = a.quantN - b.quantN;
         int newO = a.quantO - b.quantO;
         int newS = a.quantS - b.quantS;
-        String strFormula = "H"+newH+"C"+newC+"N"+newN+"O"+newO+"S"+newS;
+        String strFormula = "H" + newH + "C" + newC + "N" + newN + "O" + newO + "S" + newS;
         SumFormula joinedFormula = new SumFormula(strFormula);
         return joinedFormula;
 
     }
 
-
     //getters
-    public String getSumFormula(){
+    public String getSumFormula() {
         return this.sumFormula;
     }
 
-    public double getExactMass(){
+    public double getExactMass() {
         return this.exactMass;
     }
-    public int[] getElementalComposition(){
+
+    public int[] getElementalComposition() {
         //returns an int[] with quantities of H, C, N, O, S
         int[] comp = new int[5];
         comp[0] = this.quantH;
@@ -110,52 +110,38 @@ public class SumFormula {
     }
 
 
-
     //helper method to set quantities during element parse out
-    private void elementChooser(ArrayList<String[]> elementList){
+    private void elementChooser(ArrayList<String[]> elementList) {
         for (String[] elementNumber : elementList) {
 
             char element = elementNumber[0].charAt(0);
+            int quantity = 0;
+
+            try {
+                 quantity = Integer.parseInt(elementNumber[1]);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("This is not a number: " + elementNumber[1]);
+            }
 
             switch (element) {
                 case 'H':
-                    try {
-                        this.quantH = Integer.parseInt(elementNumber[1]);
-                    } catch (NumberFormatException e) {
-                        throw new IllegalArgumentException("This is not a number: "+elementNumber[1]);
-                    }
+                    this.quantH = quantity;
                     break;
                 case 'C':
-                    try {
-                        this.quantC = Integer.parseInt(elementNumber[1]);
-                    }
-                    catch (NumberFormatException e) {
-                    throw new IllegalArgumentException("This is not a number: "+elementNumber[1]);
-                }
+                    this.quantC =  quantity;
                     break;
                 case 'O':
-                    try {
-                        this.quantO = Integer.parseInt(elementNumber[1]);
-                    } catch (NumberFormatException e) {
-                        throw new IllegalArgumentException("This is not a number: "+elementNumber[1]);
-                    }
+                    this.quantO =  quantity;
                     break;
                 case 'N':
-                    try {
-                        this.quantN = Integer.parseInt(elementNumber[1]);
-                    } catch (NumberFormatException e) {
-                        throw new IllegalArgumentException("This is not a number: "+elementNumber[1]);
-                    }
+                    this.quantN =  quantity;
                     break;
                 case 'S':
-                    try {
-                        this.quantS = Integer.parseInt(elementNumber[1]);
-                    } catch (NumberFormatException e) {
-                        throw new IllegalArgumentException("This is not a number: "+elementNumber[1]);
-                    }
+                    this.quantS =  quantity;
                     break;
                 default:
-                    throw new NoSuchElementException("Element unknown: "+element);
+                    throw new NoSuchElementException("Element unknown: " + element);
+
             }
         }
     }

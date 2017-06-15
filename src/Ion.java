@@ -63,6 +63,10 @@ public class Ion {
         }
     }
 
+    public Ion (SumFormula sumFormulaIn){
+
+    }
+
     public double getExactMass(){return this.exactMass;}
     public int getCharge(){return this.charge;}
     public boolean getChargeStatus(){return this.chargeStateKnown;}

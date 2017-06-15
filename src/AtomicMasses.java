@@ -21,9 +21,7 @@ public class AtomicMasses {
     public static Double getCMASS(){
         return C_MASS;
     }
-    public static Double getNMASS(){
-        return N_MASS;
-    }
+    public static Double getNMASS(){return N_MASS;}
     public static Double getOMASS(){
         return O_MASS;
     }

@@ -8,7 +8,4 @@ public class FragmentIon extends Ion {
     private Peptide origin;
     private char ionSeries;
     private int ionNumber;
-
-
-
 }
