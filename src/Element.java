@@ -43,17 +43,17 @@ public class Element {
             }
 }
 //implement this method here to have only one class if more supported elements are added
-    public String elementsToString(ArrayList<Element> elements){
+    public static String elementsToString(ArrayList<Element> elements) {
         String formula = "";
+        int quantH = 0;
+        int quantC = 0;
+        int quantO = 0;
+        int quantN = 0;
+        int quantS = 0;
+        int quantHPlus = 0;
         //this loop gets the element counts for each element
-        for (Element e : elements){
+        for (Element e : elements) {
             String currentName = e.getElementName();
-            int quantH = 0;
-            int quantC = 0;
-            int quantO = 0;
-            int quantN = 0;
-            int quantS = 0;
-            int quantHPlus = 0;
             switch (currentName) {
                 case "H":
                     quantH++;
@@ -74,39 +74,41 @@ public class Element {
                     quantHPlus++;
                     break;
             }
+        }
             //Strings for the elements, to filter out quantities with 0
-            String H = "H"+quantH;
-            String C = "C"+quantC;
-            String N = "N"+quantN;
-            String O = "O"+quantO;
-            String S = "S"+quantS;
-            String HPlus = "H+"+quantHPlus;
+            String H = "H" + quantH;
+            String C = "C" + quantC;
+            String N = "N" + quantN;
+            String O = "O" + quantO;
+            String S = "S" + quantS;
+            String HPlus = "H+" + quantHPlus;
 
-            if(quantH==0){
+            if (quantH == 0) {
                 H = "";
             }
-            if(quantC==0){
+            if (quantC == 0) {
                 C = "";
             }
-            if(quantN==0){
+            if (quantN == 0) {
                 N = "";
             }
-            if(quantO==0){
+            if (quantO == 0) {
                 O = "";
             }
-            if(quantS==0){
+            if (quantS == 0) {
                 S = "";
             }
-            if(quantHPlus==0){
+            if (quantHPlus == 0) {
                 HPlus = "";
             }
 
-            formula = ""+H+C+N+O+S+HPlus;
+            formula = "" + H + C + N + O + S + HPlus;
 
 
-            return formula;
-        }
 
+
+        return formula;
+    }
 
 public double getElementMass(){return this.elementMass;}
 public String getElementName(){return this.elementName;}

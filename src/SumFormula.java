@@ -56,28 +56,40 @@ public class SumFormula {
         }
     }
 
-    public SumFormula SumFormulaJoiner(SumFormula a, SumFormula b){
+    public static SumFormula sumFormulaJoiner(SumFormula a, SumFormula b){
         ArrayList<Element> joinedFormula = new ArrayList<>();
         joinedFormula.addAll(a.getElements());
         joinedFormula.addAll(b.getElements());
-        this.elements = joinedFormula;
+        String sumFormula = Element.elementsToString(joinedFormula);
+        SumFormula newSumFormula = new SumFormula(sumFormula);
+    return newSumFormula;
+    }
 
-        for (Element e : this.elements){
-            this.exactMass += e.getElementMass();
+
+    //to implement: error handling if element in b is not present anymore in a
+    public static SumFormula sumFormulaSubstractor(SumFormula a, SumFormula b){
+        if (a.getElements().size() < b.getElements().size())
+        {
+            throw new IllegalArgumentException("Sumformula "+b.getSumFormula()+" is bigger than Sumformula "+a.getSumFormula());
         }
+        ArrayList<Element> joinedFormula = new ArrayList<>();
+        joinedFormula.addAll(a.getElements());
+        for (Element e : b.getElements()){
+            for (int i = joinedFormula.size()-1; i>0;i--){
+                if (e.getElementName().equals(joinedFormula.get(i).getElementName())){
+                    joinedFormula.remove(i);
+                    break;
+                }
+            }
 
 
-
-    return this;
+        }
+        String sumFormula = Element.elementsToString(joinedFormula);
+        SumFormula newSumFormula = new SumFormula(sumFormula);
+        return newSumFormula;
     }
 
 
-
-
-
-
-        return formula;
-    }
 
     private void elementAdder(String[] elementQuantity) {
         if (elementQuantity.length != 2)

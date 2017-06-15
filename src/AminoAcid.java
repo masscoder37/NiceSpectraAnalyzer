@@ -25,7 +25,7 @@ public class AminoAcid {
 
         this.SumFormula = new SumFormula(SumFormIn);
         this.exactMass = this.SumFormula.getExactMass();
-        this.waterLossFormula = SumFormula.SumFormSubstractor(this.SumFormula, waterFormula);
+        this.waterLossFormula = SumFormula.sumFormulaSubstractor(this.SumFormula, waterFormula);
         this.waterLossMass = this.waterLossFormula.getExactMass();
     }
 
