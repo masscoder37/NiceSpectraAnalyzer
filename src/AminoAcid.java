@@ -11,22 +11,24 @@ public class AminoAcid {
     private SumFormula SumFormula;
     private Double waterLossMass;
     private SumFormula waterLossFormula;
-    private SumFormula waterFormula = new SumFormula("H2O");
+    private boolean hasModification;
+
 
     public AminoAcid(String nameIn, String threeLetIn, String oneLetIn, String SumFormIn){
         this.name = nameIn;
         this.threeLetter = threeLetIn;
         //Be sure that one letter code is always written in upper case
         String oneLetterUpperCase = oneLetIn.toUpperCase();
-        if (oneLetterUpperCase.length() != 1) {
+        if (oneLetterUpperCase.length() == 1) {
             this.oneLetter = oneLetterUpperCase.charAt(0);
         }
         else throw new IllegalArgumentException("Invalid One-letter Code formatting!");
 
         this.SumFormula = new SumFormula(SumFormIn);
         this.exactMass = this.SumFormula.getExactMass();
-        this.waterLossFormula = SumFormula.sumFormulaSubstractor(this.SumFormula, waterFormula);
+        this.waterLossFormula = SumFormula.sumFormulaSubstractor(this.SumFormula, SumFormula.getWaterFormula());
         this.waterLossMass = this.waterLossFormula.getExactMass();
+        this.hasModification = false;
     }
 
     public String getName() {
@@ -50,5 +52,6 @@ public class AminoAcid {
     }
     public SumFormula getSumFormula(){ return this.SumFormula;}
     public SumFormula getWaterLossFormula(){return this.waterLossFormula;}
+    public boolean getModificationStatus(){ return  this.hasModification;}
 
 }

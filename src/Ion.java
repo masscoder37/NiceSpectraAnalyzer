@@ -9,7 +9,7 @@ public class Ion {
     private double exactMass;
     private int charge;
     private boolean chargeStateKnown;
-    private double massToCharge;
+    private double massToCharge;//needs to be implemented later...maybe by going by the protons in the sum formula?
     private SumFormula formula;
 
     //default Constructor
@@ -27,7 +27,7 @@ public class Ion {
         this.exactMass = exactMassIn;
         this.charge = 0;
         this.chargeStateKnown = false;
-        this.massToCharge = exactMassIn;
+
     }
 //mass and charge known
     public Ion(double exactMassIn, int chargeIn){
@@ -35,11 +35,9 @@ public class Ion {
         this.charge = chargeIn;
         if (chargeIn == 0) {
             this.chargeStateKnown = false;
-            this.massToCharge = exactMassIn;
         }
         else {
             this.chargeStateKnown = true;
-            this.massToCharge = (exactMassIn + AtomicMasses.getPROTON()*chargeIn)/chargeIn;
         }
     }
     //sumformula known
@@ -49,18 +47,10 @@ public class Ion {
         this.chargeStateKnown = false;
     }
     //sumFormula and charge known
-    public Ion(double exactMassIn, String sumFormulaIn, int chargeIn) {
-        this.formula = new SumFormula(sumFormulaIn);
+    public Ion(SumFormula sumFormulaIn, int chargeIn) {
+        this.formula = sumFormulaIn;
         this.exactMass = this.formula.getExactMass();
         this.charge = chargeIn;
-        if (chargeIn == 0) {
-            this.chargeStateKnown = false;
-            this.massToCharge = exactMassIn;
-        }
-        else {
-            this.chargeStateKnown = true;
-            this.massToCharge = (exactMassIn + AtomicMasses.getPROTON()*chargeIn)/chargeIn;
-        }
     }
 
 

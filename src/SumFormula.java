@@ -121,4 +121,13 @@ public class SumFormula {
         return this.elements;
     }
 
+    public static SumFormula getWaterFormula(){
+        SumFormula waterFormula = new SumFormula("H2O");
+        return waterFormula;
+    }
+    public static SumFormula getProtonFormula(){
+        SumFormula protonFormula = new SumFormula("H+");
+        return protonFormula;
+    }
+
 }
