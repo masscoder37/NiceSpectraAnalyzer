@@ -16,11 +16,11 @@ public class Main {
         aminoAcidsList = CSVReader.aminoAcidParse(aminoAcids);
 
 
-        Peptide test = new Peptide("MICHI", aminoAcidsList);
+        Peptide test = new Peptide("TVMENHARNMHKIES", aminoAcidsList);
         System.out.println("Peptide sequence: "+test.getSequence());
         System.out.println("Peptide exact mass: "+fiveDec.format(test.getExactMass()));
         System.out.println("Peptide sum formula: "+test.getSumFormula().getSumFormula());
-        /*System.out.println("b-Ion series: ");
+        System.out.println("b-Ion series: ");
 
         for(FragmentIon ion : test.getbIons()){
             FragmentIon.fragmentIonPrinter(ion);
@@ -29,7 +29,7 @@ public class Main {
         System.out.println("y-Ion series: ");
         for(FragmentIon ion : test.getyIons()){
             FragmentIon.fragmentIonPrinter(ion);
-        }*/
+        }
 
 
 

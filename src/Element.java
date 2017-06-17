@@ -76,8 +76,8 @@ public class Element {
             }
         }
             //Strings for the elements, to filter out quantities with 0
-            String H = "H" + quantH;
             String C = "C" + quantC;
+            String H = "H" + quantH;
             String N = "N" + quantN;
             String O = "O" + quantO;
             String S = "S" + quantS;
@@ -102,7 +102,7 @@ public class Element {
                 HPlus = "";
             }
 
-            formula = "" + H + C + N + O + S + HPlus;
+            formula = ""+ C + H  + N + O + S + HPlus;
 
 
 

@@ -21,6 +21,7 @@ public class Peptide {
         //first for loop: go through the whole Sequence
         for (int a = 0; a < this.sequenceLength; a++) {
             char current = this.sequence.charAt(a);
+            aaNotFound = true;
             //second for loop: go through all the amino acids until you find the right one
             //if the right one is found, aaNotFound = false and the loop exits prematurely
             for (int b = 0; b < acids.size() && aaNotFound; b++) {
@@ -51,8 +52,8 @@ public class Peptide {
         this.sumFormula = addFormula;
         this.exactMass = this.sumFormula.getExactMass();
         //create Fragment ions
-        //bIonBuilder(1);
-        //yIonBuilder(1);
+        bIonBuilder(1);
+        yIonBuilder(1);
 
     }
 
@@ -82,7 +83,7 @@ public class Peptide {
         //this loop goes through all the amino acids
         for (int i = this.sequenceLength-1; i>-1;i-- ) {
             runningFormula = SumFormula.sumFormulaJoiner(runningFormula, this.aminoAcidsList.get(i).getWaterLossFormula());
-            this.yIons.add(new FragmentIon(runningFormula, chargeState, this, 'y', this.sequenceLength-1));
+            this.yIons.add(new FragmentIon(runningFormula, chargeState, this, 'y', this.sequenceLength-i));
         }
         return yIons;
     }
