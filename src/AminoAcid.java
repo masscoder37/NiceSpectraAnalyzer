@@ -31,6 +31,11 @@ public class AminoAcid {
         this.hasModification = false;
     }
 
+public void setHasModification(boolean modStatus){
+        this.hasModification = modStatus;
+}
+
+
     public String getName() {
         return this.name;
     }
@@ -44,12 +49,10 @@ public class AminoAcid {
     }
 
     public double getMass() {
-        return this.exactMass;
+        return this.SumFormula.getExactMass();
     }
 
-    public double getwaterLossMass() {
-        return this.waterLossMass;
-    }
+    public double getwaterLossMass() {return this.waterLossFormula.getExactMass();}
     public SumFormula getSumFormula(){ return this.SumFormula;}
     public SumFormula getWaterLossFormula(){return this.waterLossFormula;}
     public boolean getModificationStatus(){ return  this.hasModification;}

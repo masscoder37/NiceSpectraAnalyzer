@@ -51,6 +51,10 @@ public class Ion {
         this.formula = sumFormulaIn;
         this.exactMass = this.formula.getExactMass();
         this.charge = chargeIn;
+        if (chargeIn == 0)
+            throw new IllegalArgumentException("Charge state of Ions can't be 0!");
+        this.chargeStateKnown = true;
+        this.massToCharge = this.exactMass/this.charge;
     }
 
 

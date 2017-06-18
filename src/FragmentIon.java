@@ -10,24 +10,31 @@ public class FragmentIon extends Ion {
     private Peptide precursor;
     private char ionSeries;
     private int ionNumber;
+    private boolean isModified;
     public static DecimalFormat fiveDec = new DecimalFormat("0.00000");
 
 
-    public FragmentIon(SumFormula sumFormulaIn, int chargeIn, Peptide peptideIn, char ionSeriesIn, int ionNumberIn){
+    public FragmentIon(SumFormula sumFormulaIn, int chargeIn, Peptide peptideIn, char ionSeriesIn, int ionNumberIn, boolean modificationStatus){
         super(sumFormulaIn, chargeIn);
         this.precursor = peptideIn;
         this.ionSeries = ionSeriesIn;
         this.ionNumber = ionNumberIn;
+        this.isModified = modificationStatus;
     }
 
     public Peptide getPrecursor(){return this.precursor;}
     public String getPrecursorSequence(){return this.precursor.getSequence();}
     public char getIonSeries(){return this.ionSeries;}
     public int getIonNumber(){return this.ionNumber;}
+    public boolean getModificationStatus(){return this.isModified;}
 
     public static void fragmentIonPrinter(FragmentIon queriedIon){
 
-        System.out.println(""+queriedIon.ionSeries+queriedIon.ionNumber+":    "+fiveDec.format(queriedIon.getExactMass()));
+        System.out.println(""+queriedIon.ionSeries+queriedIon.ionNumber+" "+queriedIon.getCharge()+"+"+":    "+fiveDec.format(queriedIon.getMToZ())+" m/z");
+    }
+    public static void fragmentIonFormulaPrinter(FragmentIon queriedIon){
+
+        System.out.println(""+queriedIon.ionSeries+queriedIon.ionNumber+" "+queriedIon.getCharge()+"+"+":    "+queriedIon.getFormula().getSumFormula());
     }
 
 

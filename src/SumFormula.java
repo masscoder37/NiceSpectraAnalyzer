@@ -12,7 +12,6 @@ public class SumFormula {
 
     public SumFormula(String formulaIn) {
         this.elements = new ArrayList<>();
-        this.sumFormula = formulaIn;
         int length = formulaIn.length();
         //create String[] with length = 2 and elementName in [0] and elementQuantity in [1]
         String[] toElementAdder = new String[2];
@@ -54,6 +53,7 @@ public class SumFormula {
         for (Element element : this.elements) {
             this.exactMass += element.getElementMass();
         }
+        this.sumFormula = Element.elementsToString(this.elements);
     }
 
     public static SumFormula sumFormulaJoiner(SumFormula a, SumFormula b){
@@ -128,6 +128,18 @@ public class SumFormula {
     public static SumFormula getProtonFormula(){
         SumFormula protonFormula = new SumFormula("H+");
         return protonFormula;
+    }
+    public int getProtonNumber(){
+        int protonNumber =0;
+
+        for (Element e : this.elements){
+            if (e.getElementName().equals("H+"))
+                protonNumber++;
+        }
+
+
+
+        return protonNumber;
     }
 
 }
