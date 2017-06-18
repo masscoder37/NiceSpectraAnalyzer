@@ -13,6 +13,8 @@ public class Peptide {
     private boolean hasModification;
     private ArrayList<AminoAcid> aminoAcidsList;
 
+    //ArrayList<AminoAcid> acids usually contains all 20 natural amino acids
+    //ArrayList<AminoAcid> aminoAcidsList contains only aminoacids in the peptide, in order of the sequence
     public Peptide(String sequenceIn, ArrayList<AminoAcid> acids) {
         this.sequence = sequenceIn.toUpperCase();
         this.sequenceLength = sequenceIn.length();
@@ -46,9 +48,6 @@ public class Peptide {
         this.hasModification = false;
         for (AminoAcid aa : this.aminoAcidsList) {
             addFormula = SumFormula.sumFormulaJoiner(addFormula, aa.getWaterLossFormula());
-            if (aa.getModificationStatus()) {
-                this.hasModification = true;
-            }
         }
         this.sumFormula = addFormula;
         this.exactMass = this.sumFormula.getExactMass();
@@ -59,6 +58,41 @@ public class Peptide {
         yIonBuilder(1);
 
     }
+    //implement new constructor, specifically for modified peptides
+    //in this case, only ArrayList<AminoAcid> contains only AAs which already are known to be part of the sequence, since all peptides go through the normal constructor first
+    private Peptide (String sequenceIn, ArrayList<AminoAcid> aminoAcidsListIn, boolean modStatus){
+        this.hasModification = modStatus;
+        this.sequenceLength = sequenceIn.length();
+        //construct new Sequence which annotates modified AminoAcid with *
+        String[] modPos = new String[sequenceIn.length()];
+        for (int a = 0; a<this.sequenceLength;a++){
+            modPos[a] = ""+aminoAcidsListIn.get(a).get1Let();
+            if (aminoAcidsListIn.get(a).getModificationStatus())
+                modPos[a]+= "*";
+        }
+        this.sequence = "";
+        for (String aa : modPos){
+            this.sequence += aa;
+        }
+        //aminoAcids List is just the list supplied by modification method
+        this.aminoAcidsList = aminoAcidsListIn;
+        //calculate SumFormula and exact masses
+        //for peptide, sum up waterloss masses and waterFormula
+        SumFormula addFormula = SumFormula.getWaterFormula();
+        for (AminoAcid aa : this.aminoAcidsList){
+            addFormula = SumFormula.sumFormulaJoiner(addFormula, aa.getWaterLossFormula());
+        }
+        this.sumFormula = addFormula;
+        this.exactMass = this.sumFormula.getExactMass();
+        //create b- and y-ions
+        this.bIons = new ArrayList<>();
+        this.yIons = new ArrayList<>();
+        bIonBuilder(1);
+        yIonBuilder(1);
+
+    }
+
+
 
     private ArrayList<FragmentIon> bIonBuilder(int chargeState) {
         if (chargeState == 0)
@@ -72,6 +106,7 @@ public class Peptide {
         }
         //implement knowledge about modification status
         boolean isModified = false;
+
         //this loop goes through all the amino acids
         for (int i = 0; i < this.sequenceLength; i++) {
             runningFormula = SumFormula.sumFormulaJoiner(runningFormula, this.aminoAcidsList.get(i).getWaterLossFormula());
@@ -97,17 +132,18 @@ public class Peptide {
         boolean hasModAtAll = false;
         for (int b = 0; b < this.aminoAcidsList.size(); b++) {
             if (aminoAcidsList.get(b).getModificationStatus()) {
-                modPosition = b;
+                modPosition = b+1; //+1 because converting of index in real position
                 hasModAtAll = true;
-                break;
             }
         }
         //this loop goes through all the amino acids
         for (int i = this.sequenceLength - 1; i > -1; i--) {
             runningFormula = SumFormula.sumFormulaJoiner(runningFormula, this.aminoAcidsList.get(i).getWaterLossFormula());
             //at this point, all the other fragment ions are modified
-            if (i == this.sequenceLength - modPosition && hasModAtAll)
+            if (i <modPosition && hasModAtAll)
                 isModified = true;
+            if (i>=modPosition)
+                isModified = false;
             this.yIons.add(new FragmentIon(runningFormula, chargeState, this, 'y', this.sequenceLength - i, isModified));
         }
         return yIons;
@@ -120,6 +156,9 @@ public class Peptide {
         for (Modification mod : modListIn) {
             boolean fixedModPosition = mod.getPositionType();
             if (fixedModPosition) {
+                if (mod.getPositionNumber() > this.aminoAcidsList.size()) {
+                    break;
+                }
                 AminoAcid currentAcid = this.aminoAcidsList.get(mod.getPositionNumber());
                 SumFormula newFormula = SumFormula.sumFormulaJoiner(mod.getModificationFormula(), currentAcid.getSumFormula());
                 AminoAcid modAcid = new AminoAcid("" + currentAcid.getName() + mod.getModificationName(), currentAcid.get3Let(), "" + currentAcid.get1Let(), newFormula.getSumFormula());
@@ -138,7 +177,7 @@ public class Peptide {
                 }
             }
         }
-        Peptide modPeptide = new Peptide(this.getSequence(), modAAList);
+        Peptide modPeptide = new Peptide(this.getSequence(), modAAList, true);
         return modPeptide;
     }
 

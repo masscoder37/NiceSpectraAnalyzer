@@ -34,8 +34,11 @@ public class Main {
         }
         System.out.println();System.out.println();
         ArrayList<Modification> modList = new ArrayList<>();
-        Modification mod1 = new Modification("Test", "C10", 2);
+        Modification mod1 = new Modification("Test", "C10", 'B');
+        Modification mod2 = new Modification("Test2", "N3", 8);
+
         modList.add(mod1);
+        modList.add(mod2);
         Peptide modTest = testPeptide.peptideModifier(modList);
 
         System.out.println("Peptide sequence: "+modTest.getSequence());
