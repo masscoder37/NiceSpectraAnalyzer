@@ -15,7 +15,7 @@ public class Main {
         ArrayList<AminoAcid> aminoAcidsList = new ArrayList<>();
         aminoAcidsList = CSVReader.aminoAcidParse(aminoAcids);
 
-        Peptide testPeptide = new Peptide("LEANDER", aminoAcidsList);
+        Peptide testPeptide = new Peptide("DVLEAMQADSGIR", aminoAcidsList);
 
         System.out.println("Peptide sequence: "+testPeptide.getSequence());
         System.out.println("Peptide exact mass: "+fiveDec.format(testPeptide.getExactMass()));
@@ -37,7 +37,7 @@ public class Main {
         }
         System.out.println();System.out.println();
         ArrayList<Modification> modList = new ArrayList<>();
-        Modification mod1 = new Modification("Test", "C10", 'N');
+        Modification mod1 = new Modification("Test", "C14CxH28N4O4S", 1);
         Modification mod2 = new Modification("Test2", "N3", 8);
 
         modList.add(mod1);
