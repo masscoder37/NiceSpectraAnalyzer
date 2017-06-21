@@ -1,3 +1,4 @@
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 /**
@@ -9,6 +10,9 @@ public class Spectrum {
     private int numberOfPeaks;
     private int scanNumber;
     private String scanHeader;
+    private DecimalFormat fourDec = new DecimalFormat("0.0000");
+    private DecimalFormat twoDec = new DecimalFormat("0.00");
+    private DecimalFormat scientific = new DecimalFormat("0.00E0");
 
     public Spectrum(ArrayList<Peak> peaksIn, int scanNumberIn, String scanHeaderIn){
         this.scanNumber = scanNumberIn;
@@ -22,6 +26,7 @@ public class Spectrum {
     //use this function to remove peaks not wanted in spectrum and to asign rel Intensities and base peak
     private ArrayList<Peak> peakPacker (ArrayList<Peak> peaksToPack){
         ArrayList<Peak> packedPeaks = new ArrayList<>();
+        //set scanNumber from respective Spectrum
         int scanNumber = this.scanNumber;
         double highestInt = 0;
         double currentInt;
@@ -54,10 +59,12 @@ public class Spectrum {
 
         System.out.println("");
         System.out.println("Generating Peak list:");
+        System.out.println("");
+
         System.out.println(""+wrongScanNumber+" peak(s) were removed(different scan number).");
         System.out.println("");
 
-        return packedPeaks;
+        return peaksToPack;
     }
 
     public ArrayList<Peak> getPeakList(){ return this.peakList;}
@@ -71,5 +78,65 @@ public class Spectrum {
                 index = i;
         }
         return index;
+    }
+
+    public int[] getChargeStateDistributionNumber(){
+        int chargeUnknown=0;
+        int charge1=0;
+        int charge2=0;
+        int charge3=0;
+        int charge4=0;
+        int chargeHigher=0;
+        for (Peak peak : this.peakList){
+            int current = peak.getCharge();
+            switch(current){
+                case 0: chargeUnknown++;
+                break;
+                case 1: charge1++;
+                break;
+                case 2: charge2++;
+                break;
+                case 3: charge3++;
+                break;
+                case 4: charge4++;
+                break;
+                default:
+                    chargeHigher++;
+                    break;
+            }
+        }
+int[] chargeStateDistri = new int[6];
+        chargeStateDistri[0] = chargeUnknown;
+        chargeStateDistri[1] = charge1;
+        chargeStateDistri[2] = charge2;
+        chargeStateDistri[3] = charge3;
+        chargeStateDistri[4] = charge4;
+        chargeStateDistri[5] = chargeHigher;
+        return chargeStateDistri;
+    }
+
+    public void spectrumPrinter(){
+        System.out.println("");
+        System.out.println("Generating Spectrum information");
+        System.out.println("Scan Header: "+this.scanHeader);
+        System.out.println("Scan Number: "+this.scanNumber);
+        double summedIntensity = 0;
+        for (Peak peak : this.peakList){
+            System.out.println("Peak mass: "+fourDec.format(peak.getMass())
+                    +"   Charge: "+peak.getCharge()
+                    +"   Rel. Int.: "+twoDec.format(peak.getRelIntensity())
+                    +"   Base Peak: "+peak.getBasePeak());
+            summedIntensity += peak.getRelIntensity();
+        }
+        System.out.println("");
+        System.out.println("General spectra properties:");
+        System.out.println("");
+        System.out.println("Number of Peaks: "+this.peakList.size());
+        System.out.println("Mean rel. Intensity: "+twoDec.format((summedIntensity / this.peakList.size()))+"%");
+        int basePeakIndex = this.getBasePeakIndex();
+        double maxInt = this.peakList.get(basePeakIndex).getIntensity();
+        System.out.println("Base peak Intensity: "+scientific.format(maxInt));
+        System.out.println("End of spectrum analysis!");
+        System.out.println("");
     }
 }

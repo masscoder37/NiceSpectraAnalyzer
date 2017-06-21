@@ -12,6 +12,7 @@ public class Peak {
     private double relInt;
     private boolean isBasePeak;
     private int scanNumberAffil;
+    private boolean chargeStateKnown;
     DecimalFormat twoDec = new DecimalFormat("0.00");
 
 
@@ -20,6 +21,11 @@ public class Peak {
     public Peak(double massIn, double intensityIn, int chargeIn, int scanNumberIn){
         this.mass = massIn;
         this.charge = chargeIn;
+        if (this.charge != 0)
+            this.chargeStateKnown = true;
+        else{
+            this.chargeStateKnown = false;
+        }
         this.intensity = intensityIn;
         this.scanNumberAffil = scanNumberIn;
     }

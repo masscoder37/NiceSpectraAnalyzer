@@ -15,51 +15,24 @@ public class Main {
         ArrayList<AminoAcid> aminoAcidsList = new ArrayList<>();
         aminoAcidsList = CSVReader.aminoAcidParse(aminoAcids);
 
-        Peptide testPeptide = new Peptide("DVLEAMQADSGIR", aminoAcidsList);
+        File spectrum = new File("C:\\Users\\micha\\Desktop\\5451.csv");
+        Spectrum testSpectrum = CSVReader.spectrumParse(spectrum);
 
-        System.out.println("Peptide sequence: "+testPeptide.getSequence());
-        System.out.println("Peptide exact mass: "+fiveDec.format(testPeptide.getExactMass()));
-        System.out.println("Peptide sum formula: "+testPeptide.getSumFormula().getSumFormula());
-        System.out.println("b-Ion series: ");
-
-        for(FragmentIon ion : testPeptide.getbIons()){
-            FragmentIon.fragmentIonPrinter(ion);
-            FragmentIon.fragmentIonFormulaPrinter(ion);
-            System.out.println("Is modified: "+ion.getModificationStatus());
+        Peptide pepA = new Peptide("AAALAAADAR", aminoAcidsList);
+        ArrayList<Modification> mods = new ArrayList<>();
+        mods.add(Modification.uncleavedECDuplexNTerm());
+        Peptide pepAMod = pepA.peptideModifier(mods);
+        //pepAMod.createAddFragmentIonChargestate(2);
+        System.out.println("");
+        System.out.println("");
+        ArrayList<FragmentIon> fragments = pepAMod.getbIons();
+        fragments.addAll(pepAMod.getyIons());
+        for (FragmentIon fragment : fragments){
+            //FragmentIon.fragmentIonFormulaPrinter(fragment);
+            FragmentIon.fragmentIonPrinter(fragment);
         }
-        System.out.println();
-        System.out.println("y-Ion series: ");
-        for(FragmentIon ion : testPeptide.getyIons()){
-            FragmentIon.fragmentIonPrinter(ion);
-            FragmentIon.fragmentIonFormulaPrinter(ion);
-            System.out.println("Is modified: "+ion.getModificationStatus());
+       ArrayList<IonMatch> matchedIons = PeakCompare.peakCompare(testSpectrum, pepAMod, 5);
 
-        }
-        System.out.println();System.out.println();
-        ArrayList<Modification> modList = new ArrayList<>();
-        Modification mod1 = new Modification("Test", "C14CxH28N4O4S", 1);
-        Modification mod2 = new Modification("Test2", "N3", 8);
-
-        modList.add(mod1);
-        //modList.add(mod2);
-        Peptide modTest = testPeptide.peptideModifier(modList);
-
-        System.out.println("Peptide sequence: "+modTest.getSequence());
-        System.out.println("Peptide exact mass: "+fiveDec.format(modTest.getExactMass()));
-        System.out.println("Peptide sum formula: "+modTest.getSumFormula().getSumFormula());
-        System.out.println("b-Ion series: ");
-
-        for(FragmentIon ion : modTest.getbIons()){
-            FragmentIon.fragmentIonPrinter(ion);
-            System.out.println("Is modified: "+ion.getModificationStatus());
-        }
-        System.out.println();
-        System.out.println("y-Ion series: ");
-        for(FragmentIon ion : modTest.getyIons()){
-            FragmentIon.fragmentIonPrinter(ion);
-            System.out.println("Is modified: "+ion.getModificationStatus());
-
-        }
 
 
 

@@ -26,11 +26,15 @@ public class FragmentIon extends Ion {
     public String getPrecursorSequence(){return this.precursor.getSequence();}
     public char getIonSeries(){return this.ionSeries;}
     public int getIonNumber(){return this.ionNumber;}
+    public String getCompleteIon(){return ""+this.ionSeries+this.ionNumber;}
     public boolean getModificationStatus(){return this.isModified;}
 
     public static void fragmentIonPrinter(FragmentIon queriedIon){
 
-        System.out.println(""+queriedIon.ionSeries+queriedIon.ionNumber+" "+queriedIon.getCharge()+"+"+":    "+fiveDec.format(queriedIon.getMToZ())+" m/z");
+        System.out.println(""+queriedIon.ionSeries+queriedIon.ionNumber+" "
+                +queriedIon.getCharge()+"+"
+                +":    "+fiveDec.format(queriedIon.getMToZ())+" m/z"
+        +"   is modified: "+queriedIon.getModificationStatus());
     }
     public static void fragmentIonFormulaPrinter(FragmentIon queriedIon){
 

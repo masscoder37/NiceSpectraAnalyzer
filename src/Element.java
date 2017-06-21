@@ -113,7 +113,7 @@ public class Element {
             Cx = "";
         }
 
-            formula = ""+ C + H  + N + O + S + HPlus+Cx;
+            formula = ""+ C + H  + N + O + S + Cx + HPlus;
 
 
 

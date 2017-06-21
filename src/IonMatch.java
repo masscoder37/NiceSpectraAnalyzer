@@ -7,4 +7,10 @@ public class IonMatch {
     private Peak peak;
     private double ppmDeviation;
 
+    public IonMatch(FragmentIon fragmentIonIn, Peak peakIn, double ppmDeviationIn){
+        this.fragmentIon = fragmentIonIn;
+        this.peak = peakIn;
+        this.ppmDeviation = ppmDeviationIn;
+    }
+
 }

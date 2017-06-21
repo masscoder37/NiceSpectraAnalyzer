@@ -36,7 +36,7 @@ public class Modification {
     public SumFormula getModificationFormula(){return this.modificationFormula;}
     public double getModificationMass(){return this.modificationMass;}
     public int getPositionNumber(){
-        if (certainPosition == false)
+        if (!certainPosition)
     throw new IllegalArgumentException("AminoAcid was modified, not certain position!");
         return this.positionNumber;
     }
@@ -45,6 +45,24 @@ public class Modification {
             throw new IllegalArgumentException("Certain position was modifed, not specific amino acid!");
         return this.aminoAcidName;
     }
-
+    public static Modification uncleavedECDuplexNTerm(){
+        Modification mod = new Modification("ECDuplex_intact", "C14CxH28N4O4S", 1);
+        return mod;
+    }
+    public static Modification uncleavedECDuplexLys(){
+        return new Modification("ECDuplex_intact", "C14CxH28N4O4S",'K');
+    }
+    public static Modification cleavedEC180NTerm(){
+        return new Modification("EC180_cleaved", "C9H14N2O2", 1);
+    }
+    public static Modification uncleavedEC180Lys(){
+        return new Modification("EC180_cleaved", "C9H14N2O2",'K');
+    }
+    public static Modification cleavedEC179NTerm(){
+        return new Modification("EC180_cleaved", "C8CxH14N2O2", 1);
+    }
+    public static Modification uncleavedEC179Lys(){
+        return new Modification("EC180_cleaved", "C8CxH14N2O2",'K');
+    }
 
 }
