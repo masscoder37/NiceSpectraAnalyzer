@@ -42,6 +42,8 @@ public class Main {
 
         MzXMLFile file = new MzXMLFile(new File("C:\\Users\\Michael Stadlmeier\\Desktop\\Programmierzeugs\\20170519_stamch_ECDuplex_NEBBSA_newbatches_1to1_R1.mzxml"));
         Spectrum spectrum = file.getSpectrumById("2050");
+        int spectraNumber = file.getSpectraCount();
+        System.out.println("spectra count: "+spectraNumber);
 
 
 

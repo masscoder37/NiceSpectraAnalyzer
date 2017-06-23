@@ -3,7 +3,8 @@
   <component name="MavenProjectsManager">
     <option name="originalFiles">
       <list>
-        <option value="E:/Downloads/Anwendungen/jmzreader/neu/jmzReader-jmzreader-library-1.2.5/pom.xml" />
+        <option value="E:/Downloads/Anwendungen/jmzreader/neu/jmzReader-jmzreader-library-1.2.5/mzxml-parser/pom.xml" />
+        <option value="E:/Downloads/Anwendungen/jmzreader/neu/jmzReader-jmzreader-library-1.2.5/jmzreader/pom.xml" />
       </list>
     </option>
   </component>

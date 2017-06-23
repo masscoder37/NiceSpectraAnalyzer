@@ -6,17 +6,8 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="apl-parser" />
-        <module name="braf" />
-        <module name="dta-parser" />
         <module name="jmzreader" />
-        <module name="mgf-parser" />
-        <module name="ms2-parser" />
-        <module name="mzdata-parser" />
-        <module name="mzml-wrapper" />
         <module name="mzxml-parser" />
-        <module name="pkl-parser" />
-        <module name="pride-wrapper" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
