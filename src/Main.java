@@ -16,7 +16,7 @@ public class Main {
         aminoAcidsList = CSVReader.aminoAcidParse(aminoAcids);
 
         File spectrum = new File("C:\\Users\\micha\\Desktop\\5451.csv");
-        Spectrum testSpectrum = CSVReader.spectrumParse(spectrum);
+        MySpectrum testSpectrum = CSVReader.spectrumParse(spectrum);
 
         Peptide pepA = new Peptide("AAALAAADAR", aminoAcidsList);
         ArrayList<Modification> mods = new ArrayList<>();

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class PeakCompare {
     private DecimalFormat twoDec = new DecimalFormat("0.00");
 
-    public static ArrayList<IonMatch> peakCompare(Spectrum spectrumIn, Peptide peptideIn, double ppmDev) {
+    public static ArrayList<IonMatch> peakCompare(MySpectrum spectrumIn, Peptide peptideIn, double ppmDev) {
         DecimalFormat twoDec = new DecimalFormat("0.00");
         ArrayList<IonMatch> matches = new ArrayList<>();
         ArrayList<Peak> peakList = spectrumIn.getPeakList();

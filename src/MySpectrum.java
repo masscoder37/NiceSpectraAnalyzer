@@ -5,7 +5,7 @@ import java.util.ArrayList;
  * Created by Michael Stadlmeier on 6/20/2017.
  */
 // uses an ArrayList of Peaks to create a spectrum
-public class Spectrum {
+public class MySpectrum {
     private ArrayList<Peak> peakList;
     private int numberOfPeaks;
     private int scanNumber;
@@ -14,7 +14,7 @@ public class Spectrum {
     private DecimalFormat twoDec = new DecimalFormat("0.00");
     private DecimalFormat scientific = new DecimalFormat("0.00E0");
 
-    public Spectrum(ArrayList<Peak> peaksIn, int scanNumberIn, String scanHeaderIn){
+    public MySpectrum(ArrayList<Peak> peaksIn, int scanNumberIn, String scanHeaderIn){
         this.scanNumber = scanNumberIn;
         this.scanHeader = scanHeaderIn;
         this.peakList = peakPacker(peaksIn);
@@ -26,7 +26,7 @@ public class Spectrum {
     //use this function to remove peaks not wanted in spectrum and to asign rel Intensities and base peak
     private ArrayList<Peak> peakPacker (ArrayList<Peak> peaksToPack){
         ArrayList<Peak> packedPeaks = new ArrayList<>();
-        //set scanNumber from respective Spectrum
+        //set scanNumber from respective MySpectrum
         int scanNumber = this.scanNumber;
         double highestInt = 0;
         double currentInt;
@@ -117,7 +117,7 @@ int[] chargeStateDistri = new int[6];
 
     public void spectrumPrinter(){
         System.out.println("");
-        System.out.println("Generating Spectrum information");
+        System.out.println("Generating MySpectrum information");
         System.out.println("Scan Header: "+this.scanHeader);
         System.out.println("Scan Number: "+this.scanNumber);
         double summedIntensity = 0;

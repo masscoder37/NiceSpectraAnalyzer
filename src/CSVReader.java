@@ -35,7 +35,7 @@ public class CSVReader {
         return acids;
     }
 
-    public static Spectrum spectrumParse(File file) {
+    public static MySpectrum spectrumParse(File file) {
         Scanner scanner = null;
         try {
             scanner = new Scanner(file);
@@ -70,7 +70,7 @@ public class CSVReader {
             }
         }
         scanner.close();
-        Spectrum spectrumOut = new Spectrum(peaks, spectrumScanNumber, scanHeader);
+        MySpectrum spectrumOut = new MySpectrum(peaks, spectrumScanNumber, scanHeader);
         return spectrumOut;
     }
 }
