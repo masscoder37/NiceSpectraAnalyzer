@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="apl-parser" />
+        <module name="braf" />
+        <module name="dta-parser" />
+        <module name="jmzreader" />
+        <module name="mgf-parser" />
+        <module name="ms2-parser" />
+        <module name="mzdata-parser" />
+        <module name="mzml-wrapper" />
+        <module name="mzxml-parser" />
+        <module name="pkl-parser" />
+        <module name="pride-wrapper" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="apl-parser" target="1.7" />
+      <module name="braf" target="1.7" />
+      <module name="dta-parser" target="1.7" />
+      <module name="jmzreader" target="1.7" />
+      <module name="jmzreader-library" target="1.7" />
+      <module name="mgf-parser" target="1.7" />
+      <module name="ms2-parser" target="1.7" />
+      <module name="mzdata-parser" target="1.7" />
+      <module name="mzml-wrapper" target="1.7" />
+      <module name="mzxml-parser" target="1.7" />
+      <module name="pkl-parser" target="1.7" />
+      <module name="pride-wrapper" target="1.7" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
