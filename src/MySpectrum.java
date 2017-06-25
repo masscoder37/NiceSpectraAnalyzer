@@ -23,7 +23,7 @@ public class MySpectrum {
     }
 
 
-    //use this function to remove peaks not wanted in spectrum and to asign rel Intensities and base peak
+    //use this function to remove peaks not wanted in spectrum and to assign rel Intensities and base peak
     private ArrayList<Peak> peakPacker (ArrayList<Peak> peaksToPack){
         ArrayList<Peak> packedPeaks = new ArrayList<>();
         //set scanNumber from respective MySpectrum
@@ -66,6 +66,7 @@ public class MySpectrum {
 
         return peaksToPack;
     }
+
 
     public ArrayList<Peak> getPeakList(){ return this.peakList;}
     public int getScanNumber(){return   this.scanNumber;}
