@@ -118,7 +118,7 @@ int[] chargeStateDistri = new int[6];
 
     public void spectrumPrinter(){
         System.out.println("");
-        System.out.println("Generating MySpectrum information");
+        System.out.println("Generating Spectrum information...");
         System.out.println("Scan Header: "+this.scanHeader);
         System.out.println("Scan Number: "+this.scanNumber);
         double summedIntensity = 0;

@@ -11,18 +11,8 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="apl-parser" target="1.7" />
-      <module name="braf" target="1.7" />
-      <module name="dta-parser" target="1.7" />
       <module name="jmzreader" target="1.7" />
-      <module name="jmzreader-library" target="1.7" />
-      <module name="mgf-parser" target="1.7" />
-      <module name="ms2-parser" target="1.7" />
-      <module name="mzdata-parser" target="1.7" />
-      <module name="mzml-wrapper" target="1.7" />
       <module name="mzxml-parser" target="1.7" />
-      <module name="pkl-parser" target="1.7" />
-      <module name="pride-wrapper" target="1.7" />
     </bytecodeTargetLevel>
   </component>
 </project>

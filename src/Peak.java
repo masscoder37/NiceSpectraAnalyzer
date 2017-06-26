@@ -28,7 +28,22 @@ public class Peak {
         }
         this.intensity = intensityIn;
         this.scanNumberAffil = scanNumberIn;
+        this.relInt = 0;
+        this.isBasePeak = false;
     }
+
+    //second constructor if charge is unknown, has to be set later
+    public Peak(double massIn, double intensityIn, int scanNumberIn){
+        this.mass = massIn;
+        this.intensity = intensityIn;
+        this.scanNumberAffil = scanNumberIn;
+        this.charge = 0;
+        this.relInt = 0;
+        this.chargeStateKnown= false;
+        this.isBasePeak = false;
+
+    }
+
 
     //setter for peak properties derived from ArrayList
     public void setRelInt(double relIntIn){
@@ -38,6 +53,18 @@ public class Peak {
     public void setBasePeak(){
         this.isBasePeak = true;
     }
+
+    public void setCharge(int chargeIn){
+        this.charge = chargeIn;
+        if (this.charge != 0){
+            this.chargeStateKnown = true;
+        }
+        else {
+            this.chargeStateKnown = false;
+        }
+
+    }
+
 
 
 

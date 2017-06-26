@@ -1,5 +1,8 @@
 import uk.ac.ebi.pride.tools.jmzreader.JMzReaderException;
 import uk.ac.ebi.pride.tools.jmzreader.model.Spectrum;
+import uk.ac.ebi.pride.tools.jmzreader.model.impl.CvParam;
+import uk.ac.ebi.pride.tools.jmzreader.model.impl.ParamGroup;
+import uk.ac.ebi.pride.tools.jmzreader.model.impl.UserParam;
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLFile;
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLParsingException;
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLSpectrum;
@@ -7,6 +10,7 @@ import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLSpectrum;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Created by Michael Stadlmeier on 6/13/2017.
@@ -39,6 +43,17 @@ public class Main {
         }
        ArrayList<IonMatch> matchedIons = PeakCompare.peakCompare(testSpectrum, pepAMod, 5);
 */
+
+        String filePath = "C:\\Universität\\Doktorarbeit\\Aktuelle Massedaten\\24052017_EC_BSA_SpikeIn\\with Tag\\3 ratios\\20170529_stamch_EColi_1to1_BSA_1pmol_1ug.mzXML";
+        File spectrumFile = new File(filePath);
+        MzXMLFile mzXMLFile = new MzXMLFile(spectrumFile);
+
+        MySpectrum convertedSpectrum = MzXMLReadIn.mzXMLToMySpectrum(mzXMLFile, "4031");
+        Spectrum uncovertedSpectrum = mzXMLFile.getSpectrumById("4031");
+        System.out.println("unconverted Spectrum Size: "+uncovertedSpectrum.getPeakList().size());
+        //convertedSpectrum.spectrumPrinter();
+
+
 
 
 
