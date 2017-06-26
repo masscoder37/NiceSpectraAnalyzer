@@ -25,7 +25,12 @@ public class MzXMLReadIn {
         Spectrum currentSpectrum = completeMzXML.getSpectrumById(scanNumberIn);
         //scan Header shows precursor M/z and charge of precursor
         String scanHeader = "";
-        scanHeader += fourDec.format(currentSpectrum.getPrecursorMZ())+" "+currentSpectrum.getPrecursorCharge();
+        try {
+            scanHeader += fourDec.format(currentSpectrum.getPrecursorMZ()) + " " + currentSpectrum.getPrecursorCharge();
+        }
+        catch (IllegalArgumentException e){
+            scanHeader = "NA";
+        }
         scanHeader+= "+";
         //scan Number is set
         int scanNumber = Integer.parseInt(scanNumberIn);

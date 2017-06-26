@@ -17,6 +17,9 @@ public class MySpectrum {
     public MySpectrum(ArrayList<Peak> peaksIn, int scanNumberIn, String scanHeaderIn){
         this.scanNumber = scanNumberIn;
         this.scanHeader = scanHeaderIn;
+        //make sure that peakList is ordered
+        //implemented QuickSort Algorithm
+        peaksIn = MassQuickSort.peakListQuickSort(peaksIn);
         this.peakList = peakPacker(peaksIn);
         this.numberOfPeaks = this.peakList.size();
 
@@ -66,6 +69,8 @@ public class MySpectrum {
 
         return peaksToPack;
     }
+
+
 
 
     public ArrayList<Peak> getPeakList(){ return this.peakList;}
@@ -140,4 +145,21 @@ int[] chargeStateDistri = new int[6];
         System.out.println("End of spectrum analysis!");
         System.out.println("");
     }
+
+    public void smallIntensitiesRemover (){
+        ArrayList<Peak> convolutedList = this.peakList;
+        ArrayList<Peak> deconvolutedList = new ArrayList<>();
+        int removedPeaks = 0;
+        for (Peak p : convolutedList){
+            if (p.getIntensity() != 0){
+                deconvolutedList.add(p);
+                removedPeaks++;
+            }
+        }
+        System.out.println("Number of removed Peaks with low intensity: "+removedPeaks);
+
+        this.peakList = peakPacker(deconvolutedList);
+        this.numberOfPeaks = this.peakList.size();
+    }
+
 }

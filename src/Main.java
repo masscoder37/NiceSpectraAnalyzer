@@ -44,14 +44,16 @@ public class Main {
        ArrayList<IonMatch> matchedIons = PeakCompare.peakCompare(testSpectrum, pepAMod, 5);
 */
 
-        String filePath = "C:\\Universität\\Doktorarbeit\\Aktuelle Massedaten\\24052017_EC_BSA_SpikeIn\\with Tag\\3 ratios\\20170529_stamch_EColi_1to1_BSA_1pmol_1ug.mzXML";
+        String filePath = "C:\\Users\\Michael Stadlmeier\\Desktop\\Programmierzeugs\\complete\\20170519_stamch_ECDuplex_NEBBSA_newbatches_1to1_R1.mzxml";
         File spectrumFile = new File(filePath);
         MzXMLFile mzXMLFile = new MzXMLFile(spectrumFile);
+        System.out.println("Number of spectra: "+mzXMLFile.getSpectraCount());
 
-        MySpectrum convertedSpectrum = MzXMLReadIn.mzXMLToMySpectrum(mzXMLFile, "4031");
-        Spectrum uncovertedSpectrum = mzXMLFile.getSpectrumById("4031");
-        System.out.println("unconverted Spectrum Size: "+uncovertedSpectrum.getPeakList().size());
-        //convertedSpectrum.spectrumPrinter();
+        for (int i = 1; i<mzXMLFile.getSpectraCount()+1;i++) {
+            MySpectrum convertedSpectrum = MzXMLReadIn.mzXMLToMySpectrum(mzXMLFile, Integer.toString(i));
+            System.out.println("Generating spectra: "+i);
+        }
+
 
 
 
