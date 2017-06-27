@@ -20,40 +20,55 @@ public class Main {
     public static void main(String[] args) throws MzXMLParsingException, JMzReaderException {
         DecimalFormat fiveDec = new DecimalFormat("0.00000");
 
-        /*String filePath = "C:\\Anwendungen\\IntelliJProjects\\NiceSpectraAnalyzer\\NiceSpectraAnalyzer\\Aminoacids_list.csv";
-        File aminoAcids = new File(filePath);
+        //testing: read in amino acids
+
+        String filePathAcids = "C:\\Anwendungen\\IntelliJProjects\\NiceSpectraAnalyzer\\Aminoacids_list.csv";
+        File aminoAcids = new File(filePathAcids);
         ArrayList<AminoAcid> aminoAcidsList = new ArrayList<>();
         aminoAcidsList = CSVReader.aminoAcidParse(aminoAcids);
 
-        File spectrum = new File("C:\\Users\\micha\\Desktop\\5451.csv");
-        MySpectrum testSpectrum = CSVReader.spectrumParse(spectrum);
+        //testing: read in spectrum
+        String filePathSpectrum =  "C:\\Universität\\Doktorarbeit\\Aktuelle Massedaten\\Programmiertests\\20170529_stamch_EColi_1to1_BSA_1pmol_1ug.mzxml";
+        //File completemzXMLSource = new File(filePathSpectrum);
+        //MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
+        //MySpectrum spectrumOfInterest = MzXMLReadIn.mzXMLToMySpectrum(completemzXML, "23493");
 
-        Peptide pepA = new Peptide("AAALAAADAR", aminoAcidsList);
+        //testing: creating peptides
+        Peptide pepA = new Peptide("AVAAVNGPIAQALIGK", aminoAcidsList);
         ArrayList<Modification> mods = new ArrayList<>();
         mods.add(Modification.uncleavedECDuplexNTerm());
+        Modification secondMod = new Modification("zweitTest", "C2", 6);
+        mods.add(secondMod);
         Peptide pepAMod = pepA.peptideModifier(mods);
-        //pepAMod.createAddFragmentIonChargestate(2);
+        pepAMod.createAddFragmentIonChargestate(2);
         System.out.println("");
         System.out.println("");
+        pepA.peptidePrinter();
+        pepAMod.peptidePrinter();
+
         ArrayList<FragmentIon> fragments = pepAMod.getbIons();
         fragments.addAll(pepAMod.getyIons());
         for (FragmentIon fragment : fragments){
             //FragmentIon.fragmentIonFormulaPrinter(fragment);
             FragmentIon.fragmentIonPrinter(fragment);
         }
-       ArrayList<IonMatch> matchedIons = PeakCompare.peakCompare(testSpectrum, pepAMod, 5);
-*/
 
-        String filePath = "C:\\Users\\Michael Stadlmeier\\Desktop\\Programmierzeugs\\complete\\20170519_stamch_ECDuplex_NEBBSA_newbatches_1to1_R1.mzxml";
+        ArrayList<Modification> mods2 = new ArrayList<>();
+        mods2.add(secondMod);
+        //Peptide pepAModmod = pepAMod.peptideModifier(mods2);
+        //pepAModmod.peptidePrinter();
+
+       //ArrayList<IonMatch> matchedIons = PeakCompare.peakCompare(spectrumOfInterest, pepAMod, 5);
+
+
+        /*String filePath = "C:\\Universität\\Doktorarbeit\\Aktuelle Massedaten\\Programmiertests\\20170529_stamch_EColi_1to1_BSA_1pmol_1ug.mzxml";
         File spectrumFile = new File(filePath);
-        MzXMLFile mzXMLFile = new MzXMLFile(spectrumFile);
-        System.out.println("Number of spectra: "+mzXMLFile.getSpectraCount());
-
-        for (int i = 1; i<mzXMLFile.getSpectraCount()+1;i++) {
-            MySpectrum convertedSpectrum = MzXMLReadIn.mzXMLToMySpectrum(mzXMLFile, Integer.toString(i));
-            System.out.println("Generating spectra: "+i);
-        }
-
+        MzXMLFile completemzXML = new MzXMLFile(spectrumFile);
+        System.out.println("Number of spectra: "+completemzXML.getSpectraCount());
+        for (int i = 17000; i<18001;i++) {
+            MySpectrum convertedSpectrum = MzXMLReadIn.mzXMLToMySpectrum(completemzXML, Integer.toString(i));
+            System.out.println("MySpectrum created: "+i+"  with "+convertedSpectrum.getNumberOfPeaks()+" peaks!");
+        }*/
 
 
 

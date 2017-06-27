@@ -1,3 +1,4 @@
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 /**
@@ -12,6 +13,8 @@ public class Peptide {
     private ArrayList<FragmentIon> yIons;
     private boolean hasModification;
     private ArrayList<AminoAcid> aminoAcidsList;
+
+    private DecimalFormat fiveDec = new DecimalFormat("0.00000");
 
     //ArrayList<AminoAcid> acids usually contains all 20 natural amino acids
     //ArrayList<AminoAcid> aminoAcidsList contains only aminoacids in the peptide, in order of the sequence
@@ -216,8 +219,36 @@ public class Peptide {
     }
 
     public void createAddFragmentIonChargestate(int chargeIn) {
-        this.bIonBuilder(chargeIn);
-        this.yIonBuilder(chargeIn);
+        //check if additional charge states were already created
+        boolean containsChargeStateB = false;
+        boolean containsChargeStateY = false;
+
+        for (FragmentIon fragmentIon : this.bIons) {
+            if (chargeIn == fragmentIon.getCharge())
+                containsChargeStateB = true;
+        }
+        for (FragmentIon fragmentIon : this.yIons) {
+            if (chargeIn == fragmentIon.getCharge())
+                containsChargeStateY = true;
+        }
+
+        if (!containsChargeStateB) {
+            this.bIonBuilder(chargeIn);
+        }
+        if (!containsChargeStateY) {
+            this.yIonBuilder(chargeIn);
+        }
+
+    }
+
+    public void peptidePrinter(){
+        System.out.println("");
+        System.out.println("Peptide: "+this.sequence);
+        System.out.println("is modified: "+this.hasModification);
+        System.out.println("Sum Formula: "+this.sumFormula.getSumFormula());
+        System.out.println("Length: "+this.sequenceLength);
+        System.out.println("Mass: "+fiveDec.format(this.exactMass));
+        System.out.println("");
     }
 
 }

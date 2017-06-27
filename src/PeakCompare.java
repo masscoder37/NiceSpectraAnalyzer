@@ -9,6 +9,7 @@ import java.util.ArrayList;
     //utilizes Deviation Calc to generate the appropriate ppm windows
 public class PeakCompare {
     private DecimalFormat twoDec = new DecimalFormat("0.00");
+    private static DecimalFormat fiveDec = new DecimalFormat("0.00000");
 
     public static ArrayList<IonMatch> peakCompare(MySpectrum spectrumIn, Peptide peptideIn, double ppmDev) {
         DecimalFormat twoDec = new DecimalFormat("0.00");
@@ -20,6 +21,8 @@ public class PeakCompare {
         for (int i = 0; i<chargeStateDistro.length; i++){
             double percentChargeState = ((double) chargeStateDistro[i])/spectrumIn.getNumberOfPeaks()*100;
             if (percentChargeState > 2.5){
+                //charge state 1 is already initialized
+                //more than z = +5 is unrealistic
                 if (i>1 && i<5)
                 peptideIn.createAddFragmentIonChargestate(i);
             }
@@ -34,9 +37,9 @@ public class PeakCompare {
                     matches.add(new IonMatch(fragment, peak, deviation));
                     System.out.println("Match! Ion: "+fragment.getCompleteIon()
                             +" "+fragment.getCharge()+"+"
-                            +"  Mass found: "+peak.getMass()
+                            +"  Mass found: "+fiveDec.format(peak.getMass()) + " m/z"
                             +"   Deviation: " +twoDec.format(deviation)+" ppm"
-                    +" is modfied: "+fragment.getModificationStatus());
+                    +"        is modfied: "+fragment.getModificationStatus());
                 }
             }
 
