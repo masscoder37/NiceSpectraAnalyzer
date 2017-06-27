@@ -157,6 +157,7 @@ public class Peptide {
     //this method uses an ArrayList of Modifications to attach modifications to existing peptides
     public Peptide peptideModifier(ArrayList<Modification> modListIn) {
         ArrayList<AminoAcid> modAAList = this.getAminoAcidsList();
+        boolean modStatus = false;
         for (Modification mod : modListIn) {
             boolean fixedModPosition = mod.getPositionType();
             if (fixedModPosition) {
@@ -168,6 +169,7 @@ public class Peptide {
                 AminoAcid modAcid = new AminoAcid("" + currentAcid.getName() + mod.getModificationName(), currentAcid.get3Let(), "" + currentAcid.get1Let(), newFormula.getSumFormula());
                 modAAList.set(mod.getPositionNumber(), modAcid);
                 modAAList.get(mod.getPositionNumber()).setHasModification(true);
+                modStatus = true;
             }
             if (!fixedModPosition) {
                 for (int i = 0; i < modAAList.size(); i++) {
@@ -177,11 +179,12 @@ public class Peptide {
                         AminoAcid modAcid = new AminoAcid("" + currentAcid.getName() + mod.getModificationName(), currentAcid.get3Let(), "" + currentAcid.get1Let(), newFormula.getSumFormula());
                         modAAList.set(i, modAcid);
                         modAAList.get(i).setHasModification(true);
+                        modStatus = true;
                     }
                 }
             }
         }
-        Peptide modPeptide = new Peptide(this.getSequence(), modAAList, true);
+        Peptide modPeptide = new Peptide(this.getSequence(), modAAList, modStatus);
         return modPeptide;
     }
 

@@ -55,14 +55,14 @@ public class Modification {
     public static Modification cleavedEC180NTerm(){
         return new Modification("EC180_cleaved", "C9H14N2O2", 1);
     }
-    public static Modification uncleavedEC180Lys(){
+    public static Modification cleavedEC180Lys(){
         return new Modification("EC180_cleaved", "C9H14N2O2",'K');
     }
     public static Modification cleavedEC179NTerm(){
-        return new Modification("EC180_cleaved", "C8CxH14N2O2", 1);
+        return new Modification("EC179_cleaved", "C8CxH14N2O2", 1);
     }
-    public static Modification uncleavedEC179Lys(){
-        return new Modification("EC180_cleaved", "C8CxH14N2O2",'K');
+    public static Modification cleavedEC179Lys(){
+        return new Modification("EC179_cleaved", "C8CxH14N2O2",'K');
     }
 
 }

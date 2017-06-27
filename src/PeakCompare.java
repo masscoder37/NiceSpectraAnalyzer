@@ -27,7 +27,8 @@ public class PeakCompare {
                 peptideIn.createAddFragmentIonChargestate(i);
             }
         }
-        ArrayList<FragmentIon> fragmentIonsList = peptideIn.getbIons();
+        ArrayList<FragmentIon> fragmentIonsList = new ArrayList<>();
+        fragmentIonsList.addAll(peptideIn.getbIons());
         fragmentIonsList.addAll(peptideIn.getyIons());
         for (FragmentIon fragment : fragmentIonsList){
             double[] massRange = DeviationCalc.ppmRangeCalc(ppmDev, fragment.getMToZ());
@@ -39,7 +40,8 @@ public class PeakCompare {
                             +" "+fragment.getCharge()+"+"
                             +"  Mass found: "+fiveDec.format(peak.getMass()) + " m/z"
                             +"   Deviation: " +twoDec.format(deviation)+" ppm"
-                    +"        is modfied: "+fragment.getModificationStatus());
+                            +"  rel. Int.: "+twoDec.format(peak.getRelIntensity())+"%"+
+                    "        is modfied: "+fragment.getModificationStatus());
                 }
             }
 

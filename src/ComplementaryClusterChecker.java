@@ -10,8 +10,17 @@ import java.util.ArrayList;
     //also check if fragmentation of EC occurred
     //return an ArrayList of compClusterIonMatches
 public class ComplementaryClusterChecker {
-    public static ArrayList<CompClusterIonMatch> compClusterCheckerEC (String SequenceIn, ArrayList<Modification> modsIn, String spectrumID, MzXMLFile completeFileIn){
+    public static ArrayList<CompClusterIonMatch> compClusterCheckerEC (String SequenceIn, ArrayList<Modification> modsIn, String spectrumID, MzXMLFile completeFileIn, double accuracy){
         ArrayList<CompClusterIonMatch> successfulMatches = new ArrayList<>();
 
+
+
+
+
+
+
+
+
+        return successfulMatches;
     }
 }

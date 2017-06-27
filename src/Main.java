@@ -22,43 +22,36 @@ public class Main {
 
         //testing: read in amino acids
 
-        String filePathAcids = "C:\\Anwendungen\\IntelliJProjects\\NiceSpectraAnalyzer\\Aminoacids_list.csv";
+        String filePathAcids = "C:\\Users\\Michael Stadlmeier\\Desktop\\Programmierzeugs\\Aminoacids_list.csv";
         File aminoAcids = new File(filePathAcids);
         ArrayList<AminoAcid> aminoAcidsList = new ArrayList<>();
         aminoAcidsList = CSVReader.aminoAcidParse(aminoAcids);
 
         //testing: read in spectrum
-        String filePathSpectrum =  "C:\\Universität\\Doktorarbeit\\Aktuelle Massedaten\\Programmiertests\\20170529_stamch_EColi_1to1_BSA_1pmol_1ug.mzxml";
-        //File completemzXMLSource = new File(filePathSpectrum);
-        //MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
-        //MySpectrum spectrumOfInterest = MzXMLReadIn.mzXMLToMySpectrum(completemzXML, "23493");
+        String filePathSpectrum =  "C:\\Users\\Michael Stadlmeier\\Desktop\\Programmierzeugs\\20170529_stamch_EColi_1to1_BSA_1pmol_1ug.mzxml";
+        File completemzXMLSource = new File(filePathSpectrum);
+        MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
+        MySpectrum spectrumOfInterest = MzXMLReadIn.mzXMLToMySpectrum(completemzXML, "15681");
 
         //testing: creating peptides
-        Peptide pepA = new Peptide("AVAAVNGPIAQALIGK", aminoAcidsList);
+        Peptide pepA = new Peptide("ALMEYDESLR", aminoAcidsList);
         ArrayList<Modification> mods = new ArrayList<>();
-        mods.add(Modification.uncleavedECDuplexNTerm());
-        Modification secondMod = new Modification("zweitTest", "C2", 6);
-        mods.add(secondMod);
+        mods.add(Modification.cleavedEC180NTerm());
         Peptide pepAMod = pepA.peptideModifier(mods);
-        pepAMod.createAddFragmentIonChargestate(2);
         System.out.println("");
         System.out.println("");
         pepA.peptidePrinter();
         pepAMod.peptidePrinter();
 
-        ArrayList<FragmentIon> fragments = pepAMod.getbIons();
+        ArrayList<FragmentIon> fragments = new ArrayList<>();
+        fragments.addAll(pepAMod.getbIons());
         fragments.addAll(pepAMod.getyIons());
-        for (FragmentIon fragment : fragments){
+        for (FragmentIon fragmentIon : fragments) {
             //FragmentIon.fragmentIonFormulaPrinter(fragment);
-            FragmentIon.fragmentIonPrinter(fragment);
+            FragmentIon.fragmentIonPrinter(fragmentIon);
         }
 
-        ArrayList<Modification> mods2 = new ArrayList<>();
-        mods2.add(secondMod);
-        //Peptide pepAModmod = pepAMod.peptideModifier(mods2);
-        //pepAModmod.peptidePrinter();
-
-       //ArrayList<IonMatch> matchedIons = PeakCompare.peakCompare(spectrumOfInterest, pepAMod, 5);
+        //ArrayList<IonMatch> matchedIons = PeakCompare.peakCompare(spectrumOfInterest, pepAMod, 5);
 
 
         /*String filePath = "C:\\Universität\\Doktorarbeit\\Aktuelle Massedaten\\Programmiertests\\20170529_stamch_EColi_1to1_BSA_1pmol_1ug.mzxml";
