@@ -44,13 +44,9 @@ public class ComplementaryClusterChecker {
 
     //this function should create all the different possibilities for EC modifications
     //cleaved and uncleaved, EC179 and EC180 complementary ion-clusters
-    private static ArrayList<ArrayList<Modification>> modCreator(Peptide pepToModify, int countECIn, ArrayList<Modification>modsIn){
-        //create new ArrayList of Modification-arraylists
-        ArrayList<ArrayList<Modification>> nTermModList = new ArrayList<>();
-        //create loop to exit as soon as all the modifications have been done
-        int handledMods = 0;
+    public static ArrayList<ArrayList<Modification>> modCreator(Peptide pepToModify, int countECIn, ArrayList<Modification>modsIn){
             //create positions of modified lysines
-            //lysPos is int[] with all the positions of lysines in the sequence
+            //lysPos is int[] with all the positions of EC-Modifications(N-Term + Lys) in the sequence
             int lysCount = countECIn - 1;
             int[] lysPos = new int[lysCount];
             int lysPosPointer = 0;
@@ -58,71 +54,54 @@ public class ComplementaryClusterChecker {
             sequence.addAll(pepToModify.getAminoAcidsList());
             for (int a = 0; a < sequence.size(); a++) {
                 if (sequence.get(a).get1Let() == 'K') {
-                    lysPos[lysPosPointer] = a;
+                    lysPos[lysPosPointer] = a+1;
                     lysPosPointer++;
                 }
             }
-
-
-
-        //modify N-terminus
-        //after this, there are 3 Lists of Modifications with all the non-EC mods already included
-        //list 0: uncleaved
-        //list 1: cleaved EC179
-        //list 2: cleaved EC180
-        for (int b = 0; b < 3; b++){
-                ArrayList<Modification> currentModList = new ArrayList<>();
-                currentModList.addAll(modsIn);
-                currentModList.add(nTermChooser(b));
-                nTermModList.add(currentModList);
+        ArrayList<ArrayList<Modification>> completeList= new ArrayList<>();
+        for (int e = 0; e < 3; e++){
+            ArrayList<Modification> current = new ArrayList<>();
+            current.addAll(modsIn);
+            current.add(modChooser(e, 1));
+            completeList.add(current);
         }
-        //as long as there are other modifications to handle, do this
-        for (int c = 0; c<lysCount; c++){
-            //next loop: go through the created lists
-            for (int d = 0; d <3;d++){
-                //and iterate the different modifications
-                for (int e = 0; e <3;e++){
-                    ArrayList<Modification> lysMods = new ArrayList<>();
-                    lysMods.addAll(nTermModList.get(d));
-                    lysMods.add(lysChooser(e, lysPos[c]));
-                }
+        for (int f = 0; f < lysCount; f++) {
+            completeList = listMultiplier(completeList, lysPos[f]);
+        }
+
+        System.out.println("Size: "+completeList.size());
+
+return completeList;
+    }
+
+
+    private static ArrayList<ArrayList<Modification>> listMultiplier(ArrayList<ArrayList<Modification>> listIn, int pos){
+        int sizeOfList = listIn.size();
+        ArrayList<ArrayList<Modification>> listOut = new ArrayList<>();
+        for (ArrayList<Modification> modLists : listIn){
+            for (int i = 0; i<3;i++){
+                ArrayList<Modification> currentList = new ArrayList<>();
+                currentList.addAll(modLists);
+                currentList.add(modChooser(i, pos));
+                listOut.add(currentList);
             }
-
         }
-
-
-
-
-
-
+        return listOut;
     }
 
-    private static Modification nTermChooser(int nTermChooser){
+
+
+    private static Modification modChooser(int modChooser, int pos){
         Modification mod = null;
-        switch(nTermChooser){
+        switch(modChooser){
             case 0:
-                mod = Modification.uncleavedECDuplexNTerm();
+                mod = Modification.uncleavedECDuplex(pos);
                 break;
             case 1:
-                mod = Modification.cleavedEC179NTerm();
+                mod = Modification.cleavedEC179(pos);
                 break;
             case 2:
-                mod = Modification.cleavedEC180NTerm();
-                break;
-        }
-        return mod;
-    }
-    private static Modification lysChooser(int lysChooser, int pos){
-        Modification mod = null;
-        switch(lysChooser){
-            case 0:
-                mod = Modification.uncleavedECDuplexLys(pos);
-                break;
-            case 1:
-                mod = Modification.cleavedEC179Lys(pos);
-                break;
-            case 2:
-                mod = Modification.cleavedEC179Lys(pos);
+                mod = Modification.cleavedEC180(pos);
                 break;
         }
         return mod;
