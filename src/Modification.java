@@ -42,27 +42,27 @@ public class Modification {
     }
     public char getAminoAcidName(){
         if (certainPosition == true)
-            throw new IllegalArgumentException("Certain position was modifed, not specific amino acid!");
+            throw new IllegalArgumentException("Certain position was modified, not specific amino acid!");
         return this.aminoAcidName;
     }
     public static Modification uncleavedECDuplexNTerm(){
-        Modification mod = new Modification("ECDuplex_intact", "C14CxH28N4O4S", 1);
+        Modification mod = new Modification("ECDuplex_intact_NTerm", "C14CxH28N4O4S", 1);
         return mod;
     }
-    public static Modification uncleavedECDuplexLys(){
-        return new Modification("ECDuplex_intact", "C14CxH28N4O4S",'K');
+    public static Modification uncleavedECDuplexLys(int pos){
+        return new Modification("ECDuplex_intact_Lys", "C14CxH28N4O4S",pos);
     }
     public static Modification cleavedEC180NTerm(){
-        return new Modification("EC180_cleaved", "C9H14N2O2", 1);
+        return new Modification("EC180_cleaved_NTerm", "C9H14N2O2", 1);
     }
-    public static Modification cleavedEC180Lys(){
-        return new Modification("EC180_cleaved", "C9H14N2O2",'K');
+    public static Modification cleavedEC180Lys(int pos){
+        return new Modification("EC180_cleaved_Lys", "C9H14N2O2",pos);
     }
     public static Modification cleavedEC179NTerm(){
-        return new Modification("EC179_cleaved", "C8CxH14N2O2", 1);
+        return new Modification("EC179_cleaved_NTerm", "C8CxH14N2O2", 1);
     }
-    public static Modification cleavedEC179Lys(){
-        return new Modification("EC179_cleaved", "C8CxH14N2O2",'K');
+    public static Modification cleavedEC179Lys(int pos){
+        return new Modification("EC179_cleaved_Lys", "C8CxH14N2O2",pos);
     }
 
 }
