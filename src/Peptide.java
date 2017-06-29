@@ -71,7 +71,7 @@ public class Peptide {
         for (int a = 0; a<this.sequenceLength;a++){
             modPos[a] = ""+aminoAcidsListIn.get(a).get1Let();
             if (aminoAcidsListIn.get(a).getModificationStatus())
-                modPos[a]+= "*";
+                modPos[a]+= "("+aminoAcidsListIn.get(a).getModification().getModificationName()+")";
         }
         this.sequence = "";
         for (String aa : modPos){
@@ -169,6 +169,7 @@ public class Peptide {
                 AminoAcid modAcid = new AminoAcid("" + currentAcid.getName() + mod.getModificationName(), currentAcid.get3Let(), "" + currentAcid.get1Let(), newFormula.getSumFormula());
                 modAAList.set(mod.getPositionNumber(), modAcid);
                 modAAList.get(mod.getPositionNumber()).setHasModification(true);
+                modAAList.get(mod.getPositionNumber()).setModification(mod);
                 modStatus = true;
             }
             if (!fixedModPosition) {
@@ -179,6 +180,7 @@ public class Peptide {
                         AminoAcid modAcid = new AminoAcid("" + currentAcid.getName() + mod.getModificationName(), currentAcid.get3Let(), "" + currentAcid.get1Let(), newFormula.getSumFormula());
                         modAAList.set(i, modAcid);
                         modAAList.get(i).setHasModification(true);
+                        modAAList.get(i).setModification(mod);
                         modStatus = true;
                     }
                 }

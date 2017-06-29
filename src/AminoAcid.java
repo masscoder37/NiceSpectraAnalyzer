@@ -12,17 +12,17 @@ public class AminoAcid {
     private Double waterLossMass;
     private SumFormula waterLossFormula;
     private boolean hasModification;
+    private Modification modification = null;
 
 
-    public AminoAcid(String nameIn, String threeLetIn, String oneLetIn, String SumFormIn){
+    public AminoAcid(String nameIn, String threeLetIn, String oneLetIn, String SumFormIn) {
         this.name = nameIn;
         this.threeLetter = threeLetIn;
         //Be sure that one letter code is always written in upper case
         String oneLetterUpperCase = oneLetIn.toUpperCase();
         if (oneLetterUpperCase.length() == 1) {
             this.oneLetter = oneLetterUpperCase.charAt(0);
-        }
-        else throw new IllegalArgumentException("Invalid One-letter Code formatting!");
+        } else throw new IllegalArgumentException("Invalid One-letter Code formatting!");
 
         this.SumFormula = new SumFormula(SumFormIn);
         this.exactMass = this.SumFormula.getExactMass();
@@ -31,10 +31,14 @@ public class AminoAcid {
         this.hasModification = false;
     }
 
-public void setHasModification(boolean modStatus){
+    public void setHasModification(boolean modStatus) {
         this.hasModification = modStatus;
-}
+    }
 
+
+    public void setModification(Modification modIn) {
+        this.modification = modIn;
+    }
 
     public String getName() {
         return this.name;
@@ -52,9 +56,23 @@ public void setHasModification(boolean modStatus){
         return this.SumFormula.getExactMass();
     }
 
-    public double getwaterLossMass() {return this.waterLossFormula.getExactMass();}
-    public SumFormula getSumFormula(){ return this.SumFormula;}
-    public SumFormula getWaterLossFormula(){return this.waterLossFormula;}
-    public boolean getModificationStatus(){ return  this.hasModification;}
+    public double getwaterLossMass() {
+        return this.waterLossFormula.getExactMass();
+    }
+
+    public SumFormula getSumFormula() {
+        return this.SumFormula;
+    }
+
+    public SumFormula getWaterLossFormula() {
+        return this.waterLossFormula;
+    }
+
+    public boolean getModificationStatus() {
+        return this.hasModification;
+    }
+
+    public Modification getModification(){return this.modification;}
+
 
 }

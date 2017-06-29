@@ -22,23 +22,22 @@ public class Main {
         DecimalFormat fiveDec = new DecimalFormat("0.00000");
 
         //testing: read in amino acids
-        String filePathAcids = "C:\\Users\\Michael Stadlmeier\\Desktop\\Programmierzeugs\\Aminoacids_list.csv";
+        String filePathAcids = "C:\\Programmierordner\\Aminoacids_list.csv";
         File aminoAcids = new File(filePathAcids);
-        ArrayList<AminoAcid> aminoAcidsList = new ArrayList<>();
-        aminoAcidsList = CSVReader.aminoAcidParse(aminoAcids);
+        ArrayList<AminoAcid> aminoAcidsList = CSVReader.aminoAcidParse(aminoAcids);
 
         //testing: read in spectrum
-        String filePathSpectrum =  "C:\\Users\\Michael Stadlmeier\\Desktop\\Programmierzeugs\\klein\\20170529_stamch_EColi_1to1_BSA_1pmol_1ug.mzxml";
+        String filePathSpectrum =  "C:\\Programmierordner\\20170529_stamch_EColi_1to1_BSA_1pmol_1ug.mzXML";
         File completemzXMLSource = new File(filePathSpectrum);
         MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
         //testing: creating peptides
-        Peptide pepA = new Peptide("AFGRTGHK", aminoAcidsList);
+        Peptide pepA = new Peptide("LLADDIVPSR", aminoAcidsList);
         ArrayList<Modification> modList = new ArrayList<>();
         Modification testMod = new Modification("Oxidation", "O", 'M' );
-        modList.add(testMod);
+        //modList.add(testMod);
 
-        ArrayList<ArrayList<Modification>> testList = new ArrayList<>();
-        testList = ComplementaryClusterChecker.modCreator(pepA, 2, modList);
+        /*ArrayList<ArrayList<Modification>> testList = ComplementaryClusterChecker.modCreator(pepA, 3, modList);
+        System.out.println("Size: "+testList.size());
         int i = 1;
         for (ArrayList<Modification> modLists : testList){
             System.out.println("List"+i+":");
@@ -47,7 +46,11 @@ public class Main {
             }
             System.out.println("");
             i++;
-        }
+        }*/
+
+        ComplementaryClusterChecker.compClusterCheckerEC(aminoAcidsList, "LLADDIVPSR", modList, "19094", completemzXML, 5 );
+
+
 
 
 
