@@ -112,11 +112,15 @@ public class Peptide {
         boolean isModified = false;
 
         //this loop goes through all the amino acids
+        ArrayList<AminoAcid> aminoAcidsComposition = new ArrayList<>();
         for (int i = 0; i < this.sequenceLength; i++) {
             runningFormula = SumFormula.sumFormulaJoiner(runningFormula, this.aminoAcidsList.get(i).getWaterLossFormula());
+            aminoAcidsComposition.add(this.aminoAcidsList.get(i));
             if (this.aminoAcidsList.get(i).getModificationStatus())
                 isModified = true;
-            this.bIons.add(new FragmentIon(runningFormula, chargeState, this, 'b', i + 1, isModified));
+            ArrayList<AminoAcid> completeAAComp = new ArrayList<>();
+            completeAAComp.addAll(aminoAcidsComposition);
+            this.bIons.add(new FragmentIon(runningFormula, chargeState, this, 'b', i + 1, isModified, completeAAComp));
         }
         return bIons;
     }
@@ -141,14 +145,18 @@ public class Peptide {
             }
         }
         //this loop goes through all the amino acids
+        ArrayList<AminoAcid> aaComposition = new ArrayList<>();
         for (int i = this.sequenceLength - 1; i > -1; i--) {
             runningFormula = SumFormula.sumFormulaJoiner(runningFormula, this.aminoAcidsList.get(i).getWaterLossFormula());
+            aaComposition.add(this.aminoAcidsList.get(i));
             //at this point, all the other fragment ions are modified
             if (i <modPosition && hasModAtAll)
                 isModified = true;
             if (i>=modPosition)
                 isModified = false;
-            this.yIons.add(new FragmentIon(runningFormula, chargeState, this, 'y', this.sequenceLength - i, isModified));
+            ArrayList<AminoAcid> completeAAComp = new ArrayList<>();
+            completeAAComp.addAll(aaComposition);
+            this.yIons.add(new FragmentIon(runningFormula, chargeState, this, 'y', this.sequenceLength - i, isModified, completeAAComp));
         }
         return yIons;
     }

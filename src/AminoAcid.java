@@ -40,6 +40,8 @@ public class AminoAcid {
         this.modification = modIn;
     }
 
+
+
     public String getName() {
         return this.name;
     }

@@ -29,26 +29,27 @@ public class Main {
         //testing: read in spectrum
         String filePathSpectrum =  "C:\\Programmierordner\\20170529_stamch_EColi_1to1_BSA_1pmol_1ug.mzXML";
         File completemzXMLSource = new File(filePathSpectrum);
-        MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
+        //MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
         //testing: creating peptides
-        Peptide pepA = new Peptide("LLADDIVPSR", aminoAcidsList);
+        Peptide pepA = new Peptide("LLADDVPSK", aminoAcidsList);
         ArrayList<Modification> modList = new ArrayList<>();
-        Modification testMod = new Modification("Oxidation", "O", 'M' );
-        //modList.add(testMod);
+        Modification oxidationM = new Modification("Oxidation", "O", 'M' );
+        //modList.add(oxidationM);
+        ArrayList<FragmentIon> fragListB = pepA.getbIons();
+        ArrayList<FragmentIon> fragListY = pepA.getyIons();
 
-        /*ArrayList<ArrayList<Modification>> testList = ComplementaryClusterChecker.modCreator(pepA, 3, modList);
-        System.out.println("Size: "+testList.size());
-        int i = 1;
-        for (ArrayList<Modification> modLists : testList){
-            System.out.println("List"+i+":");
-            for (Modification mod : modLists){
-                System.out.println("Modification: "+mod.getModificationName());
-            }
-            System.out.println("");
-            i++;
-        }*/
+        pepA.peptidePrinter();
+        for (FragmentIon frag : fragListB){
+            FragmentIon.fragmentIonPrinter(frag);
+        }
+        for (FragmentIon frag : fragListY){
+            FragmentIon.fragmentIonPrinter(frag);
+        }
 
-        ComplementaryClusterChecker.compClusterCheckerEC(aminoAcidsList, "NIYDYYK", modList, "8794", completemzXML, 5 );
+
+
+
+       //ComplementaryClusterChecker.compClusterCheckerEC(aminoAcidsList, "NIYDYYK", modList, "8794", completemzXML, 5 );
 
 
 
