@@ -40,17 +40,14 @@ public class ComplementaryClusterChecker {
         //generate List of different modified peptides to check for every possibility (EC cleaved/EC not cleaved)
         ArrayList<Peptide> modifiedPeptides = new ArrayList<>();
         for (ArrayList<Modification> modList : allMods){
-            Peptide modifiedPeptide = null;
-            modifiedPeptide = idPeptide.peptideModifier(modList);
-            modifiedPeptides.add(modifiedPeptide);
+            Peptide modifiedPeptide = new Peptide(SequenceIn, acids);
+            modifiedPeptides.add(modifiedPeptide.peptideModifier(modList));
         }
         //invoke PeakCompare function and store result matches in List of IonMatches
         for (Peptide modPeptide : modifiedPeptides){
+            System.out.println("Peptide: "+modPeptide.getSequence());
+            successfulMatches.addAll(PeakCompare.peakCompare(spectrumToCheck, modPeptide, accuracy));
             System.out.println();
-            modPeptide.peptidePrinter();
-            System.out.printf("");
-
-            //successfulMatches.addAll(PeakCompare.peakCompare(spectrumToCheck, modPeptide, accuracy));
         }
 
         return successfulMatches;

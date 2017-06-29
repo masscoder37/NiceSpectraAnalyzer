@@ -48,8 +48,7 @@ public class Main {
             i++;
         }*/
 
-        ComplementaryClusterChecker.compClusterCheckerEC(aminoAcidsList, "LLADDIVPSR", modList, "19094", completemzXML, 5 );
-
+        ComplementaryClusterChecker.compClusterCheckerEC(aminoAcidsList, "NIYDYYK", modList, "8794", completemzXML, 5 );
 
 
 
