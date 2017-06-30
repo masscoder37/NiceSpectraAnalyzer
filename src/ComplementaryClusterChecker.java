@@ -1,3 +1,4 @@
+import com.sun.corba.se.spi.orbutil.fsm.Guard;
 import uk.ac.ebi.pride.tools.jmzreader.JMzReaderException;
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLFile;
 
@@ -12,7 +13,7 @@ import java.util.ArrayList;
     //return an ArrayList of compClusterIonMatches
     //ArrayList of Mods can be empty, only filled if other modification than EC-modification is present
 public class ComplementaryClusterChecker {
-    public static ArrayList<IonMatch> compClusterCheckerEC (ArrayList<AminoAcid> acids,
+    public static ArrayList<CompClusterIonMatch> compClusterCheckerEC (ArrayList<AminoAcid> acids,
                                                                        String SequenceIn,
                                                                        ArrayList<Modification> modsIn,
                                                                        String spectrumID, MzXMLFile completeFileIn,
@@ -20,6 +21,7 @@ public class ComplementaryClusterChecker {
         ArrayList<IonMatch> successfulMatches = new ArrayList<>();
         //generate spectrum to look at:
         MySpectrum spectrumToCheck = MzXMLReadIn.mzXMLToMySpectrum(completeFileIn, spectrumID);
+        String spectrumHeader = spectrumToCheck.getScanHeader();
 
 
         //create unmodified peptide
@@ -50,7 +52,10 @@ public class ComplementaryClusterChecker {
             System.out.println();
         }
 
-        return successfulMatches;
+        ArrayList<CompClusterIonMatch> relevantMatches = new ArrayList<>();
+        relevantMatches = relevantMatchesPicker(successfulMatches, spectrumHeader);
+
+        return relevantMatches;
     }
 
 
@@ -154,6 +159,52 @@ public class ComplementaryClusterChecker {
                 break;
         }
         return mod;
+    }
+
+    private static ArrayList<CompClusterIonMatch> relevantMatchesPicker(ArrayList<IonMatch> completeListIn, String scanHeaderIn){
+        ArrayList<CompClusterIonMatch> relevantList = new ArrayList<>();
+        //loop through every match in the complete IonMatch list
+        for (IonMatch match : completeListIn){
+            //check if the fragment Ion contains the label
+            if (match.getFragmentIon().getLabelStatus())
+            {
+                //in case the label is detected, determine if it is uncleaved, cleaved or mixed and get the modification name
+                int labelQuantity = match.getFragmentIon().getLabelQuantity();
+                ArrayList<AminoAcid> labeledAAs = new ArrayList<>();
+                labeledAAs = match.getFragmentIon().getLabelAAs();
+                String labelName = "";
+                boolean isCleavedOnly = false;
+                boolean isMixed=false;
+                for (int a = 0; a < labelQuantity; a++){
+                    //determine label name
+                    //if there are multiple Labels present, then insert ; in between names
+                    if (!labelName.isEmpty())
+                        labelName += ";";
+                    labelName +=  labeledAAs.get(a).getModification().getModificationName();
+                    //determine if cleavage status is all uncleaved (isCleavedOnly = false, isMixed = false), all cleaved (isCleavedOnly= true, isMixed = false)
+                    //in case of mixing: isCleavedOnly=false, isMixed=true
+                    isCleavedOnly = labeledAAs.get(a).getModification().getCleavedStatus(); //cleaved: true; intact=false
+                    //if only one variable is present, then exit here
+                    if (a==0)
+                        break;
+                    //if isCleavedOnly was determined before
+                    boolean nextLabel;
+                    nextLabel = !(isCleavedOnly^labeledAAs.get(a).getModification().getCleavedStatus());//next label gets inverted XOR statement
+                    if (nextLabel != isCleavedOnly)
+                        isMixed=true; //one difference is enough to set isMixed to true
+                    isCleavedOnly = nextLabel;
+                }
+                CompClusterIonMatch importantMatch = new CompClusterIonMatch(match.getFragmentIon(), match.getPeak(),
+                                                                                match.getPpmDeviation(),
+                                                                                labelName,isCleavedOnly, isMixed, scanHeaderIn);
+                relevantList.add(importantMatch);
+
+
+
+            }
+        }
+
+        return relevantList;
     }
 
 

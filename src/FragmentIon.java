@@ -30,12 +30,69 @@ public class FragmentIon extends Ion {
         this.aminoAcidsList = aaCompositionIn;
     }
 
+    //getter
     public Peptide getPrecursor(){return this.precursor;}
     public String getPrecursorSequence(){return this.precursor.getSequence();}
     public char getIonSeries(){return this.ionSeries;}
     public int getIonNumber(){return this.ionNumber;}
     public String getCompleteIon(){return ""+this.ionSeries+this.ionNumber;}
     public boolean getModificationStatus(){return this.isModified;}
+    public ArrayList<AminoAcid> getAminoAcidsList(){return this.aminoAcidsList;}
+
+    //getter for fragment ion label properties
+    //does the fragment ion has a label at all?
+    public boolean getLabelStatus(){
+        boolean hasLabel = false;
+        for (AminoAcid aa : this.aminoAcidsList){
+            if(aa.getModification()!=null) {
+                if (aa.getModification().getLabelStatus())
+                    hasLabel = true;
+            }
+        }
+        return hasLabel;
+    }
+    //how many labels are there in the fragment ion
+    public int getLabelQuantity(){
+        int labelQuantity = 0;
+        for (AminoAcid aa : this.aminoAcidsList) {
+            if (aa.getModification() != null) {
+                if (aa.getModification().getLabelStatus())
+                    labelQuantity++;
+            }
+        }
+        return labelQuantity;
+    }
+    //returns the labeled amino acids
+     public ArrayList<AminoAcid> getLabelAAs(){
+        ArrayList<AminoAcid> labeledAAs = new ArrayList<>();
+         for (AminoAcid aa : this.aminoAcidsList) {
+             if (aa.getModification() != null) {
+                 if (aa.getModification().getLabelStatus())
+                     labeledAAs.add(aa);
+
+             }
+         }
+         return labeledAAs;
+     }
+
+     //returns amino acid sequence
+    public String getAASequence(){
+
+        String sequence = "";
+        for (AminoAcid acid : this.aminoAcidsList){
+            sequence += acid.get1Let();
+        }
+        if (this.getIonSeries() == 'y')
+            sequence = new StringBuilder(sequence).reverse().toString();
+
+        return sequence;
+    }
+
+
+
+
+
+
 
     public static void fragmentIonPrinter(FragmentIon queriedIon){
 
@@ -43,12 +100,7 @@ public class FragmentIon extends Ion {
                 +queriedIon.getCharge()+"+"
                 +":    "+fiveDec.format(queriedIon.getMToZ())+" m/z"
         +"   is modified: "+queriedIon.getModificationStatus());
-        System.out.print("    Sequence: ");
-        String sequence = "";
-        for (AminoAcid acid : queriedIon.aminoAcidsList){
-           sequence += acid.get1Let();
-        }
-        System.out.println(""+sequence);
+        System.out.println("    Sequence: "+queriedIon.getAASequence());
 
     }
     public static void fragmentIonFormulaPrinter(FragmentIon queriedIon){

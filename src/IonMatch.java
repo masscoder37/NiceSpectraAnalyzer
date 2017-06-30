@@ -13,4 +13,11 @@ public class IonMatch {
         this.ppmDeviation = ppmDeviationIn;
     }
 
+
+
+    public FragmentIon getFragmentIon() {return this.fragmentIon;}
+    public Peak getPeak() {return this.peak;}
+    public double getPpmDeviation() {return this.ppmDeviation;}
+
+
 }

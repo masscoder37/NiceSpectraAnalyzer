@@ -21,7 +21,6 @@ public class MySpectrum {
         //make sure that peakList is ordered
         //implemented QuickSort Algorithm
         peaksIn = MassQuickSort.peakListQuickSort(peaksIn);
-        //remove peaks with intensity of 0
         this.peakList = peakPacker(peaksIn);
         this.numberOfPeaks = this.peakList.size();
 

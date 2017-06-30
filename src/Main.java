@@ -9,6 +9,7 @@ import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLParsingException;
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLSpectrum;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Map;
@@ -18,7 +19,7 @@ import java.util.Map;
  */
 public class Main {
 
-    public static void main(String[] args) throws MzXMLParsingException, JMzReaderException {
+    public static void main(String[] args) throws MzXMLParsingException, JMzReaderException, FileNotFoundException {
         DecimalFormat fiveDec = new DecimalFormat("0.00000");
 
         //testing: read in amino acids
@@ -29,28 +30,17 @@ public class Main {
         //testing: read in spectrum
         String filePathSpectrum =  "C:\\Programmierordner\\20170529_stamch_EColi_1to1_BSA_1pmol_1ug.mzXML";
         File completemzXMLSource = new File(filePathSpectrum);
-        //MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
+        MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
         //testing: creating peptides
-        Peptide pepA = new Peptide("LLADDVPSK", aminoAcidsList);
+        //Peptide pepA = new Peptide("LLADDVPSK", aminoAcidsList);
         ArrayList<Modification> modList = new ArrayList<>();
-        Modification oxidationM = new Modification("Oxidation", "O", 'M' );
-        //modList.add(oxidationM);
-        ArrayList<FragmentIon> fragListB = pepA.getbIons();
-        ArrayList<FragmentIon> fragListY = pepA.getyIons();
+        //Modification oxidationM = new Modification("Oxidation", "O", 'M' );
+        //modList.add(Modification.uncleavedECDuplex(1));
 
-        pepA.peptidePrinter();
-        for (FragmentIon frag : fragListB){
-            FragmentIon.fragmentIonPrinter(frag);
-        }
-        for (FragmentIon frag : fragListY){
-            FragmentIon.fragmentIonPrinter(frag);
-        }
-
-
-
-
-       //ComplementaryClusterChecker.compClusterCheckerEC(aminoAcidsList, "NIYDYYK", modList, "8794", completemzXML, 5 );
-
+        ArrayList<CompClusterIonMatch> relevantMatches = new ArrayList<>();
+        relevantMatches = ComplementaryClusterChecker.compClusterCheckerEC(aminoAcidsList, "NVAKPLVSYIDK", modList, "8868", completemzXML, 5 );
+        String csvOutPath = "C:\\Programmierordner\\8868_test.csv";
+        CSVCreator.compClusterMatchCSVPrinter(relevantMatches, csvOutPath);
 
 
 

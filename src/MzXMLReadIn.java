@@ -26,10 +26,10 @@ public class MzXMLReadIn {
         //scan Header shows precursor M/z and charge of precursor
         String scanHeader = "";
         try {
-            scanHeader += fourDec.format(currentSpectrum.getPrecursorMZ()) + " " + currentSpectrum.getPrecursorCharge();
+            scanHeader += fourDec.format(currentSpectrum.getPrecursorMZ()) + ";" + currentSpectrum.getPrecursorCharge();
         }
         catch (IllegalArgumentException e){
-            scanHeader = "NA";
+            scanHeader = "NA;NA";
         }
         scanHeader+= "+";
         //scan Number is set

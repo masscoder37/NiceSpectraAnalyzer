@@ -10,6 +10,8 @@ public class Modification {
     private boolean certainPosition;
     private int positionNumber;
     private char aminoAcidName;
+    private boolean isLabel = false;
+    private boolean isCleaved = false;
 
     //make 2 constructors: one for position and one for AA
     public Modification(String modNameIn, String sumFormulaIn, char aminoAcidModIn){
@@ -30,7 +32,7 @@ public class Modification {
         //calculate -1 to directly get index of lists
         this.positionNumber = positionModIn-1;
     }
-
+//getter
     public boolean getPositionType(){return this.certainPosition;}
     public String getModificationName(){return this.modificationName;}
     public SumFormula getModificationFormula(){return this.modificationFormula;}
@@ -46,14 +48,28 @@ public class Modification {
         return this.aminoAcidName;
     }
 
+    public boolean getLabelStatus(){return this.isLabel;}
+    public boolean getCleavedStatus(){return this.isCleaved;}
+
+
+    //predefined EC-modifications
     public static Modification uncleavedECDuplex(int pos){
-        return new Modification("ECDuplex_intact", "C14CxH28N4O4S",pos);
+        Modification intactEC =  new Modification("ECDuplex_intact", "C14CxH28N4O4S",pos);
+        intactEC.isLabel = true;
+        return intactEC;
     }
+
     public static Modification cleavedEC180(int pos){
-        return new Modification("EC180_cleaved", "C9H14N2O2",pos);
+        Modification cleaved180 = new Modification("EC180_cleaved", "C9H14N2O2",pos);
+        cleaved180.isLabel = true;
+        cleaved180.isCleaved = true;
+        return cleaved180;
     }
-    public static Modification cleavedEC179(int pos){
-        return new Modification("EC179_cleaved", "C8CxH14N2O2",pos);
+    public static Modification cleavedEC179(int pos) {
+        Modification cleaved179 = new Modification("EC179_cleaved", "C8CxH14N2O2",pos);
+        cleaved179.isLabel = true;
+        cleaved179.isCleaved = true;
+        return cleaved179;
     }
 
 }

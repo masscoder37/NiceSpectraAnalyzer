@@ -93,7 +93,6 @@ public class Peptide {
         bIonBuilder(1);
         yIonBuilder(1);
 
-
     }
 
 
