@@ -3,11 +3,11 @@
  */
 public class CompClusterIonMatch extends IonMatch {
     //three cases:
-    //case1: FragmentIon only contains cleaved Label
-    //case2: FragmentIon only contains intact Label
-    //case3: FragmentIon contains both cleaved and intact Label
+    //case1: FragmentIon only contains cleaved Label: is cleaved = true, is mixed = false
+    //case2: FragmentIon only contains intact Label: is cleaved = false, is mixed = false
+    //case3: FragmentIon contains both cleaved and intact Label: is cleaved = true, is mixed = true;
 
-    private boolean isCleavedOnly;
+    private boolean isCleaved;
     private boolean isMixed;
     private String labelName;
     private String scanHeader;
@@ -16,7 +16,7 @@ public class CompClusterIonMatch extends IonMatch {
     public CompClusterIonMatch(FragmentIon fragmentIonIn, Peak peakIn, double ppmDeviationIn, String labelNameIn, boolean isCleavedOnlyIn, boolean isMixedIn, String scanHeaderIn){
         super(fragmentIonIn, peakIn, ppmDeviationIn);
         this.labelName = labelNameIn;
-        this.isCleavedOnly = isCleavedOnlyIn;
+        this.isCleaved = isCleavedOnlyIn;
         this.isMixed = isMixedIn;
         this.scanHeader = scanHeaderIn;
         this.labelQuantity = fragmentIonIn.getLabelQuantity();
@@ -24,8 +24,8 @@ public class CompClusterIonMatch extends IonMatch {
     }
 
     public String getLabelName(){return this.labelName;}
-    public boolean onlyCleaved(){return this.isCleavedOnly;}
-    public boolean mixedLabels(){return this.isMixed;}
+    public boolean getIsCleaved(){return this.isCleaved;}
+    public boolean getMixedLabels(){return this.isMixed;}
     public String getScanHeader(){return this.scanHeader;}
 
 

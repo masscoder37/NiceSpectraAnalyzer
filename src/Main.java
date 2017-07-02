@@ -28,7 +28,7 @@ public class Main {
         ArrayList<AminoAcid> aminoAcidsList = CSVReader.aminoAcidParse(aminoAcids);
 
         //testing: read in spectrum
-        String filePathSpectrum =  "C:\\Programmierordner\\20170529_stamch_EColi_1to1_BSA_1pmol_1ug.mzXML";
+        String filePathSpectrum =  "C:\\Programmierordner\\20170529_stamch_EColi_1to1_BSA_14k_15k.mzXML";
         File completemzXMLSource = new File(filePathSpectrum);
         MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
         //testing: creating peptides
@@ -38,10 +38,9 @@ public class Main {
         //modList.add(Modification.uncleavedECDuplex(1));
 
         ArrayList<CompClusterIonMatch> relevantMatches = new ArrayList<>();
-        relevantMatches = ComplementaryClusterChecker.compClusterCheckerEC(aminoAcidsList, "NVAKPLVSYIDK", modList, "8868", completemzXML, 5 );
-        String csvOutPath = "C:\\Programmierordner\\8868_test.csv";
+        relevantMatches = ComplementaryClusterChecker.compClusterCheckerEC(aminoAcidsList, "FAENAYFIK", modList, "14223", completemzXML, 5 );
+        String csvOutPath = "C:\\Programmierordner\\14223_withoutduplicates.csv";
         CSVCreator.compClusterMatchCSVPrinter(relevantMatches, csvOutPath);
-
 
 
 

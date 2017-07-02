@@ -13,6 +13,7 @@ public class Peptide {
     private ArrayList<FragmentIon> yIons;
     private boolean hasModification;
     private ArrayList<AminoAcid> aminoAcidsList;
+    private String unmodifiedSequence;
 
     private DecimalFormat fiveDec = new DecimalFormat("0.00000");
 
@@ -20,6 +21,7 @@ public class Peptide {
     //ArrayList<AminoAcid> aminoAcidsList contains only aminoacids in the peptide, in order of the sequence
     public Peptide(String sequenceIn, ArrayList<AminoAcid> acids) {
         this.sequence = sequenceIn.toUpperCase();
+        this.unmodifiedSequence = sequenceIn.toUpperCase();
         this.sequenceLength = sequenceIn.length();
         this.aminoAcidsList = new ArrayList<>();
         boolean aaNotFound = true;
@@ -63,36 +65,49 @@ public class Peptide {
     }
     //implement new constructor, specifically for modified peptides
     //in this case, only ArrayList<AminoAcid> contains only AAs which already are known to be part of the sequence, since all peptides go through the normal constructor first
-    private Peptide (String sequenceIn, ArrayList<AminoAcid> aminoAcidsListIn, boolean modStatus){
+    private Peptide (String sequenceIn, ArrayList<AminoAcid> aminoAcidsListIn, boolean modStatus) {
         this.hasModification = modStatus;
         this.sequenceLength = sequenceIn.length();
+        this.unmodifiedSequence = sequenceIn;
         //construct new Sequence which annotates modified AminoAcid with *
         String[] modPos = new String[sequenceIn.length()];
-        for (int a = 0; a<this.sequenceLength;a++){
-            modPos[a] = ""+aminoAcidsListIn.get(a).get1Let();
-            if (aminoAcidsListIn.get(a).getModificationStatus())
-                modPos[a]+= "("+aminoAcidsListIn.get(a).getModification().getModificationName()+")";
-        }
-        this.sequence = "";
-        for (String aa : modPos){
-            this.sequence += aa;
-        }
-        //aminoAcids List is just the list supplied by modification method
-        this.aminoAcidsList = aminoAcidsListIn;
-        //calculate SumFormula and exact masses
-        //for peptide, sum up waterloss masses and waterFormula
-        SumFormula addFormula = SumFormula.getWaterFormula();
-        for (AminoAcid aa : this.aminoAcidsList){
-            addFormula = SumFormula.sumFormulaJoiner(addFormula, aa.getWaterLossFormula());
-        }
-        this.sumFormula = addFormula;
-        this.exactMass = this.sumFormula.getExactMass();
-        //create b- and y-ions
-        this.bIons = new ArrayList<>();
-        this.yIons = new ArrayList<>();
-        bIonBuilder(1);
-        yIonBuilder(1);
+        for (int a = 0; a < this.sequenceLength; a++) {
+            modPos[a] = "" + aminoAcidsListIn.get(a).get1Let();
+            //write Modification name in brackets
+            //write EC in brackets if you have isobaric Label modification
+            if (aminoAcidsListIn.get(a).getModificationStatus()) {
 
+                if (aminoAcidsListIn.get(a).getModification().getLabelStatus()) {
+                    if (aminoAcidsListIn.get(a).getModification().getModificationName().contains("EC"))
+                        modPos[a] += "(EC)";
+                    if (aminoAcidsListIn.get(a).getModification().getModificationName().contains("TMT"))
+                        modPos[a] += "(TMT)";
+                } else {
+                    modPos[a] += "(" + aminoAcidsListIn.get(a).getModification().getModificationName() + ")";
+
+                }
+            }
+            this.sequence = "";
+            for (String aa : modPos) {
+                this.sequence += aa;
+            }
+            //aminoAcids List is just the list supplied by modification method
+            this.aminoAcidsList = aminoAcidsListIn;
+            //calculate SumFormula and exact masses
+            //for peptide, sum up waterloss masses and waterFormula
+            SumFormula addFormula = SumFormula.getWaterFormula();
+            for (AminoAcid aa : this.aminoAcidsList) {
+                addFormula = SumFormula.sumFormulaJoiner(addFormula, aa.getWaterLossFormula());
+            }
+            this.sumFormula = addFormula;
+            this.exactMass = this.sumFormula.getExactMass();
+            //create b- and y-ions
+            this.bIons = new ArrayList<>();
+            this.yIons = new ArrayList<>();
+            bIonBuilder(1);
+            yIonBuilder(1);
+
+        }
     }
 
 
@@ -229,6 +244,8 @@ public class Peptide {
     public ArrayList<FragmentIon> getyIons() {
         return this.yIons;
     }
+
+    public String getUnmodifiedSequence() {return this.unmodifiedSequence;}
 
     public void createAddFragmentIonChargestate(int chargeIn) {
         //check if additional charge states were already created

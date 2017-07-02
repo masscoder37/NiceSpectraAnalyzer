@@ -1,8 +1,8 @@
-import com.sun.corba.se.spi.orbutil.fsm.Guard;
 import uk.ac.ebi.pride.tools.jmzreader.JMzReaderException;
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLFile;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by micha on 6/27/2017.
@@ -55,7 +55,12 @@ public class ComplementaryClusterChecker {
         ArrayList<CompClusterIonMatch> relevantMatches = new ArrayList<>();
         relevantMatches = relevantMatchesPicker(successfulMatches, spectrumHeader);
 
-        return relevantMatches;
+        //relevantMatches still contains multiple instances of the same modification, since the fragment ions from different modified peptides can be the same
+
+        ArrayList<CompClusterIonMatch> noDuplicateMatches = new ArrayList<>();
+        noDuplicateMatches = matchesConsolidator(relevantMatches);
+
+        return noDuplicateMatches;
     }
 
 
@@ -172,8 +177,11 @@ public class ComplementaryClusterChecker {
                 int labelQuantity = match.getFragmentIon().getLabelQuantity();
                 ArrayList<AminoAcid> labeledAAs = new ArrayList<>();
                 labeledAAs = match.getFragmentIon().getLabelAAs();
+                if (match.getFragmentIon().getIonSeries() == 'y')
+                Collections.reverse(labeledAAs);
                 String labelName = "";
-                boolean isCleavedOnly = false;
+                boolean isCleaved = false;
+                boolean isCleavedAtAll = false;
                 boolean isMixed=false;
                 for (int a = 0; a < labelQuantity; a++){
                     //determine label name
@@ -181,22 +189,25 @@ public class ComplementaryClusterChecker {
                     if (!labelName.isEmpty())
                         labelName += ";";
                     labelName +=  labeledAAs.get(a).getModification().getModificationName();
-                    //determine if cleavage status is all uncleaved (isCleavedOnly = false, isMixed = false), all cleaved (isCleavedOnly= true, isMixed = false)
-                    //in case of mixing: isCleavedOnly=false, isMixed=true
-                    isCleavedOnly = labeledAAs.get(a).getModification().getCleavedStatus(); //cleaved: true; intact=false
+                    //determine if cleavage status is all uncleaved (isCleaved = false, isMixed = false), all cleaved (isCleaved= true, isMixed = false)
+                    //in case of mixing: isCleaved=false, isMixed=true
                     //if only one variable is present, then exit here
-                    if (a==0)
-                        break;
-                    //if isCleavedOnly was determined before
-                    boolean nextLabel;
-                    nextLabel = !(isCleavedOnly^labeledAAs.get(a).getModification().getCleavedStatus());//next label gets inverted XOR statement
-                    if (nextLabel != isCleavedOnly)
-                        isMixed=true; //one difference is enough to set isMixed to true
-                    isCleavedOnly = nextLabel;
+                    if (a==0) {
+                        isCleaved = labeledAAs.get(a).getModification().getCleavedStatus(); //cleaved: true; intact=false
+                        if (isCleaved)
+                            isCleavedAtAll = true;
+                        continue;
+                    }
+                    if (isCleaved!=labeledAAs.get(a).getModification().getCleavedStatus())
+                        isMixed = true;
+                    isCleaved = labeledAAs.get(a).getModification().getCleavedStatus();
+                    if (isCleaved)
+                        isCleavedAtAll = true;
+
                 }
                 CompClusterIonMatch importantMatch = new CompClusterIonMatch(match.getFragmentIon(), match.getPeak(),
                                                                                 match.getPpmDeviation(),
-                                                                                labelName,isCleavedOnly, isMixed, scanHeaderIn);
+                                                                                labelName,isCleavedAtAll, isMixed, scanHeaderIn);
                 relevantList.add(importantMatch);
 
 
@@ -205,6 +216,42 @@ public class ComplementaryClusterChecker {
         }
 
         return relevantList;
+    }
+
+
+    //this function removes the multiple entries (same fragment ions from different theoretical precursors) from the relevantMatchesList
+    private static ArrayList<CompClusterIonMatch> matchesConsolidator(ArrayList<CompClusterIonMatch> listIn){
+        ArrayList<CompClusterIonMatch> reducedList = new ArrayList<>();
+        int duplicateNumber = 0;
+
+        for (CompClusterIonMatch oldMatch : listIn){
+            boolean duplicate = false;
+            if (!reducedList.isEmpty()) {
+
+                for (CompClusterIonMatch newMatch: reducedList){
+                    //check if match is already in the list
+                    //things to check: ion series + number, modifications
+                    if (oldMatch.getFragmentIon().getCompleteIon().equals(newMatch.getFragmentIon().getCompleteIon())
+                            &&oldMatch.getMixedLabels() == newMatch.getMixedLabels()
+                            &&oldMatch.getIsCleaved() == newMatch.getIsCleaved()
+                            &&oldMatch.getLabelName().equals(newMatch.getLabelName())) {
+                        duplicate = true;
+                        duplicateNumber++;
+                    }
+                    if (oldMatch.getFragmentIon().getLabelQuantity()>1){
+                        if (oldMatch.getFragmentIon().getExactMass() == newMatch.getFragmentIon().getExactMass()){
+                            duplicate = true;
+                            duplicateNumber++;
+                        }
+                    }
+                }
+            }
+            if (!duplicate) {
+                reducedList.add(oldMatch);
+            }
+        }
+        System.out.println(""+ duplicateNumber+" Matches removed (duplicates)!");
+        return reducedList;
     }
 
 

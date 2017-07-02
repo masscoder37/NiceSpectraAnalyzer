@@ -63,8 +63,8 @@ public class CSVCreator {
 
             values[3] = Integer.toString(match.getFragmentIon().getLabelQuantity()); //"Label Count";
             values[4] = match.getLabelName(); //"Label Name";
-            values[5] = ""+match.onlyCleaved();//"Cleaved Labels";
-            values[6] = ""+match.mixedLabels(); //"Mixed Labels";
+            values[5] = ""+match.getIsCleaved();//"Cleaved Labels";
+            values[6] = ""+match.getMixedLabels(); //"Mixed Labels";
             values[7] = match.getFragmentIon().getCompleteIon(); //"Fragment Ion";
             values[8] = Integer.toString(match.getFragmentIon().getCharge()); //"Fragment Ion Charge";
             values[9] = fourDec.format(match.getFragmentIon().getMToZ()); //"Fragment Ion Mass [m/z]";
