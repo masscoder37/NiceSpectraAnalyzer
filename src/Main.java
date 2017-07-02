@@ -28,19 +28,25 @@ public class Main {
         ArrayList<AminoAcid> aminoAcidsList = CSVReader.aminoAcidParse(aminoAcids);
 
         //testing: read in spectrum
-        String filePathSpectrum =  "C:\\Programmierordner\\20170529_stamch_EColi_1to1_BSA_14k_15k.mzXML";
+        String filePathSpectrum =  "C:\\Programmierordner\\20170529_stamch_EColi_1to1_BSA_1pmol_1ug.mzXML";
         File completemzXMLSource = new File(filePathSpectrum);
         MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
+        
         //testing: creating peptides
         //Peptide pepA = new Peptide("LLADDVPSK", aminoAcidsList);
         ArrayList<Modification> modList = new ArrayList<>();
         //Modification oxidationM = new Modification("Oxidation", "O", 'M' );
         //modList.add(Modification.uncleavedECDuplex(1));
 
-        ArrayList<CompClusterIonMatch> relevantMatches = new ArrayList<>();
-        relevantMatches = ComplementaryClusterChecker.compClusterCheckerEC(aminoAcidsList, "FAENAYFIK", modList, "14223", completemzXML, 5 );
-        String csvOutPath = "C:\\Programmierordner\\14223_withoutduplicates.csv";
-        CSVCreator.compClusterMatchCSVPrinter(relevantMatches, csvOutPath);
+        String evidenceLocation = "C:\\Programmierordner\\24052017_EC_BSA_SpikeIn_evidence_1to1.txt";
+        File evidence = new File(evidenceLocation);
+        //ArrayList<CompClusterIonMatch> relevantMatches = new ArrayList<>();
+        //relevantMatches = CSVReader.wholeRunECChecker(completemzXML, evidence, aminoAcidsList, 5);
+        String csvOutPath = "C:\\Programmierordner\\completeAnalysis";
+        //CSVCreator.compClusterMatchCSVPrinter(relevantMatches, csvOutPath);
+        CSVReader.wholeRunECChecker(completemzXML, evidence, aminoAcidsList, 5, 750, csvOutPath);
+
+
 
 
 

@@ -53,7 +53,7 @@ public class CSVCreator {
         for (CompClusterIonMatch match : matchesIn){
             //get the values
             String[] values = new String[18];
-            values[0] = match.getFragmentIon().getPrecursor().getSequence(); //"Modified Peptide";
+            values[0] = match.getFragmentIon().getPrecursorSequence(); //"Modified Peptide";
 
 
             String[] splitScanHeader = match.getScanHeader().split(";");

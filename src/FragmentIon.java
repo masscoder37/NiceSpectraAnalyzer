@@ -8,7 +8,7 @@ import java.util.ArrayList;
 //this class is a subclass of Ion
     //fragment ions of peptides are an object of this class
 public class FragmentIon extends Ion {
-    private Peptide precursor;
+    private String precursorSequence;
     private char ionSeries;
     private int ionNumber;
     private boolean isModified;
@@ -23,7 +23,7 @@ public class FragmentIon extends Ion {
 
     public FragmentIon(SumFormula sumFormulaIn, int chargeIn, Peptide peptideIn, char ionSeriesIn, int ionNumberIn, boolean modificationStatus, ArrayList<AminoAcid> aaCompositionIn){
         super(sumFormulaIn, chargeIn);
-        this.precursor = peptideIn;
+        this.precursorSequence = peptideIn.getSequence();
         this.ionSeries = ionSeriesIn;
         this.ionNumber = ionNumberIn;
         this.isModified = modificationStatus;
@@ -31,8 +31,7 @@ public class FragmentIon extends Ion {
     }
 
     //getter
-    public Peptide getPrecursor(){return this.precursor;}
-    public String getPrecursorSequence(){return this.precursor.getSequence();}
+    public String getPrecursorSequence(){return this.precursorSequence;}
     public char getIonSeries(){return this.ionSeries;}
     public int getIonNumber(){return this.ionNumber;}
     public String getCompleteIon(){return ""+this.ionSeries+this.ionNumber;}

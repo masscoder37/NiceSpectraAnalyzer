@@ -71,5 +71,14 @@ public class Modification {
         cleaved179.isCleaved = true;
         return cleaved179;
     }
+    public static Modification carbamidomethylation(){
+        Modification carbamidomethyl = new Modification("Carbamidomethyl", "C2H3NO", 'C');
+        return carbamidomethyl;
+    }
+
+    public static Modification oxidation(int pos) {
+        Modification oxidation = new Modification("Ox.", "O", pos);
+        return oxidation;
+    }
 
 }

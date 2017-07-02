@@ -47,9 +47,9 @@ public class ComplementaryClusterChecker {
         }
         //invoke PeakCompare function and store result matches in List of IonMatches
         for (Peptide modPeptide : modifiedPeptides){
-            System.out.println("Peptide: "+modPeptide.getSequence());
+            //System.out.println("Peptide: "+modPeptide.getSequence());
             successfulMatches.addAll(PeakCompare.peakCompare(spectrumToCheck, modPeptide, accuracy));
-            System.out.println();
+            //System.out.println();
         }
 
         ArrayList<CompClusterIonMatch> relevantMatches = new ArrayList<>();
@@ -250,7 +250,7 @@ public class ComplementaryClusterChecker {
                 reducedList.add(oldMatch);
             }
         }
-        System.out.println(""+ duplicateNumber+" Matches removed (duplicates)!");
+       // System.out.println(""+ duplicateNumber+" Matches removed (duplicates)!");
         return reducedList;
     }
 

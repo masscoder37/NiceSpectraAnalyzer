@@ -61,12 +61,12 @@ public class MySpectrum {
             }
         }
 
-        System.out.println("");
+        /*System.out.println("");
         System.out.println("Generating Peak list:");
         System.out.println("");
 
         System.out.println(""+wrongScanNumber+" peak(s) were removed(different scan number).");
-        System.out.println("");
+        System.out.println("");*/
 
         return peaksToPack;
     }
