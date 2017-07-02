@@ -86,19 +86,18 @@ public class CSVReader {
         Scanner scanner = null;
         try {
             scanner = new Scanner(evidence);
-        }
-        catch (FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             System.out.println("Could not read given file - " + evidence.getAbsolutePath());
         }
         //read out the captions
         String captions = scanner.nextLine();
-        String [] splitCaptions = captions.split("\t");
+        String[] splitCaptions = captions.split("\t");
         //determine the important columns: "Sequence", "Modifications", "Modified sequence", "MS/MS Scan Number" and "Reporter intensity count 0"
         //create new map with those keywords and the column indices (starting from 0!) as values
         Map<String, Integer> captionPositions = new HashMap<>();
         int index = 0;
-        for (String caption : splitCaptions){
-            switch (caption){
+        for (String caption : splitCaptions) {
+            switch (caption) {
                 case "Sequence":
                     captionPositions.put("Sequence", index);
                     break;
@@ -117,100 +116,105 @@ public class CSVReader {
             index++;
         }
 
-        if(captionPositions.size()!=5)
+        if (captionPositions.size() != 5)
             throw new IllegalArgumentException("Not all required captions could be read!");
         int sortedOut = 0;
         int processedSpectra = 0;
         int addedSpectra = 0;
 
+        //TODO : Writer open, write header
+
         //start reading in of values
         while (scanner.hasNextLine()) {
-                String currentRow = scanner.nextLine();
-                String[] values = currentRow.split("\t");
-                //is there a reporter present?
-                //if not, go to next line
-                if (Integer.parseInt(values[captionPositions.get("Reporter intensity count 0")]) == 0) {
-                    sortedOut++;
-                    continue;
-                }
+            String currentRow = scanner.nextLine();
+            String[] values = currentRow.split("\t");
+            //is there a reporter present?
+            //if not, go to next line
+            if (Integer.parseInt(values[captionPositions.get("Reporter intensity count 0")]) == 0) {
+                sortedOut++;
+                continue;
+            }
 
 
-                //read out the direct informations
-                String sequence = values[captionPositions.get("Sequence")];
-                String modSequence = values[captionPositions.get("Modified sequence")];
-                String scanNumber = values[captionPositions.get("MS/MS Scan Number")];
-                String modStatus = values[captionPositions.get("Modified sequence")];
+            //read out the direct informations
+            String sequence = values[captionPositions.get("Sequence")];
+            String modSequence = values[captionPositions.get("Modified sequence")];
+            String scanNumber = values[captionPositions.get("MS/MS Scan Number")];
+            String modStatus = values[captionPositions.get("Modifications")];
 
 
-                //use this information to create the ArrayList<Modification> necessary for the CompClusterChecker
-                ArrayList<Modification> mods = new ArrayList<>();
-                if (modStatus.equals("Unmodified")) {
-                    ArrayList<CompClusterIonMatch> currentSpectrumMatches = new ArrayList<>();
-                    currentSpectrumMatches = ComplementaryClusterChecker.compClusterCheckerEC(aminoAcids, sequence, mods, scanNumber, runIn, accuracy);
-                    allResults.addAll(currentSpectrumMatches);
-                    processedSpectra++;
-                    System.out.println("Processed spectrum number: " + scanNumber);
-                    System.out.println("Processed spectra: " + processedSpectra);
-                    addedSpectra++;
-                    if (addedSpectra>spectraAtOnce) {
-                        int indices = processedSpectra-addedSpectra;
-                        String path = filePath+"_"+indices+"_"+processedSpectra+".csv";
-                        CSVCreator.compClusterMatchCSVPrinter(allResults, path);
-                        allResults = new ArrayList<>();
-                        addedSpectra = 0;
-                    }
-
-                    continue;
-                }
+            //use this information to create the ArrayList<Modification> necessary for the CompClusterChecker
+            ArrayList<Modification> mods = new ArrayList<>();
+            if (modStatus.equals("Unmodified")) {
                 if (sequence.contains("C")) {
                     mods.add(Modification.carbamidomethylation());
                 }
-                modSequence = modSequence.replace("_", "");
-                while (modSequence.contains("(")) {
-                    int methPointer = 0;
-                    for (int a = 0; a < modSequence.length(); a++) {
-                        char current = modSequence.charAt(a);
-                        if (current == '(') {
-                            //Methionine is at position a, because modifications start counting at 1
-                            methPointer = a;
-                            break;
-                        }
-                    }
-                    if (methPointer != 0)
-                        mods.add(Modification.oxidation(methPointer));
-
-                    //remove occurence of brackets handled
-                    if (methPointer + 5 >= modSequence.length())
-                        break;
-                    String firstPart = modSequence.substring(0, methPointer - 1);
-                    String secondPart = modSequence.substring(methPointer + 5, modSequence.length());
-                    modSequence = firstPart + secondPart;
-                }
-
                 ArrayList<CompClusterIonMatch> currentSpectrumMatches = new ArrayList<>();
                 currentSpectrumMatches = ComplementaryClusterChecker.compClusterCheckerEC(aminoAcids, sequence, mods, scanNumber, runIn, accuracy);
                 allResults.addAll(currentSpectrumMatches);
                 processedSpectra++;
-                addedSpectra++;
                 System.out.println("Processed spectrum number: " + scanNumber);
                 System.out.println("Processed spectra: " + processedSpectra);
-            if (addedSpectra>spectraAtOnce) {
-                int indices = processedSpectra-addedSpectra;
-                String path = filePath+"_"+indices+"_"+processedSpectra+".csv";
+                addedSpectra++;
+                if (addedSpectra > spectraAtOnce) {
+                    int indices = processedSpectra - addedSpectra;
+                    String path = filePath + "_" + indices + "_" + processedSpectra + ".csv";
+                    CSVCreator.compClusterMatchCSVPrinter(allResults, path);
+                    allResults = new ArrayList<>();
+                    addedSpectra = 0;
+                }
+                continue;
+            }
+
+            modSequence = modSequence.replace("_", "");
+            while (modSequence.contains("(")) {
+                int methPointer = 0;
+                for (int a = 0; a < modSequence.length(); a++) {
+                    char current = modSequence.charAt(a);
+                    if (current == '(') {
+                        //Methionine is at position a, because modifications start counting at 1
+                        methPointer = a;
+                        break;
+                    }
+                }
+                if (methPointer != 0)
+                    mods.add(Modification.oxidation(methPointer));
+
+                //remove occurence of brackets handled
+                if (methPointer + 5 >= modSequence.length())
+                    break;
+                String firstPart = modSequence.substring(0, methPointer - 1);
+                String secondPart = modSequence.substring(methPointer + 5, modSequence.length());
+                modSequence = firstPart + secondPart;
+            }
+
+            if (sequence.contains("C")) {
+                mods.add(Modification.carbamidomethylation());
+            }
+            ArrayList<CompClusterIonMatch> currentSpectrumMatches = new ArrayList<>();
+            currentSpectrumMatches = ComplementaryClusterChecker.compClusterCheckerEC(aminoAcids, sequence, mods, scanNumber, runIn, accuracy);
+            allResults.addAll(currentSpectrumMatches);
+            processedSpectra++;
+            addedSpectra++;
+            System.out.println("Processed spectrum number: " + scanNumber);
+            System.out.println("Processed spectra: " + processedSpectra);
+            if (addedSpectra > spectraAtOnce) {
+                int indices = processedSpectra - addedSpectra;
+                String path = filePath + "_" + indices + "_" + processedSpectra + ".csv";
                 CSVCreator.compClusterMatchCSVPrinter(allResults, path);
                 allResults = new ArrayList<>();
                 addedSpectra = 0;
             }
-            }
+        }
 
         scanner.close();
-        int indices = processedSpectra-addedSpectra;
-        String path = filePath+"_"+indices+"_"+processedSpectra+".csv";
+        int indices = processedSpectra - addedSpectra;
+        String path = filePath + "_" + indices + "_" + processedSpectra + ".csv";
         CSVCreator.compClusterMatchCSVPrinter(allResults, path);
-        allResults = new ArrayList<>();
+        //TODO : writer.close
 
-        System.out.println("Sorted out spectra (no reporter ion intensities): "+sortedOut);
-        System.out.println("Processed spectra: "+processedSpectra);
+        System.out.println("Sorted out spectra (no reporter ion intensities): " + sortedOut);
+        System.out.println("Processed spectra: " + processedSpectra);
     }
 
 

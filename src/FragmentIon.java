@@ -14,7 +14,6 @@ public class FragmentIon extends Ion {
     private boolean isModified;
     //implement new variables for modifications
     private ArrayList<AminoAcid> aminoAcidsList;
-    private ArrayList<Modification> modList;
 
 
 

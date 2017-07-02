@@ -31,10 +31,10 @@ public class Main {
         String filePathSpectrum =  "C:\\Programmierordner\\20170529_stamch_EColi_1to1_BSA_1pmol_1ug.mzXML";
         File completemzXMLSource = new File(filePathSpectrum);
         MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
-        
+
         //testing: creating peptides
         //Peptide pepA = new Peptide("LLADDVPSK", aminoAcidsList);
-        ArrayList<Modification> modList = new ArrayList<>();
+        //ArrayList<Modification> modList = new ArrayList<>();
         //Modification oxidationM = new Modification("Oxidation", "O", 'M' );
         //modList.add(Modification.uncleavedECDuplex(1));
 
