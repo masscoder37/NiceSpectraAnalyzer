@@ -106,6 +106,8 @@ public class Peptide {
             this.yIons = new ArrayList<>();
             bIonBuilder(1);
             yIonBuilder(1);
+            bIonBuilder(2);
+            yIonBuilder(2);
 
         }
     }

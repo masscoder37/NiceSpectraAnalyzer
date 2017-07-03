@@ -46,6 +46,8 @@ public class Main {
         //CSVCreator.compClusterMatchCSVPrinter(relevantMatches, csvOutPath);
         CSVReader.wholeRunECChecker(completemzXML, evidence, aminoAcidsList, 5, 750, csvOutPath);
 
+        //CSVCreator.csvFileCombiner("C:\\Programmierordner\\completeAnalysis\\");
+
 
 
 

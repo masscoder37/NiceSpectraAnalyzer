@@ -34,10 +34,10 @@ public class ComplementaryClusterChecker {
             if (acid.get1Let() == 'K')
                 lysCount++;
         }
-        int countEC = lysCount+1;
+        int countTag = lysCount+1;
         //create different mods for the different possibilities (cleaved/noncleaved)
         ArrayList<ArrayList<Modification>> allMods = new ArrayList<>();
-        allMods = modCreator(idPeptide, countEC, modsIn);
+        allMods = modCreatorEC(idPeptide, countTag, modsIn);
 
         //generate List of different modified peptides to check for every possibility (EC cleaved/EC not cleaved)
         ArrayList<Peptide> modifiedPeptides = new ArrayList<>();
@@ -66,7 +66,7 @@ public class ComplementaryClusterChecker {
 
     //this function should create all the different possibilities for EC modifications
     //cleaved and uncleaved, EC179 and EC180 complementary ion-clusters
-    public static ArrayList<ArrayList<Modification>> modCreator(Peptide pepToModify, int countECIn, ArrayList<Modification> modsIn) {
+    public static ArrayList<ArrayList<Modification>> modCreatorEC(Peptide pepToModify, int countECIn, ArrayList<Modification> modsIn) {
         //create positions of modified lysines
         //lysPos is int[] with all the positions of EC-Modifications(N-Term + Lys) in the sequence
         int lysCount = countECIn - 1;
@@ -86,7 +86,7 @@ public class ComplementaryClusterChecker {
         for (int e = 0; e < 3; e++) {
             ArrayList<Modification> current = new ArrayList<>();
             current.addAll(modsIn);
-            current.add(modChooser(e, 1));
+            current.add(modChooserEC(e, 1));
             completeList.add(current);
         }
         //now loop through all the lysines and overwrite the existing list
@@ -141,7 +141,7 @@ public class ComplementaryClusterChecker {
             for (int i = 0; i<3;i++){
                 ArrayList<Modification> currentList = new ArrayList<>();
                 currentList.addAll(modLists);
-                currentList.add(modChooser(i, pos));
+                currentList.add(modChooserEC(i, pos));
                 listOut.add(currentList);
             }
         }
@@ -150,7 +150,7 @@ public class ComplementaryClusterChecker {
 
 
 
-    private static Modification modChooser(int modChooser, int pos){
+    private static Modification modChooserEC(int modChooser, int pos){
         Modification mod = null;
         switch(modChooser){
             case 0:

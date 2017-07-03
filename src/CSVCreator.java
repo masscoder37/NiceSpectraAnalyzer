@@ -1,8 +1,13 @@
+import com.sun.org.apache.xpath.internal.SourceTree;
+import uk.ac.ebi.pride.tools.mzxml_parser.mzxml.model.Scan;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.lang.reflect.Array;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  * Created by micha on 6/30/2017.
@@ -92,4 +97,71 @@ public class CSVCreator {
         csvWriter.close();
         System.out.println(".csv-file created!");
     }
+
+    //combine different .csv Files into one big .csv file
+    public static void csvFileCombiner(String folderPath) throws FileNotFoundException {
+        ArrayList<String> fileNames = new ArrayList<>();
+        File folder = new File(folderPath);
+        //get ArrayList<String> of all the .csv files in this folder
+        fileNames = getFolderCSVFileNames(folder);
+        ArrayList<File> csvFiles = new ArrayList<>();
+        //create all the .csv File objects
+        folderPath = folderPath.replace("\\", "\\\\");
+        for (String fileName : fileNames){
+            String pathName = folderPath+fileName;
+            csvFiles.add(new File(pathName));
+        }
+        //prepare writing of new .csv
+        String folderName = folder.getName();
+        String completeCSVName = folderPath + "\\"+folderName+"_complete.csv";
+        File completeCSV = new File(completeCSVName);
+        PrintWriter csvWriter = new PrintWriter(completeCSV);
+
+        //set boolean for headers
+        boolean headerWritten = false;
+        //loop through all the Files
+        for (File currentCSV : csvFiles){
+            //starting scanner and StringBuilder
+            Scanner scanner = new Scanner(currentCSV);
+            StringBuilder sb = new StringBuilder();
+            //handle writing of headers
+            if (!headerWritten){
+                String header = scanner.nextLine();
+                sb.append(header);
+                sb.append('\n');
+                headerWritten = true;
+            }
+            //if not first File, advance scanner one line
+            else {
+                scanner.nextLine();
+            }
+            //go through whole file
+            while (scanner.hasNextLine()){
+                String line = scanner.nextLine();
+                sb.append(line);
+                sb.append('\n');
+            }
+            //write to complete .csv and close this scanner
+            scanner.close();
+            csvWriter.write(sb.toString());
+            csvWriter.flush();
+            //leave csvWriter open for next go
+            System.out.println(".csv File added to complete File: "+currentCSV.getName());
+            //delete current StringBuilder
+
+        }
+        csvWriter.close();
+        System.out.println(".csv File created from "+csvFiles.size()+" individual files.");
+
+    }
+
+    private static ArrayList<String> getFolderCSVFileNames(final File folder){
+        ArrayList<String> fileNames = new ArrayList<>();
+        for (final File individualFiles : folder.listFiles()){
+            if (individualFiles.getName().contains(".csv"))
+                fileNames.add(individualFiles.getName());
+        }
+        return fileNames;
+    }
+
 }

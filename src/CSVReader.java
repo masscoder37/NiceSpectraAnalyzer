@@ -156,8 +156,8 @@ public class CSVReader {
                 System.out.println("Processed spectrum number: " + scanNumber);
                 System.out.println("Processed spectra: " + processedSpectra);
                 addedSpectra++;
-                if (addedSpectra > spectraAtOnce) {
-                    int indices = processedSpectra - addedSpectra;
+                if (addedSpectra == spectraAtOnce) {
+                    int indices = processedSpectra - addedSpectra +1;
                     String path = filePath + "_" + indices + "_" + processedSpectra + ".csv";
                     CSVCreator.compClusterMatchCSVPrinter(allResults, path);
                     allResults = new ArrayList<>();
@@ -198,8 +198,8 @@ public class CSVReader {
             addedSpectra++;
             System.out.println("Processed spectrum number: " + scanNumber);
             System.out.println("Processed spectra: " + processedSpectra);
-            if (addedSpectra > spectraAtOnce) {
-                int indices = processedSpectra - addedSpectra;
+            if (addedSpectra == spectraAtOnce) {
+                int indices = processedSpectra - addedSpectra + 1 ;
                 String path = filePath + "_" + indices + "_" + processedSpectra + ".csv";
                 CSVCreator.compClusterMatchCSVPrinter(allResults, path);
                 allResults = new ArrayList<>();
@@ -208,7 +208,7 @@ public class CSVReader {
         }
 
         scanner.close();
-        int indices = processedSpectra - addedSpectra;
+        int indices = processedSpectra - addedSpectra +1;
         String path = filePath + "_" + indices + "_" + processedSpectra + ".csv";
         CSVCreator.compClusterMatchCSVPrinter(allResults, path);
         //TODO : writer.close
