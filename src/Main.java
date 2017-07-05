@@ -30,7 +30,7 @@ public class Main {
         //testing: read in spectrum
         String filePathSpectrum =  "C:\\Programmierordner\\20170529_stamch_EColi_1to1_BSA_1pmol_1ug.mzXML";
         File completemzXMLSource = new File(filePathSpectrum);
-        MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
+        //MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
 
         //testing: creating peptides
         //Peptide pepA = new Peptide("LLADDVPSK", aminoAcidsList);
@@ -44,9 +44,24 @@ public class Main {
         //relevantMatches = CSVReader.wholeRunECChecker(completemzXML, evidence, aminoAcidsList, 5);
         String csvOutPath = "C:\\Programmierordner\\completeAnalysis";
         //CSVCreator.compClusterMatchCSVPrinter(relevantMatches, csvOutPath);
-        CSVReader.wholeRunECChecker(completemzXML, evidence, aminoAcidsList, 5, 750, csvOutPath);
+        //CSVReader.wholeRunECChecker(completemzXML, evidence, aminoAcidsList, 5, 750, csvOutPath);
 
-        //CSVCreator.csvFileCombiner("C:\\Programmierordner\\completeAnalysis\\");
+        //CSVCreator.csvFileCombiner("C:\\Programmierordner\\completeAnalysis_withz2\\");
+        Peptide pepA = new Peptide("NFGRHPR", aminoAcidsList);
+        ArrayList<Modification> modList = new ArrayList<>();
+        Modification TMTc_126 = Modification.uncleavedTMTDuplex(1);
+        modList.add(TMTc_126);
+        pepA = pepA.peptideModifier(modList);
+
+        pepA.peptidePrinter();
+
+        ArrayList<FragmentIon> fragList = new ArrayList<>();
+        fragList.addAll(pepA.getbIons());
+        fragList.addAll(pepA.getyIons());
+        for (FragmentIon frags : fragList){
+            FragmentIon.fragmentIonFormulaPrinter(frags);
+        }
+
 
 
 

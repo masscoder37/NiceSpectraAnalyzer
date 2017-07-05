@@ -79,13 +79,13 @@ public class Modification {
     }
 
     public static Modification cleavedTMT127(int pos) {
-        Modification cleaved127 = new Modification("EC179_cleaved", "",pos);
+        Modification cleaved127 = new Modification("TMT127_cleaved", "C3H5NO",pos);
         cleaved127.isLabel = true;
         cleaved127.isCleaved = true;
         return cleaved127;
     }
     public static Modification cleavedTMT126(int pos){
-        Modification cleaved126 = new Modification("EC180_cleaved", "",pos);
+        Modification cleaved126 = new Modification("TMT126_cleaved", "C2CxH5NO",pos);
         cleaved126.isLabel = true;
         cleaved126.isCleaved = true;
         return cleaved126;
