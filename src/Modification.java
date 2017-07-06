@@ -78,18 +78,17 @@ public class Modification {
         return intactTMT;
     }
 
-    public static Modification cleavedTMT127(int pos) {
-        Modification cleaved127 = new Modification("TMT127_cleaved", "C3H5NO",pos);
+
+    //cleaved TMT looses isotope label by CO-loss
+    //can't distinguish cleaved TMT126 and TMT127
+    //Modification of +1 fragment ion only, not of peptide! because of negative charge
+    public static Modification cleavedTMTduplex(int pos) {
+        Modification cleaved127 = new Modification("TMTduplex_cleaved", "C3H5NO",pos);
         cleaved127.isLabel = true;
         cleaved127.isCleaved = true;
         return cleaved127;
     }
-    public static Modification cleavedTMT126(int pos){
-        Modification cleaved126 = new Modification("TMT126_cleaved", "C2CxH5NO",pos);
-        cleaved126.isLabel = true;
-        cleaved126.isCleaved = true;
-        return cleaved126;
-    }
+
 
 
 
@@ -103,7 +102,7 @@ public class Modification {
 
 
     public static Modification carbamidomethylation(){
-        Modification carbamidomethyl = new Modification("Carbamidomethyl", "C2H3NO", 'C');
+        Modification carbamidomethyl = new Modification("Cam", "C2H3NO", 'C');
         return carbamidomethyl;
     }
 

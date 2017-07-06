@@ -81,7 +81,11 @@ public class CSVReader {
     }
 
 
-    public static void wholeRunECChecker(MzXMLFile runIn, File evidence, ArrayList<AminoAcid> aminoAcids, double accuracy, int spectraAtOnce, String filePath) throws JMzReaderException, FileNotFoundException {
+    public static void wholeRunCICChecker(MzXMLFile runIn, File evidence, ArrayList<AminoAcid> aminoAcids, double accuracy, int spectraAtOnce, String filePath, String labelIn) throws JMzReaderException, FileNotFoundException {
+        if (!labelIn.equals("TMT") && !labelIn.equals("EC"))
+            throw new IllegalArgumentException("Unknown label: "+labelIn+"! Please use TMT or EC");
+
+
         ArrayList<CompClusterIonMatch> allResults = new ArrayList<>();
         Scanner scanner = null;
         try {
@@ -150,7 +154,10 @@ public class CSVReader {
                     mods.add(Modification.carbamidomethylation());
                 }
                 ArrayList<CompClusterIonMatch> currentSpectrumMatches = new ArrayList<>();
-                currentSpectrumMatches = ComplementaryClusterChecker.compClusterCheckerEC(aminoAcids, sequence, mods, scanNumber, runIn, accuracy);
+                if (labelIn.equals("EC"))
+                    currentSpectrumMatches = ComplementaryClusterChecker.compClusterCheckerEC(aminoAcids, sequence, mods, scanNumber, runIn, accuracy);
+                if (labelIn.equals("TMT"))
+                    currentSpectrumMatches = ComplementaryClusterChecker.compClusterCheckerTMT(aminoAcids, sequence, mods, scanNumber, runIn, accuracy);
                 allResults.addAll(currentSpectrumMatches);
                 processedSpectra++;
                 System.out.println("Processed spectrum number: " + scanNumber);
@@ -192,7 +199,10 @@ public class CSVReader {
                 mods.add(Modification.carbamidomethylation());
             }
             ArrayList<CompClusterIonMatch> currentSpectrumMatches = new ArrayList<>();
-            currentSpectrumMatches = ComplementaryClusterChecker.compClusterCheckerEC(aminoAcids, sequence, mods, scanNumber, runIn, accuracy);
+            if (labelIn.equals("EC"))
+                currentSpectrumMatches = ComplementaryClusterChecker.compClusterCheckerEC(aminoAcids, sequence, mods, scanNumber, runIn, accuracy);
+            if (labelIn.equals("TMT"))
+                currentSpectrumMatches = ComplementaryClusterChecker.compClusterCheckerTMT(aminoAcids, sequence, mods, scanNumber, runIn, accuracy);
             allResults.addAll(currentSpectrumMatches);
             processedSpectra++;
             addedSpectra++;

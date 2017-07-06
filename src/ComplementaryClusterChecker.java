@@ -90,10 +90,10 @@ public class ComplementaryClusterChecker {
             completeList.add(current);
         }
         //now loop through all the lysines and overwrite the existing list
-        //do so by using the listMultiplier method
+        //do so by using the listMultiplierEC method
         //by this, create all possibilities...also those which aren't occuring
         for (int f = 0; f < lysCount; f++) {
-            completeList = listMultiplier(completeList, lysPos[f]);
+            completeList = listMultiplierEC(completeList, lysPos[f]);
         }
 
         //completeList is now longer than it needs to be
@@ -135,7 +135,7 @@ public class ComplementaryClusterChecker {
     }
 
 
-    private static ArrayList<ArrayList<Modification>> listMultiplier(ArrayList<ArrayList<Modification>> listIn, int pos){
+    private static ArrayList<ArrayList<Modification>> listMultiplierEC(ArrayList<ArrayList<Modification>> listIn, int pos){
         ArrayList<ArrayList<Modification>> listOut = new ArrayList<>();
         for (ArrayList<Modification> modLists : listIn){
             for (int i = 0; i<3;i++){
@@ -209,9 +209,6 @@ public class ComplementaryClusterChecker {
                                                                                 match.getPpmDeviation(),
                                                                                 labelName,isCleavedAtAll, isMixed, scanHeaderIn);
                 relevantList.add(importantMatch);
-
-
-
             }
         }
 
@@ -222,7 +219,7 @@ public class ComplementaryClusterChecker {
     //this function removes the multiple entries (same fragment ions from different theoretical precursors) from the relevantMatchesList
     private static ArrayList<CompClusterIonMatch> matchesConsolidator(ArrayList<CompClusterIonMatch> listIn){
         ArrayList<CompClusterIonMatch> reducedList = new ArrayList<>();
-        int duplicateNumber = 0;
+        //int duplicateNumber = 0;
 
         for (CompClusterIonMatch oldMatch : listIn){
             boolean duplicate = false;
@@ -236,12 +233,12 @@ public class ComplementaryClusterChecker {
                             &&oldMatch.getIsCleaved() == newMatch.getIsCleaved()
                             &&oldMatch.getLabelName().equals(newMatch.getLabelName())) {
                         duplicate = true;
-                        duplicateNumber++;
+                       // duplicateNumber++;
                     }
                     if (oldMatch.getFragmentIon().getLabelQuantity()>1){
                         if (oldMatch.getFragmentIon().getExactMass() == newMatch.getFragmentIon().getExactMass()){
                             duplicate = true;
-                            duplicateNumber++;
+                           // duplicateNumber++;
                         }
                     }
                 }
@@ -253,6 +250,122 @@ public class ComplementaryClusterChecker {
        // System.out.println(""+ duplicateNumber+" Matches removed (duplicates)!");
         return reducedList;
     }
+
+
+
+    //handle TMTDuplex ComplementaryIons
+
+    public static ArrayList<CompClusterIonMatch> compClusterCheckerTMT (ArrayList<AminoAcid> acids,
+                                                                       String SequenceIn,
+                                                                       ArrayList<Modification> modsIn,
+                                                                       String spectrumID, MzXMLFile completeFileIn,
+                                                                       double accuracy) throws JMzReaderException {
+        ArrayList<IonMatch> successfulMatches = new ArrayList<>();
+        //generate spectrum to look at:
+        MySpectrum spectrumToCheck = MzXMLReadIn.mzXMLToMySpectrum(completeFileIn, spectrumID);
+        String spectrumHeader = spectrumToCheck.getScanHeader();
+
+
+        //create unmodified peptide
+        Peptide idPeptide = new Peptide(SequenceIn, acids);
+        //determine how many TMT modifications are present
+        int lysCount = 0;
+        ArrayList<AminoAcid> sequence = new ArrayList<>();
+        sequence.addAll(idPeptide.getAminoAcidsList());
+        for (AminoAcid acid : sequence){
+            if (acid.get1Let() == 'K')
+                lysCount++;
+        }
+        int countTag = lysCount+1;
+        //create different mods for the different possibilities (cleaved/noncleaved)
+        ArrayList<ArrayList<Modification>> allMods = new ArrayList<>();
+        allMods = modCreatorTMT(idPeptide, countTag, modsIn);
+
+        //generate List of different modified peptides to check for every possibility (TMT cleaved/TMT not cleaved)
+        ArrayList<Peptide> modifiedPeptides = new ArrayList<>();
+        for (ArrayList<Modification> modList : allMods){
+            Peptide modifiedPeptide = new Peptide(SequenceIn, acids);
+            modifiedPeptides.add(modifiedPeptide.peptideModifier(modList));
+        }
+        //invoke PeakCompare function and store result matches in List of IonMatches
+        for (Peptide modPeptide : modifiedPeptides){
+            //System.out.println("Peptide: "+modPeptide.getSequence());
+            successfulMatches.addAll(PeakCompare.peakCompare(spectrumToCheck, modPeptide, accuracy));
+            //System.out.println();
+        }
+
+        //relevant Matches Picker doesn't change in regard to EC
+        ArrayList<CompClusterIonMatch> relevantMatches = new ArrayList<>();
+        relevantMatches = relevantMatchesPicker(successfulMatches, spectrumHeader);
+
+        //relevantMatches still contains multiple instances of the same modification, since the fragment ions from different modified peptides can be the same
+        //same matches Consolidator Method can be utilized
+        ArrayList<CompClusterIonMatch> noDuplicateMatches = new ArrayList<>();
+        noDuplicateMatches = matchesConsolidator(relevantMatches);
+
+        return noDuplicateMatches;
+    }
+
+    //this function should create all the different possibilities for TMTduplex modifications
+    //uncleaved and cleaved, only 2 possibilities
+    public static ArrayList<ArrayList<Modification>> modCreatorTMT(Peptide pepToModify, int countTMTIn, ArrayList<Modification> modsIn) {
+        //create positions of modified lysines
+        //lysPos is int[] with all the positions of TMT-Modifications(N-Term + Lys) in the sequence
+        int lysCount = countTMTIn - 1;
+        int[] lysPos = new int[lysCount];
+        int lysPosPointer = 0;
+        ArrayList<AminoAcid> sequence = new ArrayList<>();
+        sequence.addAll(pepToModify.getAminoAcidsList());
+        for (int a = 0; a < sequence.size(); a++) {
+            if (sequence.get(a).get1Let() == 'K') {
+                lysPos[lysPosPointer] = a + 1;
+                lysPosPointer++;
+            }
+        }
+        //create new list of modification lists
+        ArrayList<ArrayList<Modification>> completeList = new ArrayList<>();
+        //create the first 2 lists: 2 different possible modifications, all on NTerm
+        for (int e = 0; e < 2; e++) {
+            ArrayList<Modification> current = new ArrayList<>();
+            current.addAll(modsIn);
+            current.add(modChooserTMT(e, 1));
+            completeList.add(current);
+        }
+        //now loop through all the lysines and overwrite the existing list
+        //do so by using the listMultiplierEC method
+        for (int f = 0; f < lysCount; f++) {
+            completeList = listMultiplierTMT(completeList, lysPos[f]);
+        }
+
+        return completeList;
+    }
+
+    private static Modification modChooserTMT(int modChooser, int pos){
+        Modification mod = null;
+        switch(modChooser){
+            case 0:
+                mod = Modification.uncleavedTMTDuplex(pos);
+                break;
+            case 1:
+                mod = Modification.cleavedTMTduplex(pos);
+                break;
+        }
+        return mod;
+    }
+
+    private static ArrayList<ArrayList<Modification>> listMultiplierTMT(ArrayList<ArrayList<Modification>> listIn, int pos){
+        ArrayList<ArrayList<Modification>> listOut = new ArrayList<>();
+        for (ArrayList<Modification> modLists : listIn){
+            for (int i = 0; i<2;i++){
+                ArrayList<Modification> currentList = new ArrayList<>();
+                currentList.addAll(modLists);
+                currentList.add(modChooserTMT(i, pos));
+                listOut.add(currentList);
+            }
+        }
+        return listOut;
+    }
+
 
 
 

@@ -41,26 +41,13 @@ public class Main {
         String evidenceLocation = "C:\\Programmierordner\\24052017_EC_BSA_SpikeIn_evidence_1to1.txt";
         File evidence = new File(evidenceLocation);
         //ArrayList<CompClusterIonMatch> relevantMatches = new ArrayList<>();
-        //relevantMatches = CSVReader.wholeRunECChecker(completemzXML, evidence, aminoAcidsList, 5);
-        String csvOutPath = "C:\\Programmierordner\\completeAnalysis";
+        //relevantMatches = CSVReader.wholeRunCICChecker(completemzXML, evidence, aminoAcidsList, 5);
+        String csvOutPath = "C:\\Programmierordner\\completeAnalysisTMT";
         //CSVCreator.compClusterMatchCSVPrinter(relevantMatches, csvOutPath);
-        //CSVReader.wholeRunECChecker(completemzXML, evidence, aminoAcidsList, 5, 750, csvOutPath);
+        //CSVReader.wholeRunCICChecker(completemzXML, evidence, aminoAcidsList, 5, 500, csvOutPath, "EC");
 
-        //CSVCreator.csvFileCombiner("C:\\Programmierordner\\completeAnalysis_withz2\\");
-        Peptide pepA = new Peptide("NFGRHPR", aminoAcidsList);
-        ArrayList<Modification> modList = new ArrayList<>();
-        Modification TMTc_126 = Modification.uncleavedTMTDuplex(1);
-        modList.add(TMTc_126);
-        pepA = pepA.peptideModifier(modList);
+        CSVCreator.csvFileCombiner("C:\\Programmierordner\\completeAnalysis_withz2_EC\\");
 
-        pepA.peptidePrinter();
-
-        ArrayList<FragmentIon> fragList = new ArrayList<>();
-        fragList.addAll(pepA.getbIons());
-        fragList.addAll(pepA.getyIons());
-        for (FragmentIon frags : fragList){
-            FragmentIon.fragmentIonFormulaPrinter(frags);
-        }
 
 
 
