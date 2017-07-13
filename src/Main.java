@@ -29,7 +29,7 @@ public class Main {
 
         //testing: read in spectrum
         String filePathSpectrum =  "C:\\Programmierordner\\20170529_stamch_EColi_1to1_BSA_1pmol_1ug.mzXML";
-        File completemzXMLSource = new File(filePathSpectrum);
+        //File completemzXMLSource = new File(filePathSpectrum);
         //MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
 
         //testing: creating peptides
@@ -39,14 +39,27 @@ public class Main {
         //modList.add(Modification.uncleavedECDuplex(1));
 
         String evidenceLocation = "C:\\Programmierordner\\24052017_EC_BSA_SpikeIn_evidence_1to1.txt";
-        File evidence = new File(evidenceLocation);
+        //File evidence = new File(evidenceLocation);
         //ArrayList<CompClusterIonMatch> relevantMatches = new ArrayList<>();
         //relevantMatches = CSVReader.wholeRunCICChecker(completemzXML, evidence, aminoAcidsList, 5);
         String csvOutPath = "C:\\Programmierordner\\completeAnalysisTMT";
         //CSVCreator.compClusterMatchCSVPrinter(relevantMatches, csvOutPath);
         //CSVReader.wholeRunCICChecker(completemzXML, evidence, aminoAcidsList, 5, 500, csvOutPath, "EC");
 
-        CSVCreator.csvFileCombiner("C:\\Programmierordner\\completeAnalysis_withz2_EC\\");
+        //CSVCreator.csvFileCombiner("C:\\Programmierordner\\completeAnalysis_withz2_EC\\");
+
+        File csvFileLeander = new File ("C:\\Programmierordner\\LAGGVWR_MSMS.csv");
+        MySpectrum csvSpectrumLeander = CSVReader.spectrumParse(csvFileLeander);
+        Peptide laggvwr = new Peptide("LAGGVWR", aminoAcidsList);
+        laggvwr.peptidePrinter();
+        Modification hvXL = new Modification("photoXL", "C16H18O3N3SF3", 'R');
+        ArrayList<Modification> modList = new ArrayList<>();
+        modList.add(hvXL);
+        Peptide modPep = laggvwr.peptideModifier(modList);
+        modPep.peptidePrinter();
+
+        PeakCompare.peakCompare(csvSpectrumLeander, modPep, 10);
+
 
 
 
