@@ -48,14 +48,14 @@ public class Main {
 
         //CSVCreator.csvFileCombiner("C:\\Programmierordner\\completeAnalysis_withz2_EC\\");
 
-        File csvFileLeander = new File ("C:\\Programmierordner\\LAGGVWR_MSMS.csv");
+        File csvFileLeander = new File ("C:\\Programmierordner\\ILNAHMDSLQWVDQSSALLQR_MSMS.csv");
         MySpectrum csvSpectrumLeander = CSVReader.spectrumParse(csvFileLeander);
-        Peptide laggvwr = new Peptide("LAGGVWR", aminoAcidsList);
-        laggvwr.peptidePrinter();
-        Modification hvXL = new Modification("photoXL", "C16H18O3N3SF3", 'R');
+        Peptide ilnahmdslqwvdqssallqr = new Peptide("ILNAHMDSLQWVDQSSALLQR", aminoAcidsList);
+        ilnahmdslqwvdqssallqr.peptidePrinter();
+        Modification hvXL = new Modification("photoXL", "C21H23N3O4S", 'M');
         ArrayList<Modification> modList = new ArrayList<>();
         modList.add(hvXL);
-        Peptide modPep = laggvwr.peptideModifier(modList);
+        Peptide modPep = ilnahmdslqwvdqssallqr.peptideModifier(modList);
         modPep.peptidePrinter();
 
         PeakCompare.peakCompare(csvSpectrumLeander, modPep, 10);
