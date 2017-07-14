@@ -38,17 +38,17 @@ public class Main {
         //Modification oxidationM = new Modification("Oxidation", "O", 'M' );
         //modList.add(Modification.uncleavedECDuplex(1));
 
-        String evidenceLocation = "C:\\Programmierordner\\24052017_EC_BSA_SpikeIn_evidence_1to1.txt";
+        //String evidenceLocation = "C:\\Programmierordner\\24052017_EC_BSA_SpikeIn_evidence_1to1.txt";
         //File evidence = new File(evidenceLocation);
         //ArrayList<CompClusterIonMatch> relevantMatches = new ArrayList<>();
         //relevantMatches = CSVReader.wholeRunCICChecker(completemzXML, evidence, aminoAcidsList, 5);
-        String csvOutPath = "C:\\Programmierordner\\completeAnalysisTMT";
+        //String csvOutPath = "C:\\Programmierordner\\completeAnalysisTMT";
         //CSVCreator.compClusterMatchCSVPrinter(relevantMatches, csvOutPath);
         //CSVReader.wholeRunCICChecker(completemzXML, evidence, aminoAcidsList, 5, 500, csvOutPath, "EC");
 
         //CSVCreator.csvFileCombiner("C:\\Programmierordner\\completeAnalysis_withz2_EC\\");
 
-        File csvFileLeander = new File ("C:\\Programmierordner\\ILNAHMDSLQWVDQSSALLQR_MSMS.csv");
+        /*File csvFileLeander = new File ("C:\\Programmierordner\\ILNAHMDSLQWVDQSSALLQR_MSMS.csv");
         MySpectrum csvSpectrumLeander = CSVReader.spectrumParse(csvFileLeander);
         Peptide ilnahmdslqwvdqssallqr = new Peptide("ILNAHMDSLQWVDQSSALLQR", aminoAcidsList);
         ilnahmdslqwvdqssallqr.peptidePrinter();
@@ -58,7 +58,10 @@ public class Main {
         Peptide modPep = ilnahmdslqwvdqssallqr.peptideModifier(modList);
         modPep.peptidePrinter();
 
-        PeakCompare.peakCompare(csvSpectrumLeander, modPep, 10);
+        PeakCompare.peakCompare(csvSpectrumLeander, modPep, 10);*/
+
+        String toAnalyze = "C:\\Programmierordner\\completeAnalysis_TMT_withz2\\completeAnalysis_TMT_withz2_complete.csv";
+        CSVAnalyzer.cicStatistics(toAnalyze);
 
 
 
