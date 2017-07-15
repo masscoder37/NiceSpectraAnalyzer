@@ -4,10 +4,9 @@ import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLSpectrum;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.io.PrintWriter;
+import java.text.DecimalFormat;
+import java.util.*;
 
 /**
  * Created by micha on 6/14/2017.
@@ -227,7 +226,132 @@ public class CSVReader {
         System.out.println("Processed spectra: " + processedSpectra);
     }
 
+public static void wholeRunRepFinder(MzXMLFile runIn, File statisticsAnalysis, double ppmDev) throws FileNotFoundException, JMzReaderException {
+    DecimalFormat twoDec = new DecimalFormat("0.00");
+    DecimalFormat scientific = new DecimalFormat("0.00E0");
+        //first, set label name
+    String labelName = "";
+    String fileName = statisticsAnalysis.getName();
+    if (!fileName.contains("TMT")&&!fileName.contains("EC"))
+        throw new IllegalArgumentException("Unknown label! Use Filename with EC or TMT. Filename: "+fileName);
+    if (fileName.contains("TMT"))
+        labelName = "TMT";
+    if (fileName.contains("EC"))
+        labelName = "EC";
 
+    //initialize scanner
+    Scanner scanner = null;
+    try {
+         scanner = new Scanner(statisticsAnalysis);
+    } catch (FileNotFoundException e) {
+        System.out.println("File not found! Location: " +statisticsAnalysis.getAbsolutePath());
+    }
 
+    //get header positions
+    String header = scanner.nextLine();
+    String headerCaptions[] = header.split(",");
+    HashMap<String, Integer> captionPositions = new HashMap<>();
+    int index = 0;
+    for (String captions : headerCaptions){
+        switch (captions){
+            case "Modified Peptide":
+                captionPositions.put("Modified Peptide", index);
+                break;
+            case "Precursor Charge":
+                captionPositions.put("Precursor Charge", index);
+                break;
+            case "Scan Number":
+                captionPositions.put("Scan Number", index);
+                break;
+        }
+        index++;
+    }
 
+    //prepare new File and write header
+    String newFilePath = statisticsAnalysis.getAbsolutePath().replace("_statistics.csv", "")+"_reporterIons.csv";
+    File outputCSV = new File(newFilePath);
+    PrintWriter csvWriter = new PrintWriter(outputCSV);
+    StringBuilder sb = new StringBuilder();
+    String[] newHeader = new String[9];
+    newHeader[0] = "Modified Peptide";
+    newHeader[1] = "Precursor Charge";
+    newHeader[2] = "Scan Number";
+    newHeader[3] = "Rep0 Relative Intensity [%]";
+    newHeader[4] = "Rep0 Absolut Intensity [au]";
+    newHeader[5] = "Rep0 Mass Deviation [ppm]";
+    newHeader[6] = "Rep1 Relative Intensity [%]";
+    newHeader[7] = "Rep1 Absolut Intensity [au]";
+    newHeader[8] = "Rep1 Mass Deviation [ppm]";
+    String sep = "";
+    for (String s : newHeader){
+        sb.append(sep);
+        sb.append(s);
+        sep = ",";
+    }
+    sb.append("\n");
+    csvWriter.write(sb.toString());
+    sb.setLength(0);
+
+    //continue with scanning of the csv and readout of the values
+    int handledSpectra = 1;
+    while (scanner.hasNextLine()){
+        String currentLine = scanner.nextLine();
+        String[] values = currentLine.split(",");
+        String[] newValues = new String[9];
+        Arrays.fill(newValues, "");
+        newValues[0] = values[captionPositions.get("Modified Peptide")];
+        newValues[1] = values[captionPositions.get("Precursor Charge")];
+        newValues[2] = values[captionPositions.get("Scan Number")];
+        //generate MySpectrum and start search for Reporter Ions
+        MySpectrum currentSpectrum = MzXMLReadIn.mzXMLToMySpectrum(runIn, newValues[2]);
+        ArrayList<ReporterMatch> repMatches = new ArrayList<>();
+        repMatches = PeakCompare.reporterFinder(currentSpectrum, labelName, ppmDev);
+        //if no reporter ions are found, set values to 0
+        if (repMatches.isEmpty()){
+            for (int i = 3; i<newHeader.length; i++){
+                newHeader[i] = "0";
+            }
+        }
+        //loop through the matches
+        if (repMatches.size() > 2)
+            throw new IllegalArgumentException("More than 2 matched reporters! Size: "+repMatches.size());
+        for (ReporterMatch rep : repMatches){
+            if (rep.getRepName().equals("Rep0")){
+                newValues[3] = twoDec.format(rep.getPeak().getRelIntensity());
+                newValues[4] = scientific.format(rep.getPeak().getIntensity());
+                newValues[5] = twoDec.format(rep.getPPMDev());
+            }
+            if (rep.getRepName().equals("Rep1")){
+                newValues[6] = twoDec.format(rep.getPeak().getRelIntensity());
+                newValues[7] = scientific.format(rep.getPeak().getIntensity());
+                newValues[8] = twoDec.format(rep.getPPMDev());
+            }
+        }
+        //set values to 0 if no rep was found
+        for (int a = 0; a < newValues.length;a++){
+            if (newValues[a].length()==0)
+                newValues[a] += "0";
+        }
+        //use sb and write to file
+        sep = "";
+        for (String s : newValues){
+            sb.append(sep);
+            sb.append(s);
+            sep = ",";
+        }
+        sb.append("\n");
+        csvWriter.write(sb.toString());
+        csvWriter.flush();
+        System.out.println("Analyzed peptide: "+handledSpectra);
+        handledSpectra++;
+
+        //set values to 0 again
+        sb.setLength(0);
+        repMatches.clear();
+    }
+    scanner.close();
+    csvWriter.close();
+    System.out.println("Analysis complete! .csv File with "+ (handledSpectra-1)+" peptides created!");
+
+}
 }

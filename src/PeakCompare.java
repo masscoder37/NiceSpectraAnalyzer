@@ -1,3 +1,5 @@
+import com.sun.javaws.exceptions.InvalidArgumentException;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
@@ -48,5 +50,41 @@ public class PeakCompare {
         }
 
         return matches;
+    }
+
+    public static ArrayList<ReporterMatch> reporterFinder(MySpectrum spectrumIn, String labelName, double ppmDev){
+        ArrayList<ReporterMatch> matchedReporters = new ArrayList<>();
+        double rep0Mass = 0;
+        double rep1Mass = 0;
+        if (!labelName.equals("EC")&&!labelName.equals("TMT"))
+            throw new IllegalArgumentException("Label unknown! Please use TMT or EC! Unknown Label: "+labelName);
+
+        //set reporter masses
+        if (labelName.equals("TMT")){
+            rep0Mass = 126.12773;
+            rep1Mass = 127.13108;
+        }
+
+        if (labelName.equals("EC")){
+            rep0Mass = 179.08487;
+            rep1Mass = 180.08823;
+        }
+        //calculate mass Ranges
+        double[] massRangeRep0 = DeviationCalc.ppmRangeCalc(ppmDev, rep0Mass);
+        double[] massRangeRep1 = DeviationCalc.ppmRangeCalc(ppmDev, rep1Mass);
+
+        //check Spectrum if peaks match
+        ArrayList<Peak> peakList = spectrumIn.getPeakList();
+
+        for (Peak peak : peakList){
+            if (peak.getMass()>=massRangeRep0[0] && peak.getMass() <= massRangeRep0[1])
+                matchedReporters.add(new ReporterMatch(peak, rep0Mass, labelName, "Rep0"));
+            if (peak.getMass()>=massRangeRep1[0] && peak.getMass() <= massRangeRep1[1])
+                matchedReporters.add(new ReporterMatch(peak, rep1Mass, labelName, "Rep1"));
+            if (peak.getMass() > (rep1Mass+20))
+                break;
+        }
+
+        return matchedReporters;
     }
 }

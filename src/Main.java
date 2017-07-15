@@ -10,6 +10,7 @@ import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLSpectrum;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,9 +30,9 @@ public class Main {
         ArrayList<AminoAcid> aminoAcidsList = CSVReader.aminoAcidParse(aminoAcids);
 
         //testing: read in spectrum
-        String filePathSpectrum =  "C:\\Programmierordner\\20170529_stamch_EColi_1to1_BSA_1pmol_1ug.mzXML";
-        //File completemzXMLSource = new File(filePathSpectrum);
-        //MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
+        String filePathSpectrum =  "C:\\Programmierordner\\20170613_stamch_EColi_1to1TMT_BSA_1pmol_1ug_28HCD.mzXML";
+        File completemzXMLSource = new File(filePathSpectrum);
+        MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
 
         //testing: creating peptides
         //Peptide pepA = new Peptide("LLADDVPSK", aminoAcidsList);
@@ -61,8 +62,15 @@ public class Main {
 
         PeakCompare.peakCompare(csvSpectrumLeander, modPep, 10);*/
 
-        String toAnalyze = "C:\\Programmierordner\\completeAnalysis_TMT_withz2\\completeAnalysis_TMT_withz2_complete.csv";
-        CSVAnalyzer.cicStatistics(toAnalyze);
+        //String toAnalyze = "C:\\Programmierordner\\completeAnalysis_TMT_withz2\\completeAnalysis_TMT_withz2_complete.csv";
+        //CSVAnalyzer.cicStatistics(toAnalyze);
+        String statisticsFilePath = "C:\\Programmierordner\\completeAnalysis_TMT_withz2\\completeAnalysis_TMT_withz2_complete_statistics.csv";
+        File statisticsFile = new File(statisticsFilePath);
+
+
+        CSVReader.wholeRunRepFinder(completemzXML,statisticsFile ,5);
+
+
 
 
 
