@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -62,6 +63,8 @@ public class Main {
 
         String toAnalyze = "C:\\Programmierordner\\completeAnalysis_TMT_withz2\\completeAnalysis_TMT_withz2_complete.csv";
         CSVAnalyzer.cicStatistics(toAnalyze);
+
+
 
 
 

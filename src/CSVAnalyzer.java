@@ -2,6 +2,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
 
 /**
@@ -60,13 +62,13 @@ public class CSVAnalyzer {
         header = "Number uncleaved fragments";
         sb.append(header);
         sb.append(',');
-        header = "Mean intensity uncleaved fragments [%]";
+        header = "Median intensity uncleaved fragments [%]";
         sb.append(header);
         sb.append(',');
         header = "Number cleaved fragments";
         sb.append(header);
         sb.append(',');
-        header = "Mean intensity cleaved fragments [%]";
+        header = "Median intensity cleaved fragments [%]";
         sb.append(header);
 
         //only write this part of the header if csv contains EC
@@ -75,13 +77,13 @@ public class CSVAnalyzer {
             header = "Number EC179 fragments";
             sb.append(header);
             sb.append(',');
-            header = "Mean intensity EC179 fragments [%]";
+            header = "Median intensity EC179 fragments [%]";
             sb.append(header);
             sb.append(',');
             header = "Number EC180 fragments";
             sb.append(header);
             sb.append(',');
-            header = "Mean intensity EC180 fragments [%]";
+            header = "Median intensity EC180 fragments [%]";
             sb.append(header);
         }
         sb.append('\n');
@@ -102,17 +104,14 @@ public class CSVAnalyzer {
         //variables that have to be read out or calculated
         int uncleavedFragments = 0;
         int cleavedFragments = 0;
-        double uncleavedRelInt = 0;
-        double cleavedRelInt = 0;
-        double uncleavedMeanInt = 0;
-        double cleavedMeanInt = 0;
-            int cleavedEC179 = 0;
-            int cleavedEC180 = 0;
-            double cleavedEC179RelInt = 0;
-            double cleavedEC180RelInt = 0;
-            double cleavedEC179MeanInt = 0;
-            double cleavedEC180MeanInt = 0;
+        int cleavedEC179 = 0;
+        int cleavedEC180 = 0;
 
+        //lists for Median calculation
+        ArrayList<Double> uncleavedIntList = new ArrayList<>();
+        ArrayList<Double> cleavedIntList = new ArrayList<>();
+        ArrayList<Double> cleavedEC179IntList = new ArrayList<>();
+        ArrayList<Double> cleavedEC180IntList = new ArrayList<>();
 
         //set length of output string[]
         int outputLength;
@@ -139,12 +138,12 @@ public class CSVAnalyzer {
         //cleaved label
         if (firstLineValues[5].equals("true")){
             cleavedFragments++;
-            cleavedRelInt += Double.parseDouble(firstLineValues[13]);
+            cleavedIntList.add(Double.parseDouble(firstLineValues[13]));
         }
         //uncleaved label
         if (firstLineValues[5].equals("false")){
             uncleavedFragments++;
-            uncleavedRelInt += Double.parseDouble(firstLineValues[13]);
+            uncleavedIntList.add(Double.parseDouble(firstLineValues[13]));
         }
         //only in case of EC
         if (ec){
@@ -152,11 +151,11 @@ public class CSVAnalyzer {
             if (firstLineValues[5].equals("true")){
                 if (firstLineValues[4].contains("179")){
                     cleavedEC179++;
-                    cleavedEC179RelInt += Double.parseDouble(firstLineValues[13]);
+                    cleavedEC179IntList.add(Double.parseDouble(firstLineValues[13]));
                 }
                 if (firstLineValues[4].contains("180")){
                     cleavedEC180++;
-                    cleavedEC180RelInt += Double.parseDouble(firstLineValues[13]);
+                    cleavedEC180IntList.add(Double.parseDouble(firstLineValues[13]));
                 }
             }
         }
@@ -198,50 +197,27 @@ public class CSVAnalyzer {
                 //1 Precursor Charge
                 //2 Scan Number
                 //3 Number uncleaved fragments
-                //4 Mean intensity uncleaved fragments
+                //4 Median intensity uncleaved fragments
                 //5 Number cleaved fragments
-                //6 Mean intensity cleaved fragments
+                //6 Median intensity cleaved fragments
                 //only in case of EC, also add other information to analyze duplex
                 //7 Number EC 179 fragments
-                //8 Mean intensity EC179
+                //8 Median intensity EC179
                 //9 Number EC 180 fragments
-                //10 Mean intensity EC180
+                //10 Median intensity EC180
                 outputString[0] = activePeptide;
                 outputString[1] = Integer.toString(activeChargeState) + "+";
                 outputString[2] = activeScanNumber;
                 outputString[3] = Integer.toString(uncleavedFragments);
-                if (uncleavedFragments == 0){
-                    uncleavedMeanInt = 0;
-                }
-                else{
-                    uncleavedMeanInt = uncleavedRelInt / (double) uncleavedFragments;
-                }
-                outputString[4] = twoDec.format(uncleavedMeanInt);
+                outputString[4] = twoDec.format(medianCalc(uncleavedIntList));
                 outputString[5] = Integer.toString(cleavedFragments);
-                if (cleavedFragments == 0){
-                    cleavedMeanInt = 0;
-                }
-                else{
-                    cleavedMeanInt = cleavedRelInt / (double)cleavedFragments;
-                }
-                outputString[6] = twoDec.format(cleavedMeanInt);
+                outputString[6] = twoDec.format(medianCalc(cleavedIntList));
+
                 if (ec) {
                     outputString[7] = Integer.toString(cleavedEC179);
-                    if (cleavedEC179 == 0){
-                        cleavedEC179MeanInt = 0;
-                    }
-                    else{
-                        cleavedEC179MeanInt = cleavedEC179RelInt / (double)cleavedEC179;
-                    }
-                    outputString[8] = twoDec.format(cleavedEC179MeanInt);
+                    outputString[8] = twoDec.format(medianCalc(cleavedEC179IntList));
                     outputString[9] = Integer.toString(cleavedEC180);
-                    if (cleavedEC180 == 0){
-                        cleavedEC180MeanInt = 0;
-                    }
-                    else{
-                        cleavedEC180MeanInt = cleavedEC180RelInt / (double)cleavedEC180;
-                    }
-                    outputString[10] = twoDec.format(cleavedEC180MeanInt);
+                    outputString[10] = twoDec.format(medianCalc(cleavedEC180IntList));
                 }
 
                 //all values are set now
@@ -262,16 +238,14 @@ public class CSVAnalyzer {
                 //set all relevant variables to 0
                 uncleavedFragments = 0;
                 cleavedFragments = 0;
-                uncleavedRelInt = 0;
-                cleavedRelInt = 0;
-                uncleavedMeanInt = 0;
-                cleavedMeanInt = 0;
                 cleavedEC179 = 0;
                 cleavedEC180 = 0;
-                cleavedEC179RelInt = 0;
-                cleavedEC180RelInt = 0;
-                cleavedEC179MeanInt = 0;
-                cleavedEC180MeanInt = 0;
+
+                uncleavedIntList.clear();
+                cleavedIntList.clear();
+                cleavedEC179IntList.clear();
+                cleavedEC180IntList.clear();
+
 
                 //set the current peptide and charge state as the active ones
                 activePeptide = currentPeptide;
@@ -285,12 +259,12 @@ public class CSVAnalyzer {
             //cleaved label
             if (values[5].equals("true")){
                 cleavedFragments++;
-                cleavedRelInt += Double.parseDouble(values[13]);
+                cleavedIntList.add(Double.parseDouble(values[13]));
             }
             //uncleaved label
             if (values[5].equals("false")){
                 uncleavedFragments++;
-                uncleavedRelInt += Double.parseDouble(values[13]);
+                uncleavedIntList.add(Double.parseDouble(values[13]));
             }
             //only in case of EC
             if (ec){
@@ -298,11 +272,11 @@ public class CSVAnalyzer {
                 if (values[5].equals("true")){
                     if (values[4].contains("179")){
                         cleavedEC179++;
-                        cleavedEC179RelInt += Double.parseDouble(values[13]);
+                        cleavedEC179IntList.add(Double.parseDouble(values[13]));
                     }
                     if (values[4].contains("180")){
                         cleavedEC180++;
-                        cleavedEC180RelInt += Double.parseDouble(values[13]);
+                        cleavedEC180IntList.add(Double.parseDouble(values[13]));
                     }
                 }
             }
@@ -313,38 +287,15 @@ public class CSVAnalyzer {
         outputString[1] = Integer.toString(activeChargeState) + "+";
         outputString[2] = activeScanNumber;
         outputString[3] = Integer.toString(uncleavedFragments);
-        if (uncleavedFragments == 0){
-            uncleavedMeanInt = 0;
-        }
-        else{
-            uncleavedMeanInt = uncleavedRelInt / (double) uncleavedFragments;
-        }
-        outputString[4] = twoDec.format(uncleavedMeanInt);
+        outputString[4] = twoDec.format(medianCalc(uncleavedIntList));
         outputString[5] = Integer.toString(cleavedFragments);
-        if (cleavedFragments == 0){
-            cleavedMeanInt = 0;
-        }
-        else{
-            cleavedMeanInt = cleavedRelInt / (double)cleavedFragments;
-        }
-        outputString[6] = twoDec.format(cleavedMeanInt);
+        outputString[6] = twoDec.format(medianCalc(cleavedIntList));
+
         if (ec) {
             outputString[7] = Integer.toString(cleavedEC179);
-            if (cleavedEC179 == 0){
-                cleavedEC179MeanInt = 0;
-            }
-            else{
-                cleavedEC179MeanInt = cleavedEC179RelInt / (double)cleavedEC179;
-            }
-            outputString[8] = twoDec.format(cleavedEC179MeanInt);
+            outputString[8] = twoDec.format(medianCalc(cleavedEC179IntList));
             outputString[9] = Integer.toString(cleavedEC180);
-            if (cleavedEC180 == 0){
-                cleavedEC180MeanInt = 0;
-            }
-            else{
-                cleavedEC180MeanInt = cleavedEC180RelInt / (double)cleavedEC180;
-            }
-            outputString[10] = twoDec.format(cleavedEC180MeanInt);
+            outputString[10] = twoDec.format(medianCalc(cleavedEC180IntList));
         }
         //all values are set now
         //start Stringbuilder
@@ -366,4 +317,43 @@ public class CSVAnalyzer {
 
         System.out.println("Analysis complete! Peptides handled in total: "+ (handledPeptides-1));
     }
+
+
+
+
+    private static double medianCalc(ArrayList<Double> valuesIn){
+        double median;
+        if (valuesIn.size() == 0)
+        median = 0;
+        else {
+            //sort list
+            Collections.sort(valuesIn);
+            int middle = valuesIn.size()/2;
+            //check if list length is even or odd
+            //even
+            if (valuesIn.size() % 2 == 0) {
+                median = (valuesIn.get(middle)+valuesIn.get(middle-1))/2.0;
+            }
+            //odd
+            else{
+                median = valuesIn.get(middle);
+            }
+        }
+
+        return median;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
