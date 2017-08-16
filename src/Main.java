@@ -62,13 +62,13 @@ public class Main {
 
         PeakCompare.peakCompare(csvSpectrumLeander, modPep, 10);*/
 
-        //String toAnalyze = "C:\\Programmierordner\\completeAnalysis_TMT_withz2\\completeAnalysis_TMT_withz2_complete.csv";
-        //CSVAnalyzer.cicStatistics(toAnalyze);
-        String statisticsFilePath = "C:\\Programmierordner\\completeAnalysis_TMT_withz2\\completeAnalysis_TMT_withz2_complete_statistics.csv";
-        File statisticsFile = new File(statisticsFilePath);
+        String toAnalyze = "C:\\Programmierordner\\completeAnalysis_TMT_withz2\\completeAnalysis_TMT_withz2_complete.csv";
+        CSVAnalyzer.cicStatistics(toAnalyze);
+        //String statisticsFilePath = "C:\\Programmierordner\\completeAnalysis_TMT_withz2\\completeAnalysis_TMT_withz2_complete_statistics.csv";
+        //File statisticsFile = new File(statisticsFilePath);
 
 
-        CSVReader.wholeRunRepFinder(completemzXML,statisticsFile ,5);
+        //CSVReader.wholeRunRepFinder(completemzXML,statisticsFile ,5);
 
 
 

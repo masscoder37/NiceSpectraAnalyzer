@@ -52,6 +52,10 @@ public class ComplementaryClusterChecker {
             //System.out.println();
         }
 
+
+
+        //only use matches were there is a label present
+
         ArrayList<CompClusterIonMatch> relevantMatches = new ArrayList<>();
         relevantMatches = relevantMatchesPicker(successfulMatches, spectrumHeader);
 
@@ -190,7 +194,7 @@ public class ComplementaryClusterChecker {
                         labelName += ";";
                     labelName +=  labeledAAs.get(a).getModification().getModificationName();
                     //determine if cleavage status is all uncleaved (isCleaved = false, isMixed = false), all cleaved (isCleaved= true, isMixed = false)
-                    //in case of mixing: isCleaved=false, isMixed=true
+                    //in case of mixing: isCleaved=true, isMixed=true
                     //if only one variable is present, then exit here
                     if (a==0) {
                         isCleaved = labeledAAs.get(a).getModification().getCleavedStatus(); //cleaved: true; intact=false

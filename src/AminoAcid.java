@@ -3,6 +3,9 @@
 /**
  * Created by micha on 6/14/2017.
  */
+
+//this class handels different AminoAcids
+    //all the information is supplied by a .csv-File with all the AminiAcids
 public class AminoAcid {
     private String name;
     private String threeLetter;
