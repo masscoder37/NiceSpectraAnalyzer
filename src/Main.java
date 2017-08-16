@@ -30,7 +30,7 @@ public class Main {
         ArrayList<AminoAcid> aminoAcidsList = CSVReader.aminoAcidParse(aminoAcids);
 
         //testing: read in spectrum
-        String filePathSpectrum =  "C:\\Programmierordner\\20170613_stamch_EColi_1to1TMT_BSA_1pmol_1ug_28HCD.mzXML";
+        String filePathSpectrum =  "C:\\Programmierordner\\20170529_stamch_EColi_1to1_BSA_1pmol_1ug.mzXML";
         File completemzXMLSource = new File(filePathSpectrum);
         MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
 
@@ -62,13 +62,14 @@ public class Main {
 
         PeakCompare.peakCompare(csvSpectrumLeander, modPep, 10);*/
 
-        String toAnalyze = "C:\\Programmierordner\\completeAnalysis_TMT_withz2\\completeAnalysis_TMT_withz2_complete.csv";
-        CSVAnalyzer.cicStatistics(toAnalyze);
-        //String statisticsFilePath = "C:\\Programmierordner\\completeAnalysis_TMT_withz2\\completeAnalysis_TMT_withz2_complete_statistics.csv";
-        //File statisticsFile = new File(statisticsFilePath);
+        //String toAnalyze = "C:\\Programmierordner\\completeAnalysis_withz2_EC\\completeAnalysis_EC_withz2_complete.csv";
+        //CSVAnalyzer.cicStatistics(toAnalyze);
+        String statisticsFilePath = "C:\\Programmierordner\\completeAnalysis_withz2_EC\\completeAnalysis_EC_withz2_complete_statistics.csv";
+        File statisticsFile = new File(statisticsFilePath);
+        
 
 
-        //CSVReader.wholeRunRepFinder(completemzXML,statisticsFile ,5);
+        CSVReader.wholeRunRepFinder(completemzXML, statisticsFile ,5);
 
 
 
