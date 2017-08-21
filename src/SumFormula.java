@@ -142,4 +142,46 @@ public class SumFormula {
         return protonNumber;
     }
 
+    public int getCNumber(){
+        int cNumber = 0;
+        for (Element e : this.elements){
+            if (e.getElementName().equals("C"))
+                cNumber++;
+        }
+        return cNumber;
+    }
+    public int getHNumber(){
+        int hNumber = 0;
+        for (Element e : this.elements){
+            if (e.getElementName().equals("H") || e.getElementName().equals("H+"))
+                hNumber++;
+        }
+        return hNumber;
+    }
+
+    public int getNNumber(){
+        int nNumber = 0;
+        for (Element e : this.elements){
+            if (e.getElementName().equals("N"))
+                nNumber++;
+        }
+        return nNumber;
+    }
+    public int getONumber(){
+        int oNumber = 0;
+        for (Element e : this.elements){
+            if (e.getElementName().equals("O"))
+                oNumber++;
+        }
+        return oNumber;
+    }
+    public int getSNumber(){
+        int sNumber = 0;
+        for (Element e : this.elements){
+            if (e.getElementName().equals("S"))
+                sNumber++;
+        }
+        return sNumber;
+    }
+
 }

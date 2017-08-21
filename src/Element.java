@@ -89,34 +89,34 @@ public class Element {
                     break;
             }
         }
-            //Strings for the elements, to filter out quantities with 0
-            String C = "C" + quantC;
-            String H = "H" + quantH;
-            String N = "N" + quantN;
-            String O = "O" + quantO;
-            String S = "S" + quantS;
-            String HPlus = "H+" + quantHPlus;
-            String Cx = "Cx" + quantCx;
-            String F = "F" + quantF;
+        //Strings for the elements, to filter out quantities with 0
+        String C = "C" + quantC;
+        String H = "H" + quantH;
+        String N = "N" + quantN;
+        String O = "O" + quantO;
+        String S = "S" + quantS;
+        String HPlus = "H+" + quantHPlus;
+        String Cx = "Cx" + quantCx;
+        String F = "F" + quantF;
 
-            if (quantH == 0) {
-                H = "";
-            }
-            if (quantC == 0) {
-                C = "";
-            }
-            if (quantN == 0) {
-                N = "";
-            }
-            if (quantO == 0) {
-                O = "";
-            }
-            if (quantS == 0) {
-                S = "";
-            }
-            if (quantHPlus == 0) {
-                HPlus = "";
-            }
+        if (quantH == 0) {
+            H = "";
+        }
+        if (quantC == 0) {
+            C = "";
+        }
+        if (quantN == 0) {
+            N = "";
+        }
+        if (quantO == 0) {
+            O = "";
+        }
+        if (quantS == 0) {
+            S = "";
+        }
+        if (quantHPlus == 0) {
+            HPlus = "";
+        }
         if (quantCx == 0) {
             Cx = "";
         }
@@ -124,13 +124,15 @@ public class Element {
             F = "";
         }
 
-            formula = ""+ C + H  + N + O + S + Cx + F + HPlus;
+        formula = ""+ C + H  + N + O + S + Cx + F + HPlus;
 
 
 
 
         return formula;
     }
+
+
 
 public double getElementMass(){return this.elementMass;}
 public String getElementName(){return this.elementName;}

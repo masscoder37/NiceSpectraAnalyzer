@@ -32,7 +32,7 @@ public class Main {
         //testing: read in spectrum
         String filePathSpectrum =  "C:\\Programmierordner\\20170529_stamch_EColi_1to1_BSA_1pmol_1ug.mzXML";
         File completemzXMLSource = new File(filePathSpectrum);
-        MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
+       // MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
 
         //testing: creating peptides
         //Peptide pepA = new Peptide("LLADDVPSK", aminoAcidsList);
@@ -66,12 +66,16 @@ public class Main {
         //CSVAnalyzer.cicStatistics(toAnalyze);
         String statisticsFilePath = "C:\\Programmierordner\\completeAnalysis_withz2_EC\\completeAnalysis_EC_withz2_complete_statistics.csv";
         File statisticsFile = new File(statisticsFilePath);
-        
 
 
-        CSVReader.wholeRunRepFinder(completemzXML, statisticsFile ,5);
 
+        //CSVReader.wholeRunRepFinder(completemzXML, statisticsFile ,5);
 
+       // Peptide testPeptide = new Peptide("IMNVIGEPIDER", aminoAcidsList);
+
+        SumFormula abundanceTest = new SumFormula("C18H33N5O5H+1");
+        //System.out.println("Peptide mass: "+abundanceTest.getExactMass());
+        System.out.println("Abundance of first isotopic peak: "+IsotopicDistributer.abundanceAddNeutron(abundanceTest)*100);
 
 
 
