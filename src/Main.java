@@ -30,9 +30,9 @@ public class Main {
         ArrayList<AminoAcid> aminoAcidsList = CSVReader.aminoAcidParse(aminoAcids);
 
         //testing: read in spectrum
-        String filePathSpectrum =  "C:\\Programmierordner\\20170529_stamch_EColi_1to1_BSA_1pmol_1ug.mzXML";
+        String filePathSpectrum =  "C:\\Programmierordner\\EC_HEK\\20170821_stamch_HEKLysate_EC_1to1_5uL.mzXML";
         File completemzXMLSource = new File(filePathSpectrum);
-       // MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
+        //MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
 
         //testing: creating peptides
         //Peptide pepA = new Peptide("LLADDVPSK", aminoAcidsList);
@@ -40,15 +40,13 @@ public class Main {
         //Modification oxidationM = new Modification("Oxidation", "O", 'M' );
         //modList.add(Modification.uncleavedECDuplex(1));
 
-        //String evidenceLocation = "C:\\Programmierordner\\24052017_EC_BSA_SpikeIn_evidence_1to1.txt";
-        //File evidence = new File(evidenceLocation);
-        //ArrayList<CompClusterIonMatch> relevantMatches = new ArrayList<>();
-        //relevantMatches = CSVReader.wholeRunCICChecker(completemzXML, evidence, aminoAcidsList, 5);
-        //String csvOutPath = "C:\\Programmierordner\\completeAnalysisTMT";
+        String evidenceLocation = "C:\\Programmierordner\\EC_HEK\\21082017_EC_TMT_HEK_filtered.txt";
+        File evidence = new File(evidenceLocation);
+        String csvOutPath = "C:\\Programmierordner\\completeAnalysisTMT";
         //CSVCreator.compClusterMatchCSVPrinter(relevantMatches, csvOutPath);
         //CSVReader.wholeRunCICChecker(completemzXML, evidence, aminoAcidsList, 5, 500, csvOutPath, "EC");
 
-        //CSVCreator.csvFileCombiner("C:\\Programmierordner\\completeAnalysis_withz2_EC\\");
+        //CSVCreator.csvFileCombiner("C:\\Programmierordner\\EC_HEK\\Complete Analysis\\");
 
         /*File csvFileLeander = new File ("C:\\Programmierordner\\ILNAHMDSLQWVDQSSALLQR_MSMS.csv");
         MySpectrum csvSpectrumLeander = CSVReader.spectrumParse(csvFileLeander);
@@ -62,20 +60,27 @@ public class Main {
 
         PeakCompare.peakCompare(csvSpectrumLeander, modPep, 10);*/
 
-        //String toAnalyze = "C:\\Programmierordner\\completeAnalysis_withz2_EC\\completeAnalysis_EC_withz2_complete.csv";
+        //String toAnalyze = "C:\\Programmierordner\\EC_HEK\\Complete Analysis\\EC_HEK_complete.csv";
         //CSVAnalyzer.cicStatistics(toAnalyze);
-        String statisticsFilePath = "C:\\Programmierordner\\completeAnalysis_withz2_EC\\completeAnalysis_EC_withz2_complete_statistics.csv";
-        File statisticsFile = new File(statisticsFilePath);
-
-
-
+        //String statisticsFilePath = "C:\\Programmierordner\\EC_HEK\\Complete Analysis\\EC_HEK_complete_statistics.csv";
+        //File statisticsFile = new File(statisticsFilePath);
         //CSVReader.wholeRunRepFinder(completemzXML, statisticsFile ,5);
 
-       // Peptide testPeptide = new Peptide("IMNVIGEPIDER", aminoAcidsList);
+       Peptide testPeptide = new Peptide("VIPYWNETILPR", aminoAcidsList);
+       ArrayList<Modification> modList = new ArrayList<>();
+       modList.add(Modification.uncleavedECDuplex(1));
+       Peptide modPeptide = testPeptide.peptideModifier(modList);
+       modPeptide.peptidePrinter();
+       ArrayList<FragmentIon> fragments = new ArrayList<>();
+       fragments.addAll(modPeptide.getbIons());
+       fragments.addAll(modPeptide.getyIons());
+       for (FragmentIon f : fragments){
+           FragmentIon.fragmentIonPrinter(f);
+       }
 
-        SumFormula abundanceTest = new SumFormula("C18H33N5O5H+1");
+        //SumFormula abundanceTest = new SumFormula("C18H33N5O5H+1");
         //System.out.println("Peptide mass: "+abundanceTest.getExactMass());
-        System.out.println("Abundance of first isotopic peak: "+IsotopicDistributer.abundanceAddNeutron(abundanceTest)*100);
+        //System.out.println("Abundance of first isotopic peak: "+IsotopicDistributer.abundanceAddNeutron(abundanceTest)*100);
 
 
 
