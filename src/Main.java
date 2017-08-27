@@ -66,9 +66,10 @@ public class Main {
         //File statisticsFile = new File(statisticsFilePath);
         //CSVReader.wholeRunRepFinder(completemzXML, statisticsFile ,5);
 
-       Peptide testPeptide = new Peptide("VIPYWNETILPR", aminoAcidsList);
+       Peptide testPeptide = new Peptide("EMLPVLEAVAK", aminoAcidsList);
        ArrayList<Modification> modList = new ArrayList<>();
        modList.add(Modification.uncleavedECDuplex(1));
+       modList.add(Modification.uncleavedECDuplex(11));
        Peptide modPeptide = testPeptide.peptideModifier(modList);
        modPeptide.peptidePrinter();
        ArrayList<FragmentIon> fragments = new ArrayList<>();
@@ -77,6 +78,11 @@ public class Main {
        for (FragmentIon f : fragments){
            FragmentIon.fragmentIonPrinter(f);
        }
+       File spectrumFile = new File("C:\\Users\\Michael Stadlmeier\\Desktop\\SOT-paper\\current version\\Figure 3\\V04\\EMLPVLEAVAK_24249.csv");
+        MySpectrum csvPepToCheck = CSVReader.spectrumParse(spectrumFile);
+        PeakCompare.peakCompare(csvPepToCheck, modPeptide, 5);
+
+
 
         //SumFormula abundanceTest = new SumFormula("C18H33N5O5H+1");
         //System.out.println("Peptide mass: "+abundanceTest.getExactMass());
