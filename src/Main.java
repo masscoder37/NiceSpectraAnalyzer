@@ -18,75 +18,86 @@ import java.util.Map;
 
 /**
  * Created by Michael Stadlmeier on 6/13/2017.
+ * for more information, please contact me!
+ * michael.stadlmeier@cup.uni-muenchen.de
  */
 public class Main {
+
+    //in this class, the analysis of MS-data can be done
+    //in general, a compiler for JAVA 1.8 is required
+    //follow the instructions in the sections
+    //if you are done with a section, please comment the respective section. To do so, put /* at the beginning and */ at the end of a section
+    //if a section you want to use is in a comment block, remove the comment block by removing /* at the beginning and */ at the end
+    //please be advised that the jmzreader and the mzxml-parser class have to be imported for this application to function
+    //you can find the source code of these classes here: https://github.com/PRIDE-Utilities/jmzReader
+
+
 
     public static void main(String[] args) throws MzXMLParsingException, JMzReaderException, FileNotFoundException {
         DecimalFormat fiveDec = new DecimalFormat("0.00000");
 
-        //testing: read in amino acids
+        //The provided amino acids list is read.
+        //TODO: Please change your file path accordingly so that it points to the provided amino acids list
+        //This has to stay for the complete analysis
         String filePathAcids = "C:\\Programmierordner\\Aminoacids_list.csv";
         File aminoAcids = new File(filePathAcids);
         ArrayList<AminoAcid> aminoAcidsList = CSVReader.aminoAcidParse(aminoAcids);
 
-        //testing: read in spectrum
-        String filePathSpectrum =  "C:\\Programmierordner\\EC_HEK\\20170821_stamch_HEKLysate_EC_1to1_5uL.mzXML";
+        //Here, the spectrum to be analyzed has to be specified
+        //It has to be a .mzXML-File which was centroided on MS1 and MS2-levels (see supporting information)
+        //TODO: Please change your file path accordingly.
+        String filePathSpectrum =  "C:\\Programmierordner\\yourFileName.mzXML";
         File completemzXMLSource = new File(filePathSpectrum);
-        //MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
+        //generating the MzXMLFile object might take a few minutes and will display some warnings.
+        MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
 
-        //testing: creating peptides
-        //Peptide pepA = new Peptide("LLADDVPSK", aminoAcidsList);
-        //ArrayList<Modification> modList = new ArrayList<>();
-        //Modification oxidationM = new Modification("Oxidation", "O", 'M' );
-        //modList.add(Modification.uncleavedECDuplex(1));
 
-        String evidenceLocation = "C:\\Programmierordner\\EC_HEK\\21082017_EC_TMT_HEK_filtered.txt";
+        //In this section, you have to supply the evidence.txt file from your MaxQuant analysis.
+        //At the moment, the software assumes static carbamidomethylation on cysteine residues and variable methionine-oxidation
+        //please filter out other modifications
+        //TODO: Please change your file path accordingly.
+        String evidenceLocation = "C:\\Programmierordner\\YourEvidenceFile.txt";
         File evidence = new File(evidenceLocation);
-        String csvOutPath = "C:\\Programmierordner\\completeAnalysisTMT";
-        //CSVCreator.compClusterMatchCSVPrinter(relevantMatches, csvOutPath);
-        //CSVReader.wholeRunCICChecker(completemzXML, evidence, aminoAcidsList, 5, 500, csvOutPath, "EC");
+        //TODO: Please provide a directory were the output Files will be saved
+        String csvOutPath = "C:\\Programmierordner\\completeAnalysis";
 
-        //CSVCreator.csvFileCombiner("C:\\Programmierordner\\EC_HEK\\Complete Analysis\\");
 
-        /*File csvFileLeander = new File ("C:\\Programmierordner\\ILNAHMDSLQWVDQSSALLQR_MSMS.csv");
-        MySpectrum csvSpectrumLeander = CSVReader.spectrumParse(csvFileLeander);
-        Peptide ilnahmdslqwvdqssallqr = new Peptide("ILNAHMDSLQWVDQSSALLQR", aminoAcidsList);
-        ilnahmdslqwvdqssallqr.peptidePrinter();
-        Modification hvXL = new Modification("photoXL", "C21H23N3O4S", 'M');
-        ArrayList<Modification> modList = new ArrayList<>();
-        modList.add(hvXL);
-        Peptide modPep = ilnahmdslqwvdqssallqr.peptideModifier(modList);
-        modPep.peptidePrinter();
+        //Section 1
+        //This section handles the first data analyis
+        //it creates multiple .csv-Files (one for 500 analyzed spectra each) in the specified directory, containing all matched label-containing fragment ions
+        //TODO: change the max. allowed mass deviation in ppm. Currently: 5 ppm; 4th entry
+        //TODO: change the used label: use "EC" for the SOT-duplex or "TMT" for the TMT-duplex
+        CSVReader.wholeRunCICChecker(completemzXML, evidence, aminoAcidsList, 5, 500, csvOutPath, "EC");
+        //TODO: after compilation, the files should be created! Put section 1 in a comment block!
 
-        PeakCompare.peakCompare(csvSpectrumLeander, modPep, 10);*/
 
-        //String toAnalyze = "C:\\Programmierordner\\EC_HEK\\Complete Analysis\\EC_HEK_complete.csv";
-        //CSVAnalyzer.cicStatistics(toAnalyze);
-        //String statisticsFilePath = "C:\\Programmierordner\\EC_HEK\\Complete Analysis\\EC_HEK_complete_statistics.csv";
+
+        //Section 2
+        /*
+        //This line combines the created .csv Files to generate 1 complete file
+        //TODO: Remove the comments from this section and put them in front of Section 1
+        CSVCreator.csvFileCombiner(csvOutPath);
+        */
+
+
+
+        //Section 3
+        //in this section, the peptide specific analysis of the results from section 2 is carried out
+        //TODO: Remove the comments from this section and be sure that there are comments before and after sections 1 and 2
+        //TODO: Change the file path to your file to analyze; in this case, to complete analysis
+
+        /*
+        String toAnalyze = "C:\\Programmierordner\\completeAnalysis\\TheCompleteAnalysisFromSection2.csv";
+        CSVAnalyzer.cicStatistics(toAnalyze);
+        */
+
+        //Section 4
+        //in this section, you can analyse the reporter ion intensities of the files
+        //TODO:Remove the comments from this section and be sure that there are comments before and after sections 1, 2 and 3
+        //TODO: You can specify the allowed reporter ion mass deviation [ppm]. Standard parameter is 5 ppm; 3rd entry
+        //String statisticsFilePath = "C:\\Programmierordner\\completeAnalysis\\TheCompleteAnalysisFromSection2.csv";
         //File statisticsFile = new File(statisticsFilePath);
         //CSVReader.wholeRunRepFinder(completemzXML, statisticsFile ,5);
-
-       Peptide testPeptide = new Peptide("EMLPVLEAVAK", aminoAcidsList);
-       ArrayList<Modification> modList = new ArrayList<>();
-       modList.add(Modification.uncleavedECDuplex(1));
-       modList.add(Modification.uncleavedECDuplex(11));
-       Peptide modPeptide = testPeptide.peptideModifier(modList);
-       modPeptide.peptidePrinter();
-       ArrayList<FragmentIon> fragments = new ArrayList<>();
-       fragments.addAll(modPeptide.getbIons());
-       fragments.addAll(modPeptide.getyIons());
-       for (FragmentIon f : fragments){
-           FragmentIon.fragmentIonPrinter(f);
-       }
-       File spectrumFile = new File("C:\\Users\\Michael Stadlmeier\\Desktop\\SOT-paper\\current version\\Figure 3\\V04\\EMLPVLEAVAK_24249.csv");
-        MySpectrum csvPepToCheck = CSVReader.spectrumParse(spectrumFile);
-        PeakCompare.peakCompare(csvPepToCheck, modPeptide, 5);
-
-
-
-        //SumFormula abundanceTest = new SumFormula("C18H33N5O5H+1");
-        //System.out.println("Peptide mass: "+abundanceTest.getExactMass());
-        //System.out.println("Abundance of first isotopic peak: "+IsotopicDistributer.abundanceAddNeutron(abundanceTest)*100);
 
 
 
