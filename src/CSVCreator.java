@@ -23,7 +23,7 @@ public class CSVCreator {
         StringBuilder sb = new StringBuilder();
 
         //define captions
-        String[] header = new String[18];
+        String[] header = new String[19];
         header[0] = "Modified Peptide";
         header[1] = "Precursor Mass [m/z]";
         header[2] = "Precursor Charge";
@@ -42,6 +42,8 @@ public class CSVCreator {
         header[15] = "Scan Number";
         header[16] = "Fragment Ion Amino Acid Sequence";
         header[17] = "Fragment Ion Sum Formula";
+        header[18] = "Leading Proteins";
+
 
         //Write captions in file
         //first seperator is empty
@@ -57,7 +59,7 @@ public class CSVCreator {
         //handle the CompClusterMatches now
         for (CompClusterIonMatch match : matchesIn){
             //get the values
-            String[] values = new String[18];
+            String[] values = new String[19];
             values[0] = match.getFragmentIon().getPrecursorSequence(); //"Modified Peptide";
 
 
@@ -81,6 +83,7 @@ public class CSVCreator {
             values[15] = Integer.toString(match.getPeak().getScanNumber()); //"Scan Number";
             values[16] = match.getFragmentIon().getAASequence();//"Fragment Ion Sequence";
             values[17] = match.getFragmentIon().getFormula().getSumFormula();//"Fragment Ion Sum Formula";
+            values[18] = match.getLeadingProteins();
 
             //start writing
             sep = "";

@@ -11,22 +11,24 @@ public class CompClusterIonMatch extends IonMatch {
     private boolean isMixed;
     private String labelName;
     private String scanHeader;
+    private String leadingProteins;
     private int labelQuantity;
 
-    public CompClusterIonMatch(FragmentIon fragmentIonIn, Peak peakIn, double ppmDeviationIn, String labelNameIn, boolean isCleavedOnlyIn, boolean isMixedIn, String scanHeaderIn){
+    public CompClusterIonMatch(FragmentIon fragmentIonIn, Peak peakIn, double ppmDeviationIn, String labelNameIn, boolean isCleavedOnlyIn, boolean isMixedIn, String scanHeaderIn, String leadProteinsIn){
         super(fragmentIonIn, peakIn, ppmDeviationIn);
         this.labelName = labelNameIn;
         this.isCleaved = isCleavedOnlyIn;
         this.isMixed = isMixedIn;
         this.scanHeader = scanHeaderIn;
         this.labelQuantity = fragmentIonIn.getLabelQuantity();
-
+        this.leadingProteins = leadProteinsIn;
     }
 
     public String getLabelName(){return this.labelName;}
     public boolean getIsCleaved(){return this.isCleaved;}
     public boolean getMixedLabels(){return this.isMixed;}
     public String getScanHeader(){return this.scanHeader;}
+    public String getLeadingProteins(){return this.leadingProteins;}
 
 
 }

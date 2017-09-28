@@ -17,6 +17,7 @@ public class FragmentIon extends Ion {
 
 
 
+
     private static DecimalFormat fiveDec = new DecimalFormat("0.00000");
 
 
@@ -28,6 +29,7 @@ public class FragmentIon extends Ion {
         this.isModified = modificationStatus;
         this.aminoAcidsList = aaCompositionIn;
     }
+
 
     //getter
     public String getPrecursorSequence(){return this.precursorSequence;}

@@ -95,7 +95,7 @@ public class CSVReader {
         //read out the captions
         String captions = scanner.nextLine();
         String[] splitCaptions = captions.split("\t");
-        //determine the important columns: "Sequence", "Modifications", "Modified sequence", "MS/MS Scan Number" and "Reporter intensity count 0"
+        //determine the important columns: "Sequence", "Modifications", "Modified sequence", "MS/MS Scan Number", "Reporter intensity count 0" and "Leading Proteins"
         //create new map with those keywords and the column indices (starting from 0!) as values
         Map<String, Integer> captionPositions = new HashMap<>();
         int index = 0;
@@ -110,16 +110,20 @@ public class CSVReader {
                 case "Modified sequence":
                     captionPositions.put("Modified sequence", index);
                     break;
-                case "MS/MS Scan Number":
-                    captionPositions.put("MS/MS Scan Number", index);
-                case "Reporter intensity count 0":
-                    captionPositions.put("Reporter intensity count 0", index);
+                case "Leading proteins":
+                    captionPositions.put("Leading proteins", index);
                     break;
+                case "MS/MS Scan Number":
+                captionPositions.put("MS/MS Scan Number", index);
+                break;
+                case "Reporter intensity count 0":
+                captionPositions.put("Reporter intensity count 0", index);
+                break;
             }
             index++;
         }
 
-        if (captionPositions.size() != 5)
+        if (captionPositions.size() != 6)
             throw new IllegalArgumentException("Not all required captions could be read!");
         int sortedOut = 0;
         int processedSpectra = 0;
@@ -139,11 +143,12 @@ public class CSVReader {
             }
 
 
-            //read out the direct informations
+            //read out the direct information
             String sequence = values[captionPositions.get("Sequence")];
             String modSequence = values[captionPositions.get("Modified sequence")];
             String scanNumber = values[captionPositions.get("MS/MS Scan Number")];
             String modStatus = values[captionPositions.get("Modifications")];
+            String leadingProteins = values[captionPositions.get("Leading proteins")];
 
 
             //use this information to create the ArrayList<Modification> necessary for the CompClusterChecker
@@ -154,9 +159,9 @@ public class CSVReader {
                 }
                 ArrayList<CompClusterIonMatch> currentSpectrumMatches = new ArrayList<>();
                 if (labelIn.equals("EC"))
-                    currentSpectrumMatches = ComplementaryClusterChecker.compClusterCheckerEC(aminoAcids, sequence, mods, scanNumber, runIn, accuracy);
+                    currentSpectrumMatches = ComplementaryClusterChecker.compClusterCheckerEC(aminoAcids, sequence, mods, scanNumber, runIn, accuracy, leadingProteins);
                 if (labelIn.equals("TMT"))
-                    currentSpectrumMatches = ComplementaryClusterChecker.compClusterCheckerTMT(aminoAcids, sequence, mods, scanNumber, runIn, accuracy);
+                    currentSpectrumMatches = ComplementaryClusterChecker.compClusterCheckerTMT(aminoAcids, sequence, mods, scanNumber, runIn, accuracy, leadingProteins);
                 allResults.addAll(currentSpectrumMatches);
                 processedSpectra++;
                 System.out.println("Processed spectrum number: " + scanNumber);
@@ -199,9 +204,9 @@ public class CSVReader {
             }
             ArrayList<CompClusterIonMatch> currentSpectrumMatches = new ArrayList<>();
             if (labelIn.equals("EC"))
-                currentSpectrumMatches = ComplementaryClusterChecker.compClusterCheckerEC(aminoAcids, sequence, mods, scanNumber, runIn, accuracy);
+                currentSpectrumMatches = ComplementaryClusterChecker.compClusterCheckerEC(aminoAcids, sequence, mods, scanNumber, runIn, accuracy, leadingProteins);
             if (labelIn.equals("TMT"))
-                currentSpectrumMatches = ComplementaryClusterChecker.compClusterCheckerTMT(aminoAcids, sequence, mods, scanNumber, runIn, accuracy);
+                currentSpectrumMatches = ComplementaryClusterChecker.compClusterCheckerTMT(aminoAcids, sequence, mods, scanNumber, runIn, accuracy, leadingProteins);
             allResults.addAll(currentSpectrumMatches);
             processedSpectra++;
             addedSpectra++;
@@ -277,10 +282,10 @@ public static void wholeRunRepFinder(MzXMLFile runIn, File statisticsAnalysis, d
     newHeader[1] = "Precursor Charge";
     newHeader[2] = "Scan Number";
     newHeader[3] = "Rep0 Relative Intensity [%]";
-    newHeader[4] = "Rep0 Absolut Intensity [au]";
+    newHeader[4] = "Rep0 Absolute Intensity [au]";
     newHeader[5] = "Rep0 Mass Deviation [ppm]";
     newHeader[6] = "Rep1 Relative Intensity [%]";
-    newHeader[7] = "Rep1 Absolut Intensity [au]";
+    newHeader[7] = "Rep1 Absolute Intensity [au]";
     newHeader[8] = "Rep1 Mass Deviation [ppm]";
     String sep = "";
     for (String s : newHeader){

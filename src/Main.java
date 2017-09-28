@@ -46,20 +46,20 @@ public class Main {
         //Here, the spectrum to be analyzed has to be specified
         //It has to be a .mzXML-File which was centroided on MS1 and MS2-levels (see supporting information)
         //TODO: Please change your file path accordingly.
-        String filePathSpectrum =  "C:\\Programmierordner\\yourFileName.mzXML";
+        String filePathSpectrum =  "C:\\Programmierordner\\20170529_stamch_EColi_1to1_BSA_1pmol_1ug.mzXML";
         File completemzXMLSource = new File(filePathSpectrum);
         //generating the MzXMLFile object might take a few minutes and will display some warnings.
-        MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
+        //MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
 
 
         //In this section, you have to supply the evidence.txt file from your MaxQuant analysis.
         //At the moment, the software assumes static carbamidomethylation on cysteine residues and variable methionine-oxidation
         //please filter out other modifications
         //TODO: Please change your file path accordingly.
-        String evidenceLocation = "C:\\Programmierordner\\YourEvidenceFile.txt";
+        String evidenceLocation = "C:\\Programmierordner\\24052017_EC_BSA_SpikeIn_evidence_1to1.txt";
         File evidence = new File(evidenceLocation);
         //TODO: Please provide a directory were the output Files will be saved
-        String csvOutPath = "C:\\Programmierordner\\completeAnalysis";
+        String csvOutPath = "C:\\Programmierordner\\testNewAnalysis\\";
 
 
         //Section 1
@@ -67,17 +67,17 @@ public class Main {
         //it creates multiple .csv-Files (one for 500 analyzed spectra each) in the specified directory, containing all matched label-containing fragment ions
         //TODO: change the max. allowed mass deviation in ppm. Currently: 5 ppm; 4th entry
         //TODO: change the used label: use "EC" for the SOT-duplex or "TMT" for the TMT-duplex
-        CSVReader.wholeRunCICChecker(completemzXML, evidence, aminoAcidsList, 5, 500, csvOutPath, "EC");
+        //CSVReader.wholeRunCICChecker(completemzXML, evidence, aminoAcidsList, 5, 500, csvOutPath, "EC");
         //TODO: after compilation, the files should be created! Put section 1 in a comment block!
 
 
 
         //Section 2
-        /*
+
         //This line combines the created .csv Files to generate 1 complete file
         //TODO: Remove the comments from this section and put them in front of Section 1
         CSVCreator.csvFileCombiner(csvOutPath);
-        */
+
 
 
 

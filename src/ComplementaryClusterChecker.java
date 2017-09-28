@@ -17,7 +17,7 @@ public class ComplementaryClusterChecker {
                                                                        String SequenceIn,
                                                                        ArrayList<Modification> modsIn,
                                                                        String spectrumID, MzXMLFile completeFileIn,
-                                                                       double accuracy) throws JMzReaderException {
+                                                                       double accuracy, String leadProtsIn) throws JMzReaderException {
         ArrayList<IonMatch> successfulMatches = new ArrayList<>();
         //generate spectrum to look at:
         MySpectrum spectrumToCheck = MzXMLReadIn.mzXMLToMySpectrum(completeFileIn, spectrumID);
@@ -57,7 +57,7 @@ public class ComplementaryClusterChecker {
         //only use matches were there is a label present
 
         ArrayList<CompClusterIonMatch> relevantMatches = new ArrayList<>();
-        relevantMatches = relevantMatchesPicker(successfulMatches, spectrumHeader);
+        relevantMatches = relevantMatchesPicker(successfulMatches, spectrumHeader, leadProtsIn);
 
         //relevantMatches still contains multiple instances of the same modification, since the fragment ions from different modified peptides can be the same
 
@@ -170,7 +170,7 @@ public class ComplementaryClusterChecker {
         return mod;
     }
 
-    private static ArrayList<CompClusterIonMatch> relevantMatchesPicker(ArrayList<IonMatch> completeListIn, String scanHeaderIn){
+    private static ArrayList<CompClusterIonMatch> relevantMatchesPicker(ArrayList<IonMatch> completeListIn, String scanHeaderIn, String leadProtsIn){
         ArrayList<CompClusterIonMatch> relevantList = new ArrayList<>();
         //loop through every match in the complete IonMatch list
         for (IonMatch match : completeListIn){
@@ -211,7 +211,7 @@ public class ComplementaryClusterChecker {
                 }
                 CompClusterIonMatch importantMatch = new CompClusterIonMatch(match.getFragmentIon(), match.getPeak(),
                                                                                 match.getPpmDeviation(),
-                                                                                labelName,isCleavedAtAll, isMixed, scanHeaderIn);
+                                                                                labelName,isCleavedAtAll, isMixed, scanHeaderIn, leadProtsIn);
                 relevantList.add(importantMatch);
             }
         }
@@ -263,7 +263,7 @@ public class ComplementaryClusterChecker {
                                                                        String SequenceIn,
                                                                        ArrayList<Modification> modsIn,
                                                                        String spectrumID, MzXMLFile completeFileIn,
-                                                                       double accuracy) throws JMzReaderException {
+                                                                       double accuracy, String leadProtsIn) throws JMzReaderException {
         ArrayList<IonMatch> successfulMatches = new ArrayList<>();
         //generate spectrum to look at:
         MySpectrum spectrumToCheck = MzXMLReadIn.mzXMLToMySpectrum(completeFileIn, spectrumID);
@@ -300,7 +300,7 @@ public class ComplementaryClusterChecker {
 
         //relevant Matches Picker doesn't change in regard to EC
         ArrayList<CompClusterIonMatch> relevantMatches = new ArrayList<>();
-        relevantMatches = relevantMatchesPicker(successfulMatches, spectrumHeader);
+        relevantMatches = relevantMatchesPicker(successfulMatches, spectrumHeader, leadProtsIn);
 
         //relevantMatches still contains multiple instances of the same modification, since the fragment ions from different modified peptides can be the same
         //same matches Consolidator Method can be utilized

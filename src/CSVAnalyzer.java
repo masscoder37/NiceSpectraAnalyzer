@@ -41,15 +41,16 @@ public class CSVAnalyzer {
         //0 Modified Peptide
         //1 Precursor Charge
         //2 Scan Number
-        //3 Number uncleaved fragments
-        //4 Mean intensity uncleaved fragments
-        //5 Number cleaved fragments
-        //6 Mean intensity cleaved fragments
+        //3 Leading Proteins
+        //4 Number uncleaved fragments
+        //5 Mean intensity uncleaved fragments
+        //6 Number cleaved fragments
+        //7 Mean intensity cleaved fragments
         //only in case of EC, also add other information to analyze duplex
-        //7 Number EC 179 fragments
-        //8 Mean intensity EC179
-        //9 Number EC 180 fragments
-        //10 Mean intensity EC180
+        //8 Number EC 179 fragments
+        //9 Mean intensity EC179
+        //10 Number EC 180 fragments
+        //11 Mean intensity EC180
         String header = "Modified Peptide";
         sb.append(header);
         sb.append(',');
@@ -57,6 +58,9 @@ public class CSVAnalyzer {
         sb.append(header);
         sb.append(',');
         header = "Scan Number";
+        sb.append(header);
+        sb.append(',');
+        header = "Leading Proteins";
         sb.append(header);
         sb.append(',');
         header = "Number uncleaved fragments";
@@ -100,6 +104,7 @@ public class CSVAnalyzer {
         String currentChargeStateString;
         int currentChargeState = 0;
         String activeScanNumber;
+        String activeLeadingProteins;
 
         //variables that have to be read out or calculated
         int uncleavedFragments = 0;
@@ -116,9 +121,9 @@ public class CSVAnalyzer {
         //set length of output string[]
         int outputLength;
         if (ec)
-            outputLength = 11;
+            outputLength = 12;
         else
-            outputLength = 7;
+            outputLength = 8;
 
         int handledPeptides = 1;
 
@@ -132,6 +137,9 @@ public class CSVAnalyzer {
         activeChargeStateString = firstLineValues[2].replace("+","");
         activeChargeState = Integer.parseInt(activeChargeStateString);
         activeScanNumber = firstLineValues[15];
+        activeLeadingProteins = firstLineValues[18];
+
+
 
         //do first readout of values
 
@@ -183,6 +191,7 @@ public class CSVAnalyzer {
             //15 Scan Number
             //16 Fragment Ion Amino Acid Sequence
             //17 Fragment Ion Sum Formula
+            //18 Leading Proteins
 
             //set current Peptide with charge state
             currentPeptide = values[0];
