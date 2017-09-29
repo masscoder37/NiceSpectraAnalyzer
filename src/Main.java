@@ -76,7 +76,7 @@ public class Main {
 
         //This line combines the created .csv Files to generate 1 complete file
         //TODO: Remove the comments from this section and put them in front of Section 1
-        CSVCreator.csvFileCombiner(csvOutPath);
+        //CSVCreator.csvFileCombiner(csvOutPath);
 
 
 
@@ -86,10 +86,10 @@ public class Main {
         //TODO: Remove the comments from this section and be sure that there are comments before and after sections 1 and 2
         //TODO: Change the file path to your file to analyze; in this case, to complete analysis
 
-        /*
-        String toAnalyze = "C:\\Programmierordner\\completeAnalysis\\TheCompleteAnalysisFromSection2.csv";
+
+        String toAnalyze = "C:\\Programmierordner\\testNewAnalysis\\testNewAnalysis_complete_EC.csv";
         CSVAnalyzer.cicStatistics(toAnalyze);
-        */
+
 
         //Section 4
         //in this section, you can analyse the reporter ion intensities of the files

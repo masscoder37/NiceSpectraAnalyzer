@@ -96,14 +96,15 @@ public class CSVAnalyzer {
         //empty stringbuilder
         sb.setLength(0);
 
-        //active and current Peptide and charge state
+        //active and current Peptide, charge state and scan number
         String activePeptide = "";
         String activeChargeStateString = "";
         int activeChargeState = 0;
         String currentPeptide = "";
         String currentChargeStateString;
         int currentChargeState = 0;
-        String activeScanNumber;
+        int activeScanNumber;
+        int currentScanNumber;
         String activeLeadingProteins;
 
         //variables that have to be read out or calculated
@@ -136,7 +137,7 @@ public class CSVAnalyzer {
         activePeptide = firstLineValues[0];
         activeChargeStateString = firstLineValues[2].replace("+","");
         activeChargeState = Integer.parseInt(activeChargeStateString);
-        activeScanNumber = firstLineValues[15];
+        activeScanNumber = Integer.parseInt(firstLineValues[15]);
         activeLeadingProteins = firstLineValues[18];
 
 
@@ -193,40 +194,47 @@ public class CSVAnalyzer {
             //17 Fragment Ion Sum Formula
             //18 Leading Proteins
 
-            //set current Peptide with charge state
+            //set current Peptide with charge state and ScanNumber
             currentPeptide = values[0];
             currentChargeStateString = values[2].replace("+","");
             currentChargeState = Integer.parseInt(currentChargeStateString);
+            currentScanNumber = Integer.parseInt(values[15]);
+
+
 
             //check if current Peptide is same as active Peptide
             //if not, start Printout Sequence
-            if (!currentPeptide.equals(activePeptide) || (currentPeptide.equals(activePeptide) && currentChargeState != activeChargeState )){
+            //if (!currentPeptide.equals(activePeptide) || (currentPeptide.equals(activePeptide) && currentChargeState != activeChargeState ))
+            if (currentScanNumber != activeScanNumber)
+            {
                 String[] outputString = new String[outputLength];
                 //0 Modified Peptide
                 //1 Precursor Charge
                 //2 Scan Number
-                //3 Number uncleaved fragments
-                //4 Median intensity uncleaved fragments
-                //5 Number cleaved fragments
-                //6 Median intensity cleaved fragments
+                //3 Leading Proteins
+                //4 Number uncleaved fragments
+                //5 Mean intensity uncleaved fragments
+                //6 Number cleaved fragments
+                //7 Mean intensity cleaved fragments
                 //only in case of EC, also add other information to analyze duplex
-                //7 Number EC 179 fragments
-                //8 Median intensity EC179
-                //9 Number EC 180 fragments
-                //10 Median intensity EC180
+                //8 Number EC 179 fragments
+                //9 Mean intensity EC179
+                //10 Number EC 180 fragments
+                //11 Mean intensity EC180
                 outputString[0] = activePeptide;
                 outputString[1] = Integer.toString(activeChargeState) + "+";
-                outputString[2] = activeScanNumber;
-                outputString[3] = Integer.toString(uncleavedFragments);
-                outputString[4] = twoDec.format(medianCalc(uncleavedIntList));
-                outputString[5] = Integer.toString(cleavedFragments);
-                outputString[6] = twoDec.format(medianCalc(cleavedIntList));
+                outputString[2] = Integer.toString(activeScanNumber);
+                outputString[3] = activeLeadingProteins;
+                outputString[4] = Integer.toString(uncleavedFragments);
+                outputString[5] = twoDec.format(medianCalc(uncleavedIntList));
+                outputString[6] = Integer.toString(cleavedFragments);
+                outputString[7] = twoDec.format(medianCalc(cleavedIntList));
 
                 if (ec) {
-                    outputString[7] = Integer.toString(cleavedEC179);
-                    outputString[8] = twoDec.format(medianCalc(cleavedEC179IntList));
-                    outputString[9] = Integer.toString(cleavedEC180);
-                    outputString[10] = twoDec.format(medianCalc(cleavedEC180IntList));
+                    outputString[8] = Integer.toString(cleavedEC179);
+                    outputString[9] = twoDec.format(medianCalc(cleavedEC179IntList));
+                    outputString[10] = Integer.toString(cleavedEC180);
+                    outputString[11] = twoDec.format(medianCalc(cleavedEC180IntList));
                 }
 
                 //all values are set now
@@ -259,7 +267,8 @@ public class CSVAnalyzer {
                 //set the current peptide and charge state as the active ones
                 activePeptide = currentPeptide;
                 activeChargeState = currentChargeState;
-                activeScanNumber = values[15];
+                activeScanNumber = Integer.parseInt(values[15]);
+                activeLeadingProteins = values[18];
 
                 handledPeptides++;
             }
@@ -294,17 +303,18 @@ public class CSVAnalyzer {
         String[] outputString = new String[outputLength];
         outputString[0] = activePeptide;
         outputString[1] = Integer.toString(activeChargeState) + "+";
-        outputString[2] = activeScanNumber;
-        outputString[3] = Integer.toString(uncleavedFragments);
-        outputString[4] = twoDec.format(medianCalc(uncleavedIntList));
-        outputString[5] = Integer.toString(cleavedFragments);
-        outputString[6] = twoDec.format(medianCalc(cleavedIntList));
+        outputString[2] = Integer.toString(activeScanNumber);
+        outputString[3] = activeLeadingProteins;
+        outputString[4] = Integer.toString(uncleavedFragments);
+        outputString[5] = twoDec.format(medianCalc(uncleavedIntList));
+        outputString[6] = Integer.toString(cleavedFragments);
+        outputString[7] = twoDec.format(medianCalc(cleavedIntList));
 
         if (ec) {
-            outputString[7] = Integer.toString(cleavedEC179);
-            outputString[8] = twoDec.format(medianCalc(cleavedEC179IntList));
-            outputString[9] = Integer.toString(cleavedEC180);
-            outputString[10] = twoDec.format(medianCalc(cleavedEC180IntList));
+            outputString[8] = Integer.toString(cleavedEC179);
+            outputString[9] = twoDec.format(medianCalc(cleavedEC179IntList));
+            outputString[10] = Integer.toString(cleavedEC180);
+            outputString[11] = twoDec.format(medianCalc(cleavedEC180IntList));
         }
         //all values are set now
         //start Stringbuilder
