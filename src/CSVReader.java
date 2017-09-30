@@ -268,6 +268,9 @@ public static void wholeRunRepFinder(MzXMLFile runIn, File statisticsAnalysis, d
             case "Scan Number":
                 captionPositions.put("Scan Number", index);
                 break;
+            case "Leading Proteins":
+                captionPositions.put("Leading Proteins", index);
+                break;
         }
         index++;
     }
@@ -277,16 +280,17 @@ public static void wholeRunRepFinder(MzXMLFile runIn, File statisticsAnalysis, d
     File outputCSV = new File(newFilePath);
     PrintWriter csvWriter = new PrintWriter(outputCSV);
     StringBuilder sb = new StringBuilder();
-    String[] newHeader = new String[9];
+    String[] newHeader = new String[10];
     newHeader[0] = "Modified Peptide";
     newHeader[1] = "Precursor Charge";
     newHeader[2] = "Scan Number";
-    newHeader[3] = "Rep0 Relative Intensity [%]";
-    newHeader[4] = "Rep0 Absolute Intensity [au]";
-    newHeader[5] = "Rep0 Mass Deviation [ppm]";
-    newHeader[6] = "Rep1 Relative Intensity [%]";
-    newHeader[7] = "Rep1 Absolute Intensity [au]";
-    newHeader[8] = "Rep1 Mass Deviation [ppm]";
+    newHeader[3] = "Leading Proteins";
+    newHeader[4] = "Rep0 Relative Intensity [%]";
+    newHeader[5] = "Rep0 Absolute Intensity [au]";
+    newHeader[6] = "Rep0 Mass Deviation [ppm]";
+    newHeader[7] = "Rep1 Relative Intensity [%]";
+    newHeader[8] = "Rep1 Absolute Intensity [au]";
+    newHeader[9] = "Rep1 Mass Deviation [ppm]";
     String sep = "";
     for (String s : newHeader){
         sb.append(sep);
@@ -302,18 +306,19 @@ public static void wholeRunRepFinder(MzXMLFile runIn, File statisticsAnalysis, d
     while (scanner.hasNextLine()){
         String currentLine = scanner.nextLine();
         String[] values = currentLine.split(",");
-        String[] newValues = new String[9];
+        String[] newValues = new String[10];
         Arrays.fill(newValues, "");
         newValues[0] = values[captionPositions.get("Modified Peptide")];
         newValues[1] = values[captionPositions.get("Precursor Charge")];
         newValues[2] = values[captionPositions.get("Scan Number")];
+        newValues[3] = values[captionPositions.get("Leading Proteins")];
         //generate MySpectrum and start search for Reporter Ions
         MySpectrum currentSpectrum = MzXMLReadIn.mzXMLToMySpectrum(runIn, newValues[2]);
         ArrayList<ReporterMatch> repMatches = new ArrayList<>();
         repMatches = PeakCompare.reporterFinder(currentSpectrum, labelName, ppmDev);
         //if no reporter ions are found, set values to 0
         if (repMatches.isEmpty()){
-            for (int i = 3; i<newHeader.length; i++){
+            for (int i = 4; i<newHeader.length; i++){
                 newHeader[i] = "0";
             }
         }
@@ -322,14 +327,14 @@ public static void wholeRunRepFinder(MzXMLFile runIn, File statisticsAnalysis, d
             throw new IllegalArgumentException("More than 2 matched reporters! Size: "+repMatches.size());
         for (ReporterMatch rep : repMatches){
             if (rep.getRepName().equals("Rep0")){
-                newValues[3] = twoDec.format(rep.getPeak().getRelIntensity());
-                newValues[4] = scientific.format(rep.getPeak().getIntensity());
-                newValues[5] = twoDec.format(rep.getPPMDev());
+                newValues[4] = twoDec.format(rep.getPeak().getRelIntensity());
+                newValues[5] = scientific.format(rep.getPeak().getIntensity());
+                newValues[6] = twoDec.format(rep.getPPMDev());
             }
             if (rep.getRepName().equals("Rep1")){
-                newValues[6] = twoDec.format(rep.getPeak().getRelIntensity());
-                newValues[7] = scientific.format(rep.getPeak().getIntensity());
-                newValues[8] = twoDec.format(rep.getPPMDev());
+                newValues[7] = twoDec.format(rep.getPeak().getRelIntensity());
+                newValues[8] = scientific.format(rep.getPeak().getIntensity());
+                newValues[9] = twoDec.format(rep.getPPMDev());
             }
         }
         //set values to 0 if no rep was found

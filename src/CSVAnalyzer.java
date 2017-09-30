@@ -338,6 +338,36 @@ public class CSVAnalyzer {
     }
 
 
+    public static void cicRatioCalculator (String filePath) throws FileNotFoundException {
+        File fragmentFile = new File(filePath);
+
+        Scanner scanner = null;
+        try {
+            scanner = new Scanner(fragmentFile);
+        } catch (FileNotFoundException e) {
+            System.out.println("Could not read file: " + filePath);
+        }
+        //TODO:determine header positions
+
+        //TODO:open SB and write new header
+        //[0] Modified Peptide
+        //[1] Precursor Mass
+        //[2] Precursor Charge State
+        //[3] Scan Number
+        //[4] Leading Proteins
+        //[5] Complementary Ion Cluster Pair
+        //[6] Unadjusted Intensity SOT180c
+        //[7] Unadjusted Intensity SOT179c
+        //[8] Intensity SOT180c
+        //[9] Intensity SOT179c
+        //[10] ratio SOT179c/SOT180c
+
+
+
+
+    }
+
+
 
 
     private static double medianCalc(ArrayList<Double> valuesIn){
