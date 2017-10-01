@@ -1,6 +1,5 @@
 import uk.ac.ebi.pride.tools.jmzreader.JMzReaderException;
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLFile;
-import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLSpectrum;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -159,9 +158,9 @@ public class CSVReader {
                 }
                 ArrayList<CompClusterIonMatch> currentSpectrumMatches = new ArrayList<>();
                 if (labelIn.equals("EC"))
-                    currentSpectrumMatches = ComplementaryClusterChecker.compClusterCheckerEC(aminoAcids, sequence, mods, scanNumber, runIn, accuracy, leadingProteins);
+                    currentSpectrumMatches = LabelFragmentIonChecker.compClusterCheckerEC(aminoAcids, sequence, mods, scanNumber, runIn, accuracy, leadingProteins);
                 if (labelIn.equals("TMT"))
-                    currentSpectrumMatches = ComplementaryClusterChecker.compClusterCheckerTMT(aminoAcids, sequence, mods, scanNumber, runIn, accuracy, leadingProteins);
+                    currentSpectrumMatches = LabelFragmentIonChecker.compClusterCheckerTMT(aminoAcids, sequence, mods, scanNumber, runIn, accuracy, leadingProteins);
                 allResults.addAll(currentSpectrumMatches);
                 processedSpectra++;
                 System.out.println("Processed spectrum number: " + scanNumber);
@@ -204,9 +203,9 @@ public class CSVReader {
             }
             ArrayList<CompClusterIonMatch> currentSpectrumMatches = new ArrayList<>();
             if (labelIn.equals("EC"))
-                currentSpectrumMatches = ComplementaryClusterChecker.compClusterCheckerEC(aminoAcids, sequence, mods, scanNumber, runIn, accuracy, leadingProteins);
+                currentSpectrumMatches = LabelFragmentIonChecker.compClusterCheckerEC(aminoAcids, sequence, mods, scanNumber, runIn, accuracy, leadingProteins);
             if (labelIn.equals("TMT"))
-                currentSpectrumMatches = ComplementaryClusterChecker.compClusterCheckerTMT(aminoAcids, sequence, mods, scanNumber, runIn, accuracy, leadingProteins);
+                currentSpectrumMatches = LabelFragmentIonChecker.compClusterCheckerTMT(aminoAcids, sequence, mods, scanNumber, runIn, accuracy, leadingProteins);
             allResults.addAll(currentSpectrumMatches);
             processedSpectra++;
             addedSpectra++;

@@ -12,7 +12,7 @@ import java.util.Collections;
     //also check if fragmentation of EC occurred
     //return an ArrayList of compClusterIonMatches
     //ArrayList of Mods can be empty, only filled if other modification than EC-modification is present
-public class ComplementaryClusterChecker {
+public class LabelFragmentIonChecker {
     public static ArrayList<CompClusterIonMatch> compClusterCheckerEC (ArrayList<AminoAcid> acids,
                                                                        String SequenceIn,
                                                                        ArrayList<Modification> modsIn,

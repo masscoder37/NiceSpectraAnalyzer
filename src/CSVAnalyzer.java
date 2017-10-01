@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Scanner;
 
 /**
@@ -347,23 +348,218 @@ public class CSVAnalyzer {
         } catch (FileNotFoundException e) {
             System.out.println("Could not read file: " + filePath);
         }
-        //TODO:determine header positions
-
-        //TODO:open SB and write new header
+        int scansAnalyzed = 0;
+        //open SB and write new header
         //[0] Modified Peptide
         //[1] Precursor Mass
         //[2] Precursor Charge State
         //[3] Scan Number
         //[4] Leading Proteins
         //[5] Complementary Ion Cluster Pair
-        //[6] Unadjusted Intensity SOT180c
-        //[7] Unadjusted Intensity SOT179c
-        //[8] Intensity SOT180c
-        //[9] Intensity SOT179c
-        //[10] ratio SOT179c/SOT180c
+        //[6] Fragment Ion Amino Acid Sequence
+        //[7] Unadjusted Intensity SOT180c
+        //[8] Unadjusted Intensity SOT179c
+        //[9] Intensity SOT180c
+        //[10] Intensity SOT179c
+        //[11] ratio SOT179c/SOT180c
+
+        //set up Stringbuilder and PrinterWriter
+        String newFilePath = filePath.replace(".csv", "_");
+        newFilePath = newFilePath + "complementaryClusters.csv";
+
+        File outputFile = new File(newFilePath);
+        StringBuilder sb = new StringBuilder();
+        PrintWriter csvWriter = new PrintWriter(outputFile);
+
+        String header = "Modified Peptide";
+        sb.append(header);
+        sb.append(',');
+        header = "Precursor Mass [m/z]";
+        sb.append(header);
+        sb.append(',');
+        header = "Precursor Charge State";
+        sb.append(header);
+        sb.append(',');
+        header = "Scan Number";
+        sb.append(header);
+        sb.append(',');
+        header = "Leading Proteins";
+        sb.append(header);
+        sb.append(',');
+        header = "Complementary Ion Cluster Pair";
+        sb.append(header);
+        sb.append(',');
+        header = "Fragment Ion Amino Acid Sequence";
+        sb.append(header);
+        sb.append(',');
+        header = "Unadjusted Intensity SOT180c";
+        sb.append(header);
+        sb.append(',');
+        header = "Unadjusted Intensity SOT179c";
+        sb.append(header);
+        sb.append(',');
+        header = "Intensity SOT180c";
+        sb.append(header);
+        sb.append(',');
+        header = "Intensity SOT179c";
+        sb.append(header);
+        sb.append(',');
+        header = "ratio SOT179c/SOT180c";
+        sb.append(header);
+        sb.append('\n');
+        csvWriter.write(sb.toString());
+        csvWriter.flush();
+        //empty stringbuilder
+        sb.setLength(0);
+
+
+        //determine header positions important in the old fragment Ion list file
+
+        //[0] Modified Peptide
+        //[1] Precursor Mass [m/z]
+        //[2] Precursor Charge
+        //[3] Label Name
+        //[4] Cleaved Labels
+        //[5] Fragment Ion
+        //[6] Fragment Ion Charge
+        //[7] Fragment Ion Mass [m/z]
+        //[8] Peak Mass [m/z]
+        //[9] Mass Deviation [ppm]
+        //[10] Peak rel. Intensity [%]
+        //[11] Peak abs. Intensity [au]
+        //[12] Scan Number
+        //[13] Fragment Ion Amino Acid Sequence
+        //[14] Fragment Ion Sum Formula
+        //[15] Leading Proteins
+
+        String oldHeader = scanner.nextLine();
+        String headerCaptions[] = oldHeader.split(",");
+        HashMap<String, Integer> captionPositions = new HashMap<>();
+        int index = 0;
+        for (String captions : headerCaptions){
+            switch (captions){
+                case "Modified Peptide":
+                    captionPositions.put("Modified Peptide", index);
+                    break;
+                case "Precursor Mass [m/z]":
+                    captionPositions.put("Precursor Mass [m/z]", index);
+                    break;
+                case "Precursor Charge":
+                    captionPositions.put("Precursor Charge", index);
+                    break;
+                case "Label Name":
+                    captionPositions.put("Label Name", index);
+                    break;
+                case "Cleaved Labels":
+                    captionPositions.put("Leading Proteins", index);
+                    break;
+                case "Fragment Ion":
+                    captionPositions.put("Fragment Ion", index);
+                    break;
+                case "Fragment Ion Charge":
+                    captionPositions.put("Fragment Ion Charge", index);
+                    break;
+                case "Fragment Ion Mass [m/z]":
+                    captionPositions.put("Fragment Ion Mass [m/z]", index);
+                    break;
+                case "Peak Mass [m/z]":
+                    captionPositions.put("Peak Mass [m/z]", index);
+                    break;
+                case "Mass Deviation [ppm]":
+                    captionPositions.put("Mass Deviation [ppm]", index);
+                    break;
+                case "Peak rel. Intensity [%]":
+                    captionPositions.put("Peak rel. Intensity [%]", index);
+                    break;
+                case "Peak abs. Intensity [au]":
+                    captionPositions.put("Peak abs. Intensity [au]", index);
+                    break;
+                case "Scan Number":
+                    captionPositions.put("Scan Number", index);
+                    break;
+                case "Fragment Ion Amino Acid Sequence":
+                    captionPositions.put("Fragment Ion Amino Acid Sequence", index);
+                    break;
+                case "Fragment Ion Sum Formula":
+                    captionPositions.put("Fragment Ion Sum Formula", index);
+                    break;
+                case "Leading Proteins":
+                    captionPositions.put("Leading Proteins", index);
+                    break;
+            }
+            index++;
+        }
+        //caption positions read in, start to copy all the information of one scan together
+        //the complementary ion information will be stored in an object of the type ComplementaryIon
+        ArrayList<ComplementaryIon> compIonList = new ArrayList<>();
+        ArrayList<ComplementaryCluster> compClusterList = new ArrayList<>();
 
 
 
+        //start with first peptide, all the other direct variables and most importantly the scan number
+        String currentLine = scanner.nextLine();
+        String[] currentValues = currentLine.split(",");
+        String activePeptide = currentValues[captionPositions.get("Modified Peptide")];
+        String activePrecMass = currentValues[captionPositions.get("Precursor Mass [m/z]")];
+        int activePrecCharge = Integer.parseInt(currentValues[captionPositions.get("Precursor Charge")]);
+        String activeLeadingProtein = currentValues[captionPositions.get("Leading Proteins")];
+        int activeScanNumber = Integer.parseInt(currentValues[captionPositions.get("Scan Number")]);
+        //read the first set of fragment ion specific parameters to create a new complementary ion object and add it to the list
+        //do this only if a cleaved Ion is present
+        if (currentValues[captionPositions.get("Cleaved Labels")].equals("true")) {
+            compIonList.add(new ComplementaryIon(currentValues[captionPositions.get("Modified Peptide")],
+                    currentValues[captionPositions.get("Label Name")], currentValues[captionPositions.get("Fragment Ion")],
+                    currentValues[captionPositions.get("Fragment Ion Charge")], currentValues[captionPositions.get("Fragment Ion Mass [m/z]")],
+                    currentValues[captionPositions.get("Peak Mass [m/z]")], currentValues[captionPositions.get("Mass Deviation [ppm]")],
+                    currentValues[captionPositions.get("Peak rel. Intensity [%]")], currentValues[captionPositions.get("Peak abs. Intensity [au]")],
+                    currentValues[captionPositions.get("Scan Number")], currentValues[captionPositions.get("Fragment Ion Amino Acid Sequence")],
+                    currentValues[captionPositions.get("Fragment Ion Sum Formula")]));
+        }
+
+        //now, start scanner loop and continue with the fragmentIonReading
+        while (scanner.hasNextLine()){
+            currentLine = scanner.nextLine();
+            currentValues = currentLine.split(",");
+            int currentScanNumber = Integer.parseInt(currentValues[captionPositions.get("Scan Number")]);
+            //check if current Scan Number is still the active scan Number. If not, then lists must be handled
+            if (currentScanNumber!=activeScanNumber){
+                //TODO: all the complementary ions are now stored in the compIonList
+                //TODO: individual complementary ions now need to be combined
+                //TODO: this is all handled in the ComplementaryCluster class
+                //TODO: the ComplementaryCluster class will provide a string for the SB
+
+
+                //after old data is handled, reset everything and start readout of new data
+                compIonList.clear();
+                compClusterList.clear();
+                sb.setLength(0);
+                scansAnalyzed++;
+
+                //set new active values
+                activePeptide = currentValues[captionPositions.get("Modified Peptide")];
+                activePrecMass = currentValues[captionPositions.get("Precursor Mass [m/z]")];
+                activePrecCharge = Integer.parseInt(currentValues[captionPositions.get("Precursor Charge")]);
+                activeLeadingProtein = currentValues[captionPositions.get("Leading Proteins")];
+                activeScanNumber = currentScanNumber;
+            }
+            //normal readout of all the values
+            if (currentValues[captionPositions.get("Cleaved Labels")].equals("true")) {
+                compIonList.add(new ComplementaryIon(currentValues[captionPositions.get("Modified Peptide")],
+                        currentValues[captionPositions.get("Label Name")], currentValues[captionPositions.get("Fragment Ion")],
+                        currentValues[captionPositions.get("Fragment Ion Charge")], currentValues[captionPositions.get("Fragment Ion Mass [m/z]")],
+                        currentValues[captionPositions.get("Peak Mass [m/z]")], currentValues[captionPositions.get("Mass Deviation [ppm]")],
+                        currentValues[captionPositions.get("Peak rel. Intensity [%]")], currentValues[captionPositions.get("Peak abs. Intensity [au]")],
+                        currentValues[captionPositions.get("Scan Number")], currentValues[captionPositions.get("Fragment Ion Amino Acid Sequence")],
+                        currentValues[captionPositions.get("Fragment Ion Sum Formula")]));
+            }
+        }
+
+        //TODO: handle printout of last scan number
+
+        //close everything
+        scanner.close();
+        csvWriter.close();
+        System.out.println("Analysis complete! .csv-File created! Scans analyzed: "+ (scansAnalyzed));
 
     }
 
