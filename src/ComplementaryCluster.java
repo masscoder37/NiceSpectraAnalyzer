@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 /**
  * Created by Michael Stadlmeier on 10/2/2017.
  */
@@ -20,4 +22,88 @@
 
     //this class should also be able to generate a complete String to feed to the Stringbuilder
 public class ComplementaryCluster {
+
+    private ComplementaryIon lightCompIon;
+    private ComplementaryIon heavyCompIon;
+    private int scanNumber;
+    private double adjustedLightIntensity;
+    private double adjustedHeavyIntensity;
+    private double ratio179c180c;
+
+    public ComplementaryCluster (ComplementaryIon lightCompIonIn, ComplementaryIon heavyCompIonIn, String scanNumberIn){
+        //set complementary Ions and scan number
+        this.lightCompIon = lightCompIonIn;
+        this.heavyCompIon = heavyCompIonIn;
+        this.scanNumber = Integer.parseInt(scanNumberIn);
+
+        //get adjusted ratios from intensityAdjuster function
+        double[] adjustedRatios = intensityAdjuster(this.lightCompIon, this.heavyCompIon);
+        this.adjustedLightIntensity = adjustedRatios[0];
+        this.adjustedHeavyIntensity = adjustedRatios[1];
+
+        this.ratio179c180c = this.adjustedHeavyIntensity/this.adjustedLightIntensity;
+    }
+
+    private static double[] intensityAdjuster (ComplementaryIon lightCompIonIn, ComplementaryIon heavyCompIonIn){
+        //adjustedRatios[0]: intensity light comp ion, SOT180c
+        //adjustedRatios[1]: intensity heavy comp ion, SOT179c
+        double[] adjustedRatios = new double[2];
+
+        //empirical factor setting the isotopical impurity of the SOT179-reagent, stemming from non-complete 13C-labelling
+        double isotopicImpurityFactor = 0.005;
+
+        //set intensities for later calculations
+        double unadjustedLightIntensity = lightCompIonIn.getPeakAbsInt();
+        double unadjustedHeavyIntensity = heavyCompIonIn.getPeakAbsInt();
+
+        SumFormula sumFormulaSOT180c = new SumFormula(lightCompIonIn.getFragIonSumFormula());
+        double isotopePatternFactor = IsotopicDistributer.abundanceAddNeutron(sumFormulaSOT180c);
+
+        double denominator = (1-isotopicImpurityFactor*isotopePatternFactor);
+
+        adjustedRatios[0] = (unadjustedLightIntensity-isotopicImpurityFactor*unadjustedHeavyIntensity)/denominator;
+        adjustedRatios[1] = (unadjustedHeavyIntensity-isotopePatternFactor*unadjustedLightIntensity)/denominator;
+
+        return adjustedRatios;
+    }
+
+    public static ArrayList<ComplementaryCluster> compClusterMatcher(ArrayList<ComplementaryIon> compIonsIn){
+        //generate list of complementary clusters, each containing 2 complementary ions
+        ArrayList<ComplementaryCluster> matchedCompClusters = new ArrayList<>();
+
+        //first, divide the compIonsIn-list into 2 lists: one for SOT180c and one for SOT179c
+        ArrayList<ComplementaryIon> compIonsSOT179c = new ArrayList<>();
+        ArrayList<ComplementaryIon> compIonsSOT180c = new ArrayList<>();
+
+        for (ComplementaryIon compIon : compIonsIn){
+            if (compIon.getLabelName().contains("179")&&!compIon.getLabelName().contains("180"))
+                compIonsSOT179c.add(compIon);
+            if (compIon.getLabelName().contains("180")&&!compIon.getLabelName().contains("179"))
+                compIonsSOT180c.add(compIon);
+        }
+
+        //now, loop through one of the lists. if the fragment ion and the fragment ion charge is the same in the other list, and the scan number is the same, make a complementary cluster
+        String currentFragmentIon;
+        int currentFragmentIonCharge;
+        int currentScanNumber;
+
+        for(ComplementaryIon sot180c : compIonsSOT180c){
+            currentFragmentIon = sot180c.getFragmentIon();
+            //sort out all the y1 ions, because there could be quite some interference
+            if (currentFragmentIon.equals("y1"))
+                continue;
+            currentFragmentIonCharge = sot180c.getFragmentIonCharge();
+            currentScanNumber = sot180c.getScanNumber();
+
+            //now, loop through all the ions of the other list
+            for(ComplementaryIon sot179c : compIonsSOT179c){
+                //only if fragment ion, fragment ion charge and scan number are the same, make complementary cluster
+                if(currentFragmentIon.equals(sot179c.getFragmentIon())&&currentFragmentIonCharge==sot179c.getFragmentIonCharge()&&currentScanNumber==sot179c.getScanNumber())
+                    matchedCompClusters.add(new ComplementaryCluster(sot180c, sot179c, Integer.toString(currentScanNumber)));
+            }
+        }
+        return matchedCompClusters;
+    }
+
+
 }
