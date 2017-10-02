@@ -523,11 +523,15 @@ public class CSVAnalyzer {
             int currentScanNumber = Integer.parseInt(currentValues[captionPositions.get("Scan Number")]);
             //check if current Scan Number is still the active scan Number. If not, then lists must be handled
             if (currentScanNumber!=activeScanNumber){
-                //TODO: all the complementary ions are now stored in the compIonList
-                //TODO: individual complementary ions now need to be combined
-                //TODO: this is all handled in the ComplementaryCluster class
-                //TODO: the ComplementaryCluster class will provide a string for the SB
 
+                //with all the complementary ions in the list, now create complementary ion clusters by matching of ions
+                compClusterList.addAll(ComplementaryCluster.compClusterMatcher(compIonList));
+
+                //the ComplementaryCluster class will provide a string for the SB
+                //write the lines to the .csv File
+                sb.append(ComplementaryCluster.compClusterCSVStringProducer(compClusterList, activePeptide, activePrecMass, Integer.toString(activePrecCharge), activeLeadingProtein));
+                csvWriter.write(sb.toString());
+                csvWriter.flush();
 
                 //after old data is handled, reset everything and start readout of new data
                 compIonList.clear();
@@ -554,9 +558,23 @@ public class CSVAnalyzer {
             }
         }
 
-        //TODO: handle printout of last scan number
+
+        //last line read
+        //all scans are completed, now create complementary ion clusters by matching of ions
+        compClusterList.addAll(ComplementaryCluster.compClusterMatcher(compIonList));
+
+        //the ComplementaryCluster class will provide a string for the SB
+        //write the lines to the .csv File
+        sb.append(ComplementaryCluster.compClusterCSVStringProducer(compClusterList, activePeptide, activePrecMass, Integer.toString(activePrecCharge), activeLeadingProtein));
+        csvWriter.write(sb.toString());
+        csvWriter.flush();
+        scansAnalyzed++;
+
+
 
         //close everything
+        compIonList.clear();
+        compClusterList.clear();
         scanner.close();
         csvWriter.close();
         System.out.println("Analysis complete! .csv-File created! Scans analyzed: "+ (scansAnalyzed));

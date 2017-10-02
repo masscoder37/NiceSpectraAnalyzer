@@ -1,3 +1,4 @@
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -50,7 +51,7 @@ public class ComplementaryCluster {
         double[] adjustedRatios = new double[2];
 
         //empirical factor setting the isotopical impurity of the SOT179-reagent, stemming from non-complete 13C-labelling
-        double isotopicImpurityFactor = 0.005;
+        double isotopicImpurityFactor = 0.0042;
 
         //set intensities for later calculations
         double unadjustedLightIntensity = lightCompIonIn.getPeakAbsInt();
@@ -106,4 +107,63 @@ public class ComplementaryCluster {
     }
 
 
+    public static String compClusterCSVStringProducer(ArrayList<ComplementaryCluster> compClustersIn, String modPeptideIn, String precursorMassIn, String precursorChargeStateIn,
+                                                        String leadingProteinsIn) {
+        //The following variables must be produced for the String Builder
+        //[0] Modified Peptide
+        //[1] Precursor Mass
+        //[2] Precursor Charge State
+        //[3] Scan Number
+        //[4] Leading Proteins
+        //[5] Complementary Ion Cluster Pair
+        //[6] Fragment Ion Amino Acid Sequence
+        //[7] Unadjusted Intensity SOT180c
+        //[8] Unadjusted Intensity SOT179c
+        //[9] Intensity SOT180c
+        //[10] Intensity SOT179c
+        //[11] ratio SOT179c/SOT180c
+
+        StringBuilder combinedValues = new StringBuilder();
+
+        for (ComplementaryCluster compCluster : compClustersIn){
+            combinedValues.append(modPeptideIn + ",");
+            combinedValues.append(precursorMassIn + ",");
+            combinedValues.append(precursorChargeStateIn + ",");
+            combinedValues.append(Integer.toString(compCluster.getScanNumber()) + ",");
+            combinedValues.append(leadingProteinsIn + ",");
+            combinedValues.append(compCluster.getLightCompIon().getFragmentIon() +" " + Integer.toString(compCluster.getLightCompIon().getFragmentIonCharge())+"+,");
+            combinedValues.append(compCluster.getLightCompIon().getFragIonSequence() + ",");
+            combinedValues.append(Double.toString(compCluster.getLightCompIon().getPeakAbsInt()) + ",");
+            combinedValues.append(Double.toString(compCluster.getHeavyCompIon().getPeakAbsInt()) + ",");
+            combinedValues.append(Double.toString(compCluster.getAdjustedLightIntensity()) + ",");
+            combinedValues.append(Double.toString(compCluster.getAdjustedHeavyIntensity()) + ",");
+            combinedValues.append(Double.toString(compCluster.getRatio179c180c()) + ",");
+            combinedValues.append("\n");
+        }
+        return combinedValues.toString();
+    }
+
+    public ComplementaryIon getLightCompIon() {
+        return this.lightCompIon;
+    }
+
+    public ComplementaryIon getHeavyCompIon() {
+        return this.heavyCompIon;
+    }
+
+    public int getScanNumber() {
+        return this.scanNumber;
+    }
+
+    public double getAdjustedLightIntensity() {
+        return this.adjustedLightIntensity;
+    }
+
+    public double getAdjustedHeavyIntensity() {
+        return this.adjustedHeavyIntensity;
+    }
+
+    public double getRatio179c180c() {
+        return this.ratio179c180c;
+    }
 }
