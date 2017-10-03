@@ -1,3 +1,5 @@
+import com.sun.javaws.exceptions.InvalidArgumentException;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -451,7 +453,7 @@ public class CSVAnalyzer {
                     captionPositions.put("Label Name", index);
                     break;
                 case "Cleaved Labels":
-                    captionPositions.put("Leading Proteins", index);
+                    captionPositions.put("Cleaved Labels", index);
                     break;
                 case "Fragment Ion":
                     captionPositions.put("Fragment Ion", index);
@@ -489,6 +491,11 @@ public class CSVAnalyzer {
             }
             index++;
         }
+        //check if HashMap has all necessary entries
+        if(captionPositions.size() != 16)
+            throw new IllegalArgumentException("Not all headers could be read in! Number of read in headers, out of 16 necessary: "+captionPositions.size());
+
+
         //caption positions read in, start to copy all the information of one scan together
         //the complementary ion information will be stored in an object of the type ComplementaryIon
         ArrayList<ComplementaryIon> compIonList = new ArrayList<>();
@@ -501,7 +508,8 @@ public class CSVAnalyzer {
         String[] currentValues = currentLine.split(",");
         String activePeptide = currentValues[captionPositions.get("Modified Peptide")];
         String activePrecMass = currentValues[captionPositions.get("Precursor Mass [m/z]")];
-        int activePrecCharge = Integer.parseInt(currentValues[captionPositions.get("Precursor Charge")]);
+        String activePrecChargeString = currentValues[captionPositions.get("Precursor Charge")].replace("+","");
+        int activePrecCharge = Integer.parseInt(activePrecChargeString);
         String activeLeadingProtein = currentValues[captionPositions.get("Leading Proteins")];
         int activeScanNumber = Integer.parseInt(currentValues[captionPositions.get("Scan Number")]);
         //read the first set of fragment ion specific parameters to create a new complementary ion object and add it to the list
@@ -542,7 +550,8 @@ public class CSVAnalyzer {
                 //set new active values
                 activePeptide = currentValues[captionPositions.get("Modified Peptide")];
                 activePrecMass = currentValues[captionPositions.get("Precursor Mass [m/z]")];
-                activePrecCharge = Integer.parseInt(currentValues[captionPositions.get("Precursor Charge")]);
+                activePrecChargeString = currentValues[captionPositions.get("Precursor Charge")].replace("+","");
+                activePrecCharge = Integer.parseInt(activePrecChargeString);
                 activeLeadingProtein = currentValues[captionPositions.get("Leading Proteins")];
                 activeScanNumber = currentScanNumber;
             }
