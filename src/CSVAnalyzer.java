@@ -367,7 +367,7 @@ public class CSVAnalyzer {
 
         //set up Stringbuilder and PrinterWriter
         String newFilePath = filePath.replace(".csv", "_");
-        newFilePath = newFilePath + "complementaryClusters.csv";
+        newFilePath = newFilePath + "complementaryClusters_5rel.csv";
 
         File outputFile = new File(newFilePath);
         StringBuilder sb = new StringBuilder();
@@ -512,16 +512,20 @@ public class CSVAnalyzer {
         int activePrecCharge = Integer.parseInt(activePrecChargeString);
         String activeLeadingProtein = currentValues[captionPositions.get("Leading Proteins")];
         int activeScanNumber = Integer.parseInt(currentValues[captionPositions.get("Scan Number")]);
+        double activeRelInt;
         //read the first set of fragment ion specific parameters to create a new complementary ion object and add it to the list
         //do this only if a cleaved Ion is present
         if (currentValues[captionPositions.get("Cleaved Labels")].equals("true")) {
-            compIonList.add(new ComplementaryIon(currentValues[captionPositions.get("Modified Peptide")],
-                    currentValues[captionPositions.get("Label Name")], currentValues[captionPositions.get("Fragment Ion")],
-                    currentValues[captionPositions.get("Fragment Ion Charge")], currentValues[captionPositions.get("Fragment Ion Mass [m/z]")],
-                    currentValues[captionPositions.get("Peak Mass [m/z]")], currentValues[captionPositions.get("Mass Deviation [ppm]")],
-                    currentValues[captionPositions.get("Peak rel. Intensity [%]")], currentValues[captionPositions.get("Peak abs. Intensity [au]")],
-                    currentValues[captionPositions.get("Scan Number")], currentValues[captionPositions.get("Fragment Ion Amino Acid Sequence")],
-                    currentValues[captionPositions.get("Fragment Ion Sum Formula")]));
+            activeRelInt = Double.parseDouble(currentValues[captionPositions.get("Peak rel. Intensity [%]")]);
+            if(activeRelInt >5) {
+                compIonList.add(new ComplementaryIon(currentValues[captionPositions.get("Modified Peptide")],
+                        currentValues[captionPositions.get("Label Name")], currentValues[captionPositions.get("Fragment Ion")],
+                        currentValues[captionPositions.get("Fragment Ion Charge")], currentValues[captionPositions.get("Fragment Ion Mass [m/z]")],
+                        currentValues[captionPositions.get("Peak Mass [m/z]")], currentValues[captionPositions.get("Mass Deviation [ppm]")],
+                        currentValues[captionPositions.get("Peak rel. Intensity [%]")], currentValues[captionPositions.get("Peak abs. Intensity [au]")],
+                        currentValues[captionPositions.get("Scan Number")], currentValues[captionPositions.get("Fragment Ion Amino Acid Sequence")],
+                        currentValues[captionPositions.get("Fragment Ion Sum Formula")]));
+            }
         }
 
         //now, start scanner loop and continue with the fragmentIonReading
@@ -540,6 +544,7 @@ public class CSVAnalyzer {
                 sb.append(ComplementaryCluster.compClusterCSVStringProducer(compClusterList, activePeptide, activePrecMass, Integer.toString(activePrecCharge), activeLeadingProtein));
                 csvWriter.write(sb.toString());
                 csvWriter.flush();
+                System.out.println("Analyzed scan: #" + activeScanNumber);
 
                 //after old data is handled, reset everything and start readout of new data
                 compIonList.clear();
@@ -557,13 +562,16 @@ public class CSVAnalyzer {
             }
             //normal readout of all the values
             if (currentValues[captionPositions.get("Cleaved Labels")].equals("true")) {
-                compIonList.add(new ComplementaryIon(currentValues[captionPositions.get("Modified Peptide")],
-                        currentValues[captionPositions.get("Label Name")], currentValues[captionPositions.get("Fragment Ion")],
-                        currentValues[captionPositions.get("Fragment Ion Charge")], currentValues[captionPositions.get("Fragment Ion Mass [m/z]")],
-                        currentValues[captionPositions.get("Peak Mass [m/z]")], currentValues[captionPositions.get("Mass Deviation [ppm]")],
-                        currentValues[captionPositions.get("Peak rel. Intensity [%]")], currentValues[captionPositions.get("Peak abs. Intensity [au]")],
-                        currentValues[captionPositions.get("Scan Number")], currentValues[captionPositions.get("Fragment Ion Amino Acid Sequence")],
-                        currentValues[captionPositions.get("Fragment Ion Sum Formula")]));
+                activeRelInt = Double.parseDouble(currentValues[captionPositions.get("Peak rel. Intensity [%]")]);
+                if(activeRelInt >5) {
+                    compIonList.add(new ComplementaryIon(currentValues[captionPositions.get("Modified Peptide")],
+                            currentValues[captionPositions.get("Label Name")], currentValues[captionPositions.get("Fragment Ion")],
+                            currentValues[captionPositions.get("Fragment Ion Charge")], currentValues[captionPositions.get("Fragment Ion Mass [m/z]")],
+                            currentValues[captionPositions.get("Peak Mass [m/z]")], currentValues[captionPositions.get("Mass Deviation [ppm]")],
+                            currentValues[captionPositions.get("Peak rel. Intensity [%]")], currentValues[captionPositions.get("Peak abs. Intensity [au]")],
+                            currentValues[captionPositions.get("Scan Number")], currentValues[captionPositions.get("Fragment Ion Amino Acid Sequence")],
+                            currentValues[captionPositions.get("Fragment Ion Sum Formula")]));
+                }
             }
         }
 
@@ -586,6 +594,7 @@ public class CSVAnalyzer {
         compClusterList.clear();
         scanner.close();
         csvWriter.close();
+        System.out.println("Analyzed scan: #" + activeScanNumber);
         System.out.println("Analysis complete! .csv-File created! Scans analyzed: "+ (scansAnalyzed));
 
     }

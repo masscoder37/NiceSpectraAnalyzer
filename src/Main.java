@@ -101,7 +101,7 @@ public class Main {
 
         //Section 5
         //Complementary Ion Cluster analysis
-        String fragmentIonFilePath = "C:\\Programmierordner\\testNewAnalysis\\testNewAnalysis_complete_EC.csv";
+        String fragmentIonFilePath = "C:\\Programmierordner\\newAnalysis\\EC_newAnalysis_complete.csv";
         CSVAnalyzer.cicRatioCalculator(fragmentIonFilePath);
 
 
