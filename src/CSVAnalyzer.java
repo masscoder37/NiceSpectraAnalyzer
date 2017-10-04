@@ -364,6 +364,7 @@ public class CSVAnalyzer {
         //[9] Intensity SOT180c
         //[10] Intensity SOT179c
         //[11] ratio SOT179c/SOT180c
+        //[12] Isotope Pattern Factor
 
         //set up Stringbuilder and PrinterWriter
         String newFilePath = filePath.replace(".csv", "_");
@@ -407,6 +408,9 @@ public class CSVAnalyzer {
         sb.append(header);
         sb.append(',');
         header = "ratio SOT179c/SOT180c";
+        sb.append(header);
+        sb.append(',');
+        header = "Isotope Pattern Factor";
         sb.append(header);
         sb.append('\n');
         csvWriter.write(sb.toString());

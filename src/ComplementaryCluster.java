@@ -122,10 +122,13 @@ public class ComplementaryCluster {
         //[9] Intensity SOT180c
         //[10] Intensity SOT179c
         //[11] ratio SOT179c/SOT180c
+        //[12] Isotope Pattern Factor
 
         StringBuilder combinedValues = new StringBuilder();
 
         for (ComplementaryCluster compCluster : compClustersIn){
+            SumFormula lightCompIonFormula = new SumFormula(compCluster.getLightCompIon().getFragIonSumFormula());
+            double isotopePatternFactor = IsotopicDistributer.abundanceAddNeutron(lightCompIonFormula);
             combinedValues.append(modPeptideIn + ",");
             combinedValues.append(precursorMassIn + ",");
             combinedValues.append(precursorChargeStateIn + ",");
@@ -138,6 +141,7 @@ public class ComplementaryCluster {
             combinedValues.append(Double.toString(compCluster.getAdjustedLightIntensity()) + ",");
             combinedValues.append(Double.toString(compCluster.getAdjustedHeavyIntensity()) + ",");
             combinedValues.append(Double.toString(compCluster.getRatio179c180c()) + ",");
+            combinedValues.append(Double.toString(isotopePatternFactor));
             combinedValues.append("\n");
         }
         return combinedValues.toString();
