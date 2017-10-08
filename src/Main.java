@@ -7,6 +7,8 @@ import uk.ac.ebi.pride.tools.jmzreader.model.impl.UserParam;
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLFile;
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLParsingException;
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLSpectrum;
+import uk.ac.ebi.pride.tools.mzxml_parser.mzxml.model.PrecursorMz;
+import uk.ac.ebi.pride.tools.mzxml_parser.mzxml.model.Scan;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,6 +16,7 @@ import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -47,7 +50,7 @@ public class Main {
         //It has to be a .mzXML-File which was centroided on MS1 and MS2-levels (see supporting information)
         //TODO: Please change your file path accordingly.
         String filePathSpectrum =  "C:\\Programmierordner\\SOT_HEK_EColi\\20171003_SOT_HEKBkgrnd_EColiSpikeIn_1to1.mzXML";
-        File completemzXMLSource = new File(filePathSpectrum);
+        //File completemzXMLSource = new File(filePathSpectrum);
         //generating the MzXMLFile object might take a few minutes and will display some warnings.
         //MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
 
@@ -57,7 +60,7 @@ public class Main {
         //please filter out other modifications
         //TODO: Please change your file path accordingly.
         String evidenceLocation = "C:\\Programmierordner\\SOT_HEK_EColi\\SOT_EC_HEK_EColiSpikeIn_1to1.txt";
-        File evidence = new File(evidenceLocation);
+        //File evidence = new File(evidenceLocation);
         //TODO: Please provide a directory were the output Files will be saved
         String csvOutPath = "C:\\Programmierordner\\SOT_HEK_EColi\\Analysis\\";
 
@@ -96,13 +99,23 @@ public class Main {
         //TODO:Remove the comments from this section and be sure that there are comments before and after sections 1, 2 and 3
         //TODO: You can specify the allowed reporter ion mass deviation [ppm]. Standard parameter is 5 ppm; 3rd entry
         String statisticsFilePath = "C:\\Programmierordner\\SOT_HEK_EColi\\Analysis\\SOT_EC_HEK_EColiSpikeIn_1to1_statistics.csv";
-        File statisticsFile = new File(statisticsFilePath);
+        //File statisticsFile = new File(statisticsFilePath);
         //CSVReader.wholeRunRepFinder(completemzXML, statisticsFile ,5);
 
         //Section 5
         //Complementary Ion Cluster analysis
         String fragmentIonFilePath = "C:\\Programmierordner\\SOT_HEK_EColi\\Analysis\\SOT_EC_HEK_EColiSpikeIn_1to1.csv";
-        CSVAnalyzer.cicRatioCalculator(fragmentIonFilePath);
+       // CSVAnalyzer.cicRatioCalculator(fragmentIonFilePath);
+
+        String testFilePath = "C:\\Programmierordner\\20171004_SOT180_HEK_5uLTag_ST_subset.mzXML";
+        File testFileSource = new File(testFilePath);
+        MzXMLFile testmzXML = new MzXMLFile(testFileSource);
+
+
+
+
+
+
 
 
 

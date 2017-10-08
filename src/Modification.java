@@ -91,16 +91,6 @@ public class Modification {
 
 
 
-
-
-
-
-
-
-
-
-
-
     public static Modification carbamidomethylation(){
         Modification carbamidomethyl = new Modification("Cam", "C2H3NO", 'C');
         return carbamidomethyl;
