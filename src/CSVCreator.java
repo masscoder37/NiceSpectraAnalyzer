@@ -17,8 +17,8 @@ public class CSVCreator {
     private static DecimalFormat fourDec = new DecimalFormat("0.0000");
     private static DecimalFormat scientific = new DecimalFormat("0.00E0");
 
-    public static void compClusterMatchCSVPrinter(ArrayList<CompClusterIonMatch> matchesIn, String FilePathIn) throws FileNotFoundException{
-        File csvOut = new File(FilePathIn);
+    public static void compClusterMatchCSVPrinter(ArrayList<CompClusterIonMatch> matchesIn, String filePathIn) throws FileNotFoundException{
+        File csvOut = new File(filePathIn);
         PrintWriter csvWriter =  new PrintWriter(csvOut);
         StringBuilder sb = new StringBuilder();
 
@@ -165,6 +165,22 @@ public class CSVCreator {
                 fileNames.add(individualFiles.getName());
         }
         return fileNames;
+    }
+
+    public static void createMassDiffCSV(ArrayList<Double> diffsIn, String filePathIn) throws FileNotFoundException {
+        filePathIn = filePathIn + "massDiffAnalysis.csv";
+        File csvOut = new File(filePathIn);
+        PrintWriter csvWriter =  new PrintWriter(csvOut);
+        StringBuilder sb = new StringBuilder();
+        for (Double diff : diffsIn){
+            sb.append(fourDec.format(diff));
+            sb.append("\n");
+            csvWriter.write(sb.toString());
+            csvWriter.flush();
+            sb.setLength(0);
+        }
+        csvWriter.close();
+        System.out.println(".csv-File created!");
     }
 
 }

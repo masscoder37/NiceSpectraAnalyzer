@@ -52,6 +52,7 @@ public class PrecursorMassDiffBinner {
                     massDiffList.add(difference);
                 }
             }
+            System.out.println("Precursor Mass analyzed! Spectrum Number: "+currentSpectrum.getId());
             currentSpectrum = null;
         }
         return massDiffList;

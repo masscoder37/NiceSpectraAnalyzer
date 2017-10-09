@@ -107,9 +107,34 @@ public class Main {
         String fragmentIonFilePath = "C:\\Programmierordner\\SOT_HEK_EColi\\Analysis\\SOT_EC_HEK_EColiSpikeIn_1to1.csv";
        // CSVAnalyzer.cicRatioCalculator(fragmentIonFilePath);
 
-        String testFilePath = "C:\\Programmierordner\\20171004_SOT180_HEK_5uLTag_ST_subset.mzXML";
+        String testFilePath = "C:\\Programmierordner\\BSA_MS1Diff_Analysis\\20171005_SOT_BSA_1to1_28HCD_2.mzXML";
         File testFileSource = new File(testFilePath);
         MzXMLFile testmzXML = new MzXMLFile(testFileSource);
+
+        ArrayList<String> peptidesToCheck = new ArrayList<>();
+        peptidesToCheck.add("HLVDEPQNLIK");
+        peptidesToCheck.add("HPEYAVSLLR");
+        peptidesToCheck.add("VPQVSTPTLVEVSR");
+        peptidesToCheck.add("QTALVELLK");
+        peptidesToCheck.add("LVTDLTK");
+        peptidesToCheck.add("TVMENFVAFVDK");
+        peptidesToCheck.add("LVTDLTK");
+        peptidesToCheck.add("NECFLSHK");
+        peptidesToCheck.add("YCDNQDTISSK");
+        peptidesToCheck.add("AEFVEVTK");
+        peptidesToCheck.add("YLYEIAR");
+
+
+
+        ArrayList<Double> massDiffList = new ArrayList<>();
+        massDiffList = PrecursorMassDiffBinner.precursorMassDiffBinner(testmzXML, peptidesToCheck, aminoAcidsList);
+        System.out.println("List size: "+massDiffList.size());
+        String csvMassDiffOut = "C:\\Programmierordner\\BSA_MS1Diff_Analysis\\";
+        //CSVCreator.createMassDiffCSV(massDiffList, csvMassDiffOut);
+        System.out.println("MS2-scans: "+testmzXML.getMS2ScanCount());
+
+
+
 
 
 
