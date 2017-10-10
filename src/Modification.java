@@ -101,4 +101,9 @@ public class Modification {
         return oxidation;
     }
 
+    public static Modification acetylation(int pos){
+        Modification acetylation = new Modification("Ac", "H2C2O",pos);
+        return acetylation;
+    }
+
 }

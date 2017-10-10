@@ -107,11 +107,11 @@ public class Main {
         String fragmentIonFilePath = "C:\\Programmierordner\\SOT_HEK_EColi\\Analysis\\SOT_EC_HEK_EColiSpikeIn_1to1.csv";
        // CSVAnalyzer.cicRatioCalculator(fragmentIonFilePath);
 
-        String testFilePath = "C:\\Programmierordner\\BSA_MassDiff\\20171005_SOT_BSA_1to1_28HCD_2.mzXML";
-        File testFileSource = new File(testFilePath);
-        MzXMLFile testmzXML = new MzXMLFile(testFileSource);
+        String testFilePath = "C:\\Programmierordner\\BSA_MS1Diff_Analysis\\TMT\\20171009_stamch_NEB_BSA_TMT_1to1_2uL.mzXML";
+        //File testFileSource = new File(testFilePath);
+        //MzXMLFile testmzXML = new MzXMLFile(testFileSource);
 
-        ArrayList<String> peptidesToCheck = new ArrayList<>();
+        /*ArrayList<String> peptidesToCheck = new ArrayList<>();
         peptidesToCheck.add("HLVDEPQNLIK");
         peptidesToCheck.add("HPEYAVSLLR");
         peptidesToCheck.add("VPQVSTPTLVEVSR");
@@ -122,16 +122,46 @@ public class Main {
         peptidesToCheck.add("NECFLSHK");
         peptidesToCheck.add("YCDNQDTISSK");
         peptidesToCheck.add("AEFVEVTK");
-        peptidesToCheck.add("YLYEIAR");
+        peptidesToCheck.add("YLYEIAR");*/
 
 
 
-        ArrayList<Double> massDiffList = new ArrayList<>();
+        /*ArrayList<Double> massDiffList = new ArrayList<>();
         massDiffList = PrecursorMassDiffBinner.precursorMassDiffBinner(testmzXML, peptidesToCheck, aminoAcidsList);
         System.out.println("List size: "+massDiffList.size());
-        String csvMassDiffOut = "C:\\Programmierordner\\BSA_MassDiff\\";
+        String csvMassDiffOut = "C:\\Programmierordner\\BSA_MS1Diff_Analysis\\TMT\\";
         CSVCreator.createMassDiffCSV(massDiffList, csvMassDiffOut);
-        System.out.println("MS2-scans: "+testmzXML.getMS2ScanCount());
+        System.out.println("MS2-scans: "+testmzXML.getMS2ScanCount());*/
+
+        String ir7String = "IEAKGER";
+        Peptide ir7 = new Peptide(ir7String, aminoAcidsList);
+        ArrayList<Modification> modList = new ArrayList<>();
+        modList.add(Modification.acetylation(1));
+        modList.add(Modification.uncleavedECDuplex(4));
+        Peptide modIR7intact = ir7.peptideModifier(modList);
+        modIR7intact.peptidePrinter();
+        modList.clear();
+        modList.add(Modification.acetylation(1));
+        modList.add(Modification.cleavedEC179(4));
+
+
+        String spectrumFilePath = "C:\\Programmierordner\\IR7_SOT179_MSMS.csv";
+        File ir7File = new File(spectrumFilePath);
+        MySpectrum ir7Spectrum = CSVReader.spectrumParse(ir7File);
+        PeakCompare.peakCompare(ir7Spectrum, modIR7intact, 5);
+        System.out.println();
+
+        ir7 = new Peptide(ir7String, aminoAcidsList);
+        Peptide modIR7Cleaved = ir7.peptideModifier(modList);
+        modIR7Cleaved.peptidePrinter();
+        PeakCompare.peakCompare(ir7Spectrum, modIR7Cleaved, 5);
+
+
+
+
+
+
+
 
 
 
