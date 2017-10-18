@@ -1,5 +1,6 @@
 import uk.ac.ebi.pride.tools.jmzreader.JMzReaderException;
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLFile;
+import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLParsingException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -79,12 +80,12 @@ public class CSVReader {
     }
 
 
-    public static void wholeRunCICChecker(MzXMLFile runIn, File evidence, ArrayList<AminoAcid> aminoAcids, double accuracy, int spectraAtOnce, String filePath, String labelIn) throws JMzReaderException, FileNotFoundException {
+    public static void wholeRunCICChecker(MzXMLFile runIn, File evidence,
+                                          ArrayList<AminoAcid> aminoAcids, double accuracy,
+                                          String filePath, String labelIn) throws JMzReaderException, FileNotFoundException, MzXMLParsingException {
         if (!labelIn.equals("TMT") && !labelIn.equals("EC"))
             throw new IllegalArgumentException("Unknown label: "+labelIn+"! Please use TMT or EC");
 
-
-        ArrayList<CompClusterIonMatch> allResults = new ArrayList<>();
         Scanner scanner = null;
         try {
             scanner = new Scanner(evidence);
@@ -113,10 +114,10 @@ public class CSVReader {
                     captionPositions.put("Leading proteins", index);
                     break;
                 case "MS/MS Scan Number":
-                captionPositions.put("MS/MS Scan Number", index);
+                    captionPositions.put("MS/MS Scan Number", index);
                 break;
                 case "Reporter intensity count 0":
-                captionPositions.put("Reporter intensity count 0", index);
+                    captionPositions.put("Reporter intensity count 0", index);
                 break;
             }
             index++;
@@ -129,6 +130,52 @@ public class CSVReader {
         int addedSpectra = 0;
 
         //TODO : Writer open, write header
+        File folder = new File(filePath);
+        folder.mkdirs();
+        String path = filePath + "labelFragmentIons.csv";
+        File outputFile = new File(path);
+        PrintWriter csvWriter = new PrintWriter(outputFile);
+        StringBuilder sb = new StringBuilder();
+
+
+        String[] header = new String[19];
+        header[0] = "Modified Peptide";
+        header[1] = "Precursor Mass [m/z]";
+        header[2] = "Precursor Charge";
+        header[3] = "Label Count";
+        header[4] = "Label Name";
+        header[5] = "Cleaved Labels";
+        header[6] = "Mixed Labels";
+        header[7] = "Fragment Ion";
+        header[8] = "Fragment Ion Charge";
+        header[9] = "Fragment Ion Mass [m/z]";
+        header[10] = "Peak Charge";
+        header[11] = "Peak Mass [m/z]";
+        header[12] = "Mass Deviation [ppm]";
+        header[13] = "Peak rel. Intensity [%]";
+        header[14] = "Peak abs. Intensity [au]";
+        header[15] = "Scan Number";
+        header[16] = "Fragment Ion Amino Acid Sequence";
+        header[17] = "Fragment Ion Sum Formula";
+        header[18] = "Leading Proteins";
+
+
+        //Write captions in file
+        //first seperator is empty
+        String sep = "";
+        for (String caption : header){
+            sb.append(sep);
+            sb.append(caption);
+            sep = ",";
+        }
+        //new row
+        sb.append('\n');
+
+        //write header and empty sb
+        csvWriter.write(sb.toString());
+        csvWriter.flush();
+        sb.setLength(0);
+        //TODO: Headers should be written by now
 
         //start reading in of values
         while (scanner.hasNextLine()) {
@@ -161,18 +208,18 @@ public class CSVReader {
                     currentSpectrumMatches = LabelFragmentIonChecker.compClusterCheckerEC(aminoAcids, sequence, mods, scanNumber, runIn, accuracy, leadingProteins);
                 if (labelIn.equals("TMT"))
                     currentSpectrumMatches = LabelFragmentIonChecker.compClusterCheckerTMT(aminoAcids, sequence, mods, scanNumber, runIn, accuracy, leadingProteins);
-                allResults.addAll(currentSpectrumMatches);
+                //TODO: here, the current spectral matches have to be handled
+                //the compClusterCSVPrinter-Function has to provide a String for the String Builder in this case, or even a String Builder
                 processedSpectra++;
                 System.out.println("Processed spectrum number: " + scanNumber);
                 System.out.println("Processed spectra: " + processedSpectra);
-                addedSpectra++;
-                if (addedSpectra == spectraAtOnce) {
-                    int indices = processedSpectra - addedSpectra +1;
-                    String path = filePath + "_" + indices + "_" + processedSpectra + ".csv";
-                    CSVCreator.compClusterMatchCSVPrinter(allResults, path);
-                    allResults = new ArrayList<>();
-                    addedSpectra = 0;
-                }
+                //Printout-Procedure
+                sb = CSVCreator.compClusterSBCreator(currentSpectrumMatches);
+                csvWriter.write(sb.toString());
+                csvWriter.flush();
+                //clear variables again
+                sb.setLength(0);
+                currentSpectrumMatches.clear();
                 continue;
             }
 
@@ -206,25 +253,22 @@ public class CSVReader {
                 currentSpectrumMatches = LabelFragmentIonChecker.compClusterCheckerEC(aminoAcids, sequence, mods, scanNumber, runIn, accuracy, leadingProteins);
             if (labelIn.equals("TMT"))
                 currentSpectrumMatches = LabelFragmentIonChecker.compClusterCheckerTMT(aminoAcids, sequence, mods, scanNumber, runIn, accuracy, leadingProteins);
-            allResults.addAll(currentSpectrumMatches);
             processedSpectra++;
-            addedSpectra++;
             System.out.println("Processed spectrum number: " + scanNumber);
             System.out.println("Processed spectra: " + processedSpectra);
-            if (addedSpectra == spectraAtOnce) {
-                int indices = processedSpectra - addedSpectra + 1 ;
-                String path = filePath + "_" + indices + "_" + processedSpectra + ".csv";
-                CSVCreator.compClusterMatchCSVPrinter(allResults, path);
-                allResults = new ArrayList<>();
-                addedSpectra = 0;
-            }
+
+
+            //Printout-Procedure
+            sb = CSVCreator.compClusterSBCreator(currentSpectrumMatches);
+            csvWriter.write(sb.toString());
+            csvWriter.flush();
+            //clear variables again
+            sb.setLength(0);
+            currentSpectrumMatches.clear();
         }
 
         scanner.close();
-        int indices = processedSpectra - addedSpectra +1;
-        String path = filePath + "_" + indices + "_" + processedSpectra + ".csv";
-        CSVCreator.compClusterMatchCSVPrinter(allResults, path);
-        //TODO : writer.close
+        csvWriter.close();
 
         System.out.println("Sorted out spectra (no reporter ion intensities): " + sortedOut);
         System.out.println("Processed spectra: " + processedSpectra);

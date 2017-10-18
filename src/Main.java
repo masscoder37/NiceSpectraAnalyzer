@@ -49,20 +49,22 @@ public class Main {
         //Here, the spectrum to be analyzed has to be specified
         //It has to be a .mzXML-File which was centroided on MS1 and MS2-levels (see supporting information)
         //TODO: Please change your file path accordingly.
-        String filePathSpectrum =  "C:\\Programmierordner\\SOT_HEK_EColi\\20171003_SOT_HEKBkgrnd_EColiSpikeIn_1to1.mzXML";
-        //File completemzXMLSource = new File(filePathSpectrum);
+        String filePathSpectrum =  "C:\\Programmierordner\\EC_HEK\\20170821_stamch_HEKLysate_EC_1to1_5uL.mzXML";
+        File completemzXMLSource = new File(filePathSpectrum);
         //generating the MzXMLFile object might take a few minutes and will display some warnings.
-        //MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
+        MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
 
 
         //In this section, you have to supply the evidence.txt file from your MaxQuant analysis.
         //At the moment, the software assumes static carbamidomethylation on cysteine residues and variable methionine-oxidation
         //please filter out other modifications
         //TODO: Please change your file path accordingly.
-        String evidenceLocation = "C:\\Programmierordner\\SOT_HEK_EColi\\SOT_EC_HEK_EColiSpikeIn_1to1.txt";
-        //File evidence = new File(evidenceLocation);
+        String evidenceLocation = "C:\\Programmierordner\\EC_HEK\\21082017_EC_TMT_HEK_filtered.txt";
+        File evidence = new File(evidenceLocation);
         //TODO: Please provide a directory were the output Files will be saved
-        String csvOutPath = "C:\\Programmierordner\\SOT_HEK_EColi\\Analysis\\";
+        String csvOutPath = "C:\\Programmierordner\\EC_HEK\\newCode\\";
+
+
 
 
         //Section 1
@@ -70,7 +72,7 @@ public class Main {
         //it creates multiple .csv-Files (one for 500 analyzed spectra each) in the specified directory, containing all matched label-containing fragment ions
         //TODO: change the max. allowed mass deviation in ppm. Currently: 5 ppm; 4th entry
         //TODO: change the used label: use "EC" for the SOT-duplex or "TMT" for the TMT-duplex
-        //CSVReader.wholeRunCICChecker(completemzXML, evidence, aminoAcidsList, 5, 250, csvOutPath, "EC");
+        CSVReader.wholeRunCICChecker(completemzXML, evidence, aminoAcidsList, 10, csvOutPath, "EC");
         //TODO: after compilation, the files should be created! Put section 1 in a comment block!
 
 
@@ -132,29 +134,6 @@ public class Main {
         String csvMassDiffOut = "C:\\Programmierordner\\BSA_MS1Diff_Analysis\\TMT\\";
         CSVCreator.createMassDiffCSV(massDiffList, csvMassDiffOut);
         System.out.println("MS2-scans: "+testmzXML.getMS2ScanCount());*/
-
-        String ir7String = "IEAKGER";
-        Peptide ir7 = new Peptide(ir7String, aminoAcidsList);
-        ArrayList<Modification> modList = new ArrayList<>();
-        modList.add(Modification.acetylation(1));
-        modList.add(Modification.uncleavedECDuplex(4));
-        Peptide modIR7intact = ir7.peptideModifier(modList);
-        modIR7intact.peptidePrinter();
-        modList.clear();
-        modList.add(Modification.acetylation(1));
-        modList.add(Modification.cleavedEC179(4));
-
-
-        String spectrumFilePath = "C:\\Programmierordner\\IR7_SOT179_MSMS.csv";
-        File ir7File = new File(spectrumFilePath);
-        MySpectrum ir7Spectrum = CSVReader.spectrumParse(ir7File);
-        PeakCompare.peakCompare(ir7Spectrum, modIR7intact, 5);
-        System.out.println();
-
-        ir7 = new Peptide(ir7String, aminoAcidsList);
-        Peptide modIR7Cleaved = ir7.peptideModifier(modList);
-        modIR7Cleaved.peptidePrinter();
-        PeakCompare.peakCompare(ir7Spectrum, modIR7Cleaved, 5);
 
 
 

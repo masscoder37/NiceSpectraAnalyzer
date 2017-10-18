@@ -100,6 +100,53 @@ public class CSVCreator {
         csvWriter.close();
         System.out.println(".csv-file created!");
     }
+    public static StringBuilder compClusterSBCreator(ArrayList<CompClusterIonMatch> matchesIn){
+        StringBuilder matchesSB = new StringBuilder();
+
+
+
+        //handle the CompClusterMatches now
+        for (CompClusterIonMatch match : matchesIn){
+            //get the values
+            String[] values = new String[19];
+            values[0] = match.getFragmentIon().getPrecursorSequence(); //"Modified Peptide";
+
+
+            String[] splitScanHeader = match.getScanHeader().split(";");
+
+            values[1] = splitScanHeader[0]; //"Precursor Mass [m/z]";
+            values[2] = splitScanHeader[1]; //"Precursor Charge";
+
+            values[3] = Integer.toString(match.getFragmentIon().getLabelQuantity()); //"Label Count";
+            values[4] = match.getLabelName(); //"Label Name";
+            values[5] = ""+match.getIsCleaved();//"Cleaved Labels";
+            values[6] = ""+match.getMixedLabels(); //"Mixed Labels";
+            values[7] = match.getFragmentIon().getCompleteIon(); //"Fragment Ion";
+            values[8] = Integer.toString(match.getFragmentIon().getCharge()); //"Fragment Ion Charge";
+            values[9] = fourDec.format(match.getFragmentIon().getMToZ()); //"Fragment Ion Mass [m/z]";
+            values[10] = Integer.toString(match.getPeak().getCharge()); //"Peak Charge";
+            values[11] = fourDec.format(match.getPeak().getMass()); //"Peak Mass [m/z]";
+            values[12] = twoDec.format(match.getPpmDeviation());//"Mass Deviation [ppm]";
+            values[13] = twoDec.format(match.getPeak().getRelIntensity()); //"Peak rel. Intensity [%]";
+            values[14] = scientific.format(match.getPeak().getIntensity()); //"Peak abs. Intensity [au]";
+            values[15] = Integer.toString(match.getPeak().getScanNumber()); //"Scan Number";
+            values[16] = match.getFragmentIon().getAASequence();//"Fragment Ion Sequence";
+            values[17] = match.getFragmentIon().getFormula().getSumFormula();//"Fragment Ion Sum Formula";
+            values[18] = match.getLeadingProteins();
+
+            //start writing
+            String sep = "";
+            for (String value : values){
+                matchesSB.append(sep);
+                matchesSB.append(value);
+                sep = ",";
+            }
+            matchesSB.append('\n');
+        }
+        //all the matches are added to StringBuilder
+        return matchesSB;
+
+    }
 
     //combine different .csv Files into one big .csv file
     public static void csvFileCombiner(String folderPath) throws FileNotFoundException {
