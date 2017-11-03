@@ -87,4 +87,12 @@ public class PeakCompare {
 
         return matchedReporters;
     }
+
+    public static boolean isMatch(double massToCheck, double massCalculated, double ppmDeviation ){
+        boolean match = false;
+        double[] massRange = DeviationCalc.ppmRangeCalc(ppmDeviation, massCalculated);
+        if (massToCheck >= massRange[0] && massToCheck <= massRange[1])
+            match = true;
+        return match;
+    }
 }
