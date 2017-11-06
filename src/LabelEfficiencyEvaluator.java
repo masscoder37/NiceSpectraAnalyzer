@@ -23,7 +23,7 @@ public class LabelEfficiencyEvaluator {
         //SOT - sulfoxide tag
         //TMT - tandem mass tag
         if (!reagentIn.equals("TMT")&&!reagentIn.equals("EC")&&!reagentIn.equals("SOT"))
-            throw new IllegalArgumentException("Label not know: "+reagentIn"! Please use the labels TMT or SOT/EC!");
+            throw new IllegalArgumentException("Label not know: "+reagentIn+"! Please use the labels TMT or SOT/EC!");
 
         //first, prepare .csv-File Output
         filePathtoStore = filePathtoStore + "labelAnalysis.csv";

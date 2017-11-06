@@ -49,7 +49,7 @@ public class Main {
         //Here, the spectrum to be analyzed has to be specified
         //It has to be a .mzXML-File which was centroided on MS1 and MS2-levels (see supporting information)
         //TODO: Please change your file path accordingly.
-        String filePathSpectrum =  "C:\\Programmierordner\\EC_HEK\\20170821_stamch_HEKLysate_EC_1to1_5uL.mzXML";
+        String filePathSpectrum =  "C:\\Programmierordner\\02112017_SOT_HEK\\20171102_stamch_HEK_SOT_1to1_3p5uL.mzXML";
         File completemzXMLSource = new File(filePathSpectrum);
         //generating the MzXMLFile object might take a few minutes and will display some warnings.
         MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
@@ -59,10 +59,10 @@ public class Main {
         //At the moment, the software assumes static carbamidomethylation on cysteine residues and variable methionine-oxidation
         //please filter out other modifications
         //TODO: Please change your file path accordingly.
-        String evidenceLocation = "C:\\Programmierordner\\EC_HEK\\21082017_EC_TMT_HEK_filtered.txt";
+        String evidenceLocation = "C:\\Programmierordner\\02112017_SOT_HEK\\evidence_modifiziert_EC.txt";
         File evidence = new File(evidenceLocation);
         //TODO: Please provide a directory were the output Files will be saved
-        String csvOutPath = "C:\\Programmierordner\\EC_HEK\\newCode\\";
+        String csvOutPath = "C:\\Programmierordner\\02112017_SOT_HEK\\SOT_Analysis\\";
 
 
 

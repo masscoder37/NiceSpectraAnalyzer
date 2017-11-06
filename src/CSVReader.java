@@ -100,23 +100,24 @@ public class CSVReader {
         Map<String, Integer> captionPositions = new HashMap<>();
         int index = 0;
         for (String caption : splitCaptions) {
+            caption = caption.toLowerCase();
             switch (caption) {
-                case "Sequence":
+                case "sequence":
                     captionPositions.put("Sequence", index);
                     break;
-                case "Modifications":
+                case "modifications":
                     captionPositions.put("Modifications", index);
                     break;
-                case "Modified sequence":
+                case "modified sequence":
                     captionPositions.put("Modified sequence", index);
                     break;
-                case "Leading proteins":
+                case "leading proteins":
                     captionPositions.put("Leading proteins", index);
                     break;
-                case "MS/MS Scan Number":
+                case "ms/ms scan number":
                     captionPositions.put("MS/MS Scan Number", index);
                 break;
-                case "Reporter intensity count 0":
+                case "reporter intensity count 0":
                     captionPositions.put("Reporter intensity count 0", index);
                 break;
             }
