@@ -52,14 +52,14 @@ public class Main {
         String filePathSpectrum =  "C:\\Programmierordner\\02112017_SOT_HEK\\20171102_stamch_HEK_SOT_1to1_3p5uL.mzXML";
         File completemzXMLSource = new File(filePathSpectrum);
         //generating the MzXMLFile object might take a few minutes and will display some warnings.
-        MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
+        //MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
 
 
         //In this section, you have to supply the evidence.txt file from your MaxQuant analysis.
         //At the moment, the software assumes static carbamidomethylation on cysteine residues and variable methionine-oxidation
         //please filter out other modifications
         //TODO: Please change your file path accordingly.
-        String evidenceLocation = "C:\\Programmierordner\\02112017_SOT_HEK\\evidence_modifiziert_EC.txt";
+        String evidenceLocation = "C:\\Programmierordner\\02112017_SOT_HEK\\02112017_evidence_filtered.txt";
         File evidence = new File(evidenceLocation);
         //TODO: Please provide a directory were the output Files will be saved
         String csvOutPath = "C:\\Programmierordner\\02112017_SOT_HEK\\SOT_Analysis\\";
@@ -72,7 +72,7 @@ public class Main {
         //it creates multiple .csv-Files (one for 500 analyzed spectra each) in the specified directory, containing all matched label-containing fragment ions
         //TODO: change the max. allowed mass deviation in ppm. Currently: 5 ppm; 4th entry
         //TODO: change the used label: use "EC" for the SOT-duplex or "TMT" for the TMT-duplex
-        CSVReader.wholeRunCICChecker(completemzXML, evidence, aminoAcidsList, 10, csvOutPath, "EC");
+        //CSVReader.wholeRunCICChecker(completemzXML, evidence, aminoAcidsList, 10, csvOutPath, "EC");
         //TODO: after compilation, the files should be created! Put section 1 in a comment block!
 
 
@@ -91,8 +91,7 @@ public class Main {
         //TODO: Remove the comments from this section and be sure that there are comments before and after sections 1 and 2
         //TODO: Change the file path to your file to analyze; in this case, to complete analysis
 
-
-        String toAnalyze = "C:\\Programmierordner\\SOT_HEK_EColi\\Analysis\\SOT_EC_HEK_EColiSpikeIn_1to1.csv";
+        String toAnalyze = "C:\\Programmierordner\\02112017_SOT_HEK\\SOT_Analysis\\labelFragmentIons_EC.csv";
         //CSVAnalyzer.cicStatistics(toAnalyze);
 
 
@@ -100,14 +99,14 @@ public class Main {
         //in this section, you can analyse the reporter ion intensities of the files
         //TODO:Remove the comments from this section and be sure that there are comments before and after sections 1, 2 and 3
         //TODO: You can specify the allowed reporter ion mass deviation [ppm]. Standard parameter is 5 ppm; 3rd entry
-        String statisticsFilePath = "C:\\Programmierordner\\SOT_HEK_EColi\\Analysis\\SOT_EC_HEK_EColiSpikeIn_1to1_statistics.csv";
-        //File statisticsFile = new File(statisticsFilePath);
+        String statisticsFilePath = "C:\\Programmierordner\\02112017_SOT_HEK\\SOT_Analysis\\labelFragmentIons_EC_statistics.csv";
+        File statisticsFile = new File(statisticsFilePath);
         //CSVReader.wholeRunRepFinder(completemzXML, statisticsFile ,5);
 
         //Section 5
         //Complementary Ion Cluster analysis
-        String fragmentIonFilePath = "C:\\Programmierordner\\SOT_HEK_EColi\\Analysis\\SOT_EC_HEK_EColiSpikeIn_1to1.csv";
-       // CSVAnalyzer.cicRatioCalculator(fragmentIonFilePath);
+        String fragmentIonFilePath = "C:\\Programmierordner\\02112017_SOT_HEK\\SOT_Analysis\\labelFragmentIons_EC.csv";
+        CSVAnalyzer.cicRatioCalculator(fragmentIonFilePath);
 
         String testFilePath = "C:\\Programmierordner\\BSA_MS1Diff_Analysis\\TMT\\20171009_stamch_NEB_BSA_TMT_1to1_2uL.mzXML";
         //File testFileSource = new File(testFilePath);
