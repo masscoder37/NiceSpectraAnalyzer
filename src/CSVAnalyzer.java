@@ -368,7 +368,7 @@ public class CSVAnalyzer {
 
         //set up Stringbuilder and PrinterWriter
         String newFilePath = filePath.replace(".csv", "_");
-        newFilePath = newFilePath + "complementaryClusters_0rel.csv";
+        newFilePath = newFilePath + "complementaryClusters_withY1.csv";
 
         File outputFile = new File(newFilePath);
         StringBuilder sb = new StringBuilder();
