@@ -1,6 +1,7 @@
 import uk.ac.ebi.pride.tools.jmzreader.JMzReaderException;
 import uk.ac.ebi.pride.tools.jmzreader.model.Spectrum;
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLFile;
+import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLSpectrum;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -45,4 +46,29 @@ public class MzXMLReadIn {
 
         return spectrumOut;
     }
+
+    public static MySpectrum spectrumConvert(MzXMLSpectrum spectrumIn){
+        String scanHeader = "";
+        try {
+            scanHeader += fourDec.format(spectrumIn.getPrecursorMZ()) + ";" + spectrumIn.getPrecursorCharge();
+        }
+        catch (IllegalArgumentException e){
+            scanHeader = "NA;NA";
+        }
+        scanHeader+= "+";
+
+        int scanNumber = Integer.parseInt(spectrumIn.getId());
+
+
+        ArrayList<Peak> peakList = new ArrayList<>();
+        Map<Double, Double> mzXMLPeakList = spectrumIn.getPeakList();
+        for (Double mass : mzXMLPeakList.keySet()){
+            Double intensity = mzXMLPeakList.get(mass);
+            peakList.add(new Peak(mass, intensity, scanNumber));
+        }
+        MySpectrum spectrumOut = new MySpectrum(peakList, scanNumber, scanHeader);
+
+        return spectrumOut;
+    }
+
 }

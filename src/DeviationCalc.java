@@ -13,9 +13,6 @@ public class DeviationCalc {
 
 
     public static double ppmDeviationCalc (double massInReal, double massInMeasured){
-
-
-
         return Math.abs(massInMeasured-massInReal)/massInReal*(Math.pow(10,6));
     }
 

@@ -6,6 +6,8 @@ import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLSpectrum;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 /**
  * Created by micha on 11/3/2017.
@@ -19,6 +21,10 @@ import java.io.PrintWriter;
     //this class checks all the MS2-spectra
     //create output file with the respective label intensities and a report at the end how many % of all MS2-spectra contain the signals
 public class LabelEfficiencyEvaluator {
+
+    private static DecimalFormat twoDec = new DecimalFormat("0.00");
+    private static DecimalFormat fourDec = new DecimalFormat("0.0000");
+    private static DecimalFormat scientific = new DecimalFormat("0.00E0");
     public static void labelEvaluator(MzXMLFile mzXMLFileIn, String reagentIn, double ppmDevIn, String filePathToStore) throws FileNotFoundException, MzXMLParsingException {
         //check if label is known
         //currently accepted labels:
@@ -68,15 +74,16 @@ public class LabelEfficiencyEvaluator {
         //[13] median rel. Intensity light
         //[14] meadian rel. intensity heavy
 
-        String[] header = new String[8];
+        String[] header = new String[9];
         header[0] = "scan number";
-        header[1] = "mass deviation light label [ppm]";
-        header[2] = "abs. intensity light label [au]";
-        header[3] = "rel. intensity light label [%]";
-        header[4] = "mass deviation heavy label [ppm]";
-        header[5] = "abs. intensity heavy label [au]";
-        header[6] = "rel. intensity heavy label [%]";
-        header[7] = "ratio light label/heavy label";
+        header[1] = "peaks found";
+        header[2] = "mass deviation light label [ppm]";
+        header[3] = "abs. intensity light label [au]";
+        header[4] = "rel. intensity light label [%]";
+        header[5] = "mass deviation heavy label [ppm]";
+        header[6] = "abs. intensity heavy label [au]";
+        header[7] = "rel. intensity heavy label [%]";
+        header[8] = "ratio light label/heavy label";
 
         String[] postHeader = new String[7];
         postHeader[0] = "analyzed MS²-spectra";
@@ -103,10 +110,82 @@ public class LabelEfficiencyEvaluator {
         //now, loop through all the MS2-scans
         MzXMLFile.MzXMLScanIterator ms2Scans =  mzXMLFileIn.getMS2ScanIterator();
 
+
+        //prepare some variables for the loop
+        //no more peaks have to be compared if mass is higher than that
+        double upperMassLimit = heavyTagMass +1;
+
         while (ms2Scans.hasNext()){
 
-            //TODO: read from MzXML spectrum or convert to MySpectrum Class
+            //spectrum is converted to my file format for easier handling
             MzXMLSpectrum currentMzXMLSpectrum = new MzXMLSpectrum(ms2Scans.next());
+            MySpectrum currentMySpectrum = MzXMLReadIn.spectrumConvert(currentMzXMLSpectrum);
+
+            //go through the peaks up until upperMassLimit
+            ArrayList<Peak> spectraPeaks = new ArrayList<>();
+            spectraPeaks = currentMySpectrum.getPeakList();
+
+            //it is possible that there are more peaks that would match the masses, hence pick the one with the lowest mass deviation
+            ArrayList<Peak> lightTagPeaks = new ArrayList<>();
+            ArrayList<Peak> heavyTagPeaks = new ArrayList<>();
+
+            for (Peak peak : spectraPeaks){
+                double peakMass = peak.getMass();
+                if (PeakCompare.isMatch(peakMass, lightTagMass, ppmDevIn))
+                    lightTagPeaks.add(peak);
+                if (PeakCompare.isMatch(peakMass, heavyTagMass, ppmDevIn))
+                    heavyTagPeaks.add(peak);
+                //break the loop if upper mass limit is reached
+                if (peakMass > upperMassLimit)
+                    break;
+            }
+            //now, the peakLists are filled and the best match has to be found
+
+            Peak bestLightMatch;
+            Peak bestHeavyMatch;
+            double minppmDevLight = ppmDevIn;
+            double minppmDevHeavy = ppmDevIn;
+
+            //find the best light tag match
+            for (Peak peak : lightTagPeaks){
+                double ppmDev = DeviationCalc.ppmDeviationCalc(lightTagMass, peak.getMass());
+                if (ppmDev<=minppmDevLight) {
+                    minppmDevLight = ppmDev;
+                    bestLightMatch = peak;
+                }
+            }
+            //find the best heavy tag match
+            for (Peak peak : heavyTagPeaks){
+                double ppmDev = DeviationCalc.ppmDeviationCalc(heavyTagMass, peak.getMass());
+                if (ppmDev<=minppmDevHeavy) {
+                    minppmDevHeavy = ppmDev;
+                    bestHeavyMatch = peak;
+                }
+            }
+
+            //now, prepare the StringBuilder
+
+            //TODO: handle what to do if peaks are not found
+
+            String[] valuesForSB = new String[8];
+            //[0] Scan Number
+            //[1] Peaks found
+            //[2] Mass Dev Light Tag
+            //[3] Intensity Light Tag
+            //[4] rel. intensity Light Tag
+            //[5] Mass Dev heavy Tag
+            //[6] Intensity heavy Tag
+            //[7] rel. intensity heavy Tag
+            //[8] ratio light/heavy
+
+            valuesForSB[0] = currentMzXMLSpectrum.getId();
+
+
+
+
+
+
+
 
 
 
