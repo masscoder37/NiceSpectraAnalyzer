@@ -368,7 +368,7 @@ public class CSVAnalyzer {
 
         //set up Stringbuilder and PrinterWriter
         String newFilePath = filePath.replace(".csv", "_");
-        newFilePath = newFilePath + "complementaryClusters_withY1.csv";
+        newFilePath = newFilePath + "complementaryClusters_with10cutoff.csv";
 
         File outputFile = new File(newFilePath);
         StringBuilder sb = new StringBuilder();
@@ -521,7 +521,7 @@ public class CSVAnalyzer {
         //do this only if a cleaved Ion is present
         if (currentValues[captionPositions.get("Cleaved Labels")].equals("true")) {
             activeRelInt = Double.parseDouble(currentValues[captionPositions.get("Peak rel. Intensity [%]")]);
-            if(activeRelInt >0) {
+            if(activeRelInt >10) {
                 compIonList.add(new ComplementaryIon(currentValues[captionPositions.get("Modified Peptide")],
                         currentValues[captionPositions.get("Label Name")], currentValues[captionPositions.get("Fragment Ion")],
                         currentValues[captionPositions.get("Fragment Ion Charge")], currentValues[captionPositions.get("Fragment Ion Mass [m/z]")],
@@ -567,7 +567,7 @@ public class CSVAnalyzer {
             //normal readout of all the values
             if (currentValues[captionPositions.get("Cleaved Labels")].equals("true")) {
                 activeRelInt = Double.parseDouble(currentValues[captionPositions.get("Peak rel. Intensity [%]")]);
-                if(activeRelInt >0) {
+                if(activeRelInt >10) {
                     compIonList.add(new ComplementaryIon(currentValues[captionPositions.get("Modified Peptide")],
                             currentValues[captionPositions.get("Label Name")], currentValues[captionPositions.get("Fragment Ion")],
                             currentValues[captionPositions.get("Fragment Ion Charge")], currentValues[captionPositions.get("Fragment Ion Mass [m/z]")],
