@@ -368,7 +368,7 @@ public class CSVAnalyzer {
 
         //set up Stringbuilder and PrinterWriter
         String newFilePath = filePath.replace(".csv", "_");
-        newFilePath = newFilePath + "complementaryClusters_with10cutoff.csv";
+        newFilePath = newFilePath + "complementaryClusters_nocutoff.csv";
 
         File outputFile = new File(newFilePath);
         StringBuilder sb = new StringBuilder();
@@ -521,7 +521,7 @@ public class CSVAnalyzer {
         //do this only if a cleaved Ion is present
         if (currentValues[captionPositions.get("Cleaved Labels")].equals("true")) {
             activeRelInt = Double.parseDouble(currentValues[captionPositions.get("Peak rel. Intensity [%]")]);
-            if(activeRelInt >10) {
+            if(activeRelInt >0) {
                 compIonList.add(new ComplementaryIon(currentValues[captionPositions.get("Modified Peptide")],
                         currentValues[captionPositions.get("Label Name")], currentValues[captionPositions.get("Fragment Ion")],
                         currentValues[captionPositions.get("Fragment Ion Charge")], currentValues[captionPositions.get("Fragment Ion Mass [m/z]")],
@@ -567,7 +567,7 @@ public class CSVAnalyzer {
             //normal readout of all the values
             if (currentValues[captionPositions.get("Cleaved Labels")].equals("true")) {
                 activeRelInt = Double.parseDouble(currentValues[captionPositions.get("Peak rel. Intensity [%]")]);
-                if(activeRelInt >10) {
+                if(activeRelInt >0) {
                     compIonList.add(new ComplementaryIon(currentValues[captionPositions.get("Modified Peptide")],
                             currentValues[captionPositions.get("Label Name")], currentValues[captionPositions.get("Fragment Ion")],
                             currentValues[captionPositions.get("Fragment Ion Charge")], currentValues[captionPositions.get("Fragment Ion Mass [m/z]")],
@@ -601,6 +601,225 @@ public class CSVAnalyzer {
         System.out.println("Analyzed scan: #" + activeScanNumber);
         System.out.println("Analysis complete! .csv-File created! Scans analyzed: "+ (scansAnalyzed));
 
+    }
+
+
+    //this function combines all the complementary ion cluster ratio information for a peptide species
+    public static void clusterRatioPerPeptide(String filePathIn) throws  FileNotFoundException{
+        //first, prepare new .csv File and write header
+        String newFilePath = filePathIn.replace(".csv", "_");
+        newFilePath = newFilePath + "ratioPerPeptide.csv";
+
+        File outputFile = new File(newFilePath);
+        StringBuilder sb = new StringBuilder();
+        PrintWriter csvWriter = new PrintWriter(outputFile);
+
+        //header structure
+        //[0] Modified Peptide
+        //[1] Number of Scans
+        //[2] Scan Numbers
+        //[3] Leading Proteins
+        //[4] Utilized Ion Clusters
+        //[5] Number of Utilized Ion Clusters
+        //[6] Median Ratio 179c/180c
+        //[7] Mean Ratio 179c/180c
+
+        String[] header = new String[8];
+        header[0] = "Modified Peptide";
+        header[1] = "Number of Scans";
+        header[2] = "Scan Numbers";
+        header[3] = "Leading Proteins";
+        header[4] = "Utilized Ion Clusters";
+        header[5] = "Number of Utilized Ion Clusters";
+        header[6] = "Median Ratio 179c/180c";
+        header[7] = "Mean Ratio 179c/180c";
+
+        String sep = "";
+        for (String headerCaptions : header){
+            sb.append(headerCaptions);
+            sep = ",";
+            sb.append(sep);
+        }
+        sb.append("\n");
+        csvWriter.write(sb.toString());
+        csvWriter.flush();
+        sb.setLength(0);
+        //header written, sb cleared
+
+        //now, set important columns of old file
+        File cicFile = new File(filePathIn);
+
+        Scanner scanner = null;
+        try {
+            scanner = new Scanner(cicFile);
+        } catch (FileNotFoundException e) {
+            System.out.println("Could not read file: " + filePathIn);
+        }
+
+        String oldHeader = scanner.nextLine();
+        String oldHeaderCaptions[] = oldHeader.split(",");
+        HashMap<String, Integer> captionPositions = new HashMap<>();
+        int index = 0;
+        for (String captions : oldHeaderCaptions) {
+        switch (captions){
+            case "Modified Peptide":
+                captionPositions.put("Modified Peptide", index);
+                break;
+            case "Scan Number":
+                captionPositions.put("Scan Number", index);
+                break;
+            case "Leading Proteins":
+                captionPositions.put("Leading Proteins", index);
+                break;
+            case "Complementary Ion Cluster Pair":
+                captionPositions.put("Complementary Ion Cluster Pair", index);
+                break;
+            case "ratio SOT179c/SOT180c":
+                captionPositions.put("ratio SOT179c/SOT180c", index);
+                break;
+        }
+        index++;
+        }
+
+        //check if all important values were set
+        if(captionPositions.size() != 5)
+            throw new IllegalArgumentException("Not all headers could be read in! Number of read in headers, out of 5 necessary: "+captionPositions.size());
+
+        //header of new file is ready, column positions of old file are read
+        //start analysis of data
+
+        //set all necessary variables;
+        int handeledClusters = 0;
+        String activePeptide, currentPeptide;
+        String scanNumber;
+        int currentScanNumber = 0;
+        ArrayList<Integer> scanNumberList = new ArrayList<>();
+        String activeLeadingProteins, currentLeadingProteins;
+        String compIonClusterPair;
+        int currentCompIonClusterPairNumber = 0;
+        ArrayList<Double> currentRatioList = new ArrayList<>();
+        double medianRatio, meanRatio, sumRatiosForMean = 0;
+
+        //read first line to set active peptide and values:
+        String currentLine = scanner.nextLine();
+
+        String[] currentValues = currentLine.split(",");
+
+        activePeptide = currentValues[captionPositions.get("Modified Peptide")];
+        currentPeptide = activePeptide;
+        scanNumber = currentValues[captionPositions.get("Scan Number")] + "; ";
+        currentScanNumber = Integer.parseInt(currentValues[captionPositions.get("Scan Number")]);
+        scanNumberList.add(currentScanNumber);
+        activeLeadingProteins = currentValues[captionPositions.get("Leading Proteins")];
+        currentLeadingProteins = activeLeadingProteins;
+        compIonClusterPair = currentValues[captionPositions.get("Complementary Ion Cluster Pair")] + "; ";
+        currentCompIonClusterPairNumber++;
+        currentRatioList.add(Double.parseDouble(currentValues[captionPositions.get("ratio SOT179c/SOT180c")]));
+
+        //start scanning through the table
+
+        while (scanner.hasNextLine()){
+            currentLine = scanner.nextLine();
+            currentValues = currentLine.split(",");
+
+            currentPeptide = currentValues[captionPositions.get("Modified Peptide")];
+            currentLeadingProteins = currentValues[captionPositions.get("Leading Proteins")];
+
+            //check if current Peptide & Leading Proteins is the same or different
+            if (!currentPeptide.equals(activePeptide) && !currentLeadingProteins.equals(activeLeadingProteins)){
+                //if they are different, start writing of the active Peptide
+                //sb is empty at this point
+                //header structure
+                //[0] Modified Peptide
+                //[1] Number of Scans
+                //[2] Scan Numbers
+                //[3] Leading Proteins
+                //[4] Utilized Ion Clusters
+                //[5] Number of Utilized Ion Clusters
+                //[6] Median Ratio 179c/180c
+                //[7] Mean Ratio 179c/180c
+
+                sb.append(activePeptide+",");
+                sb.append(Integer.toString(scanNumberList.size())+",");
+                sb.append(scanNumber+",");
+                sb.append(activeLeadingProteins+",");
+                sb.append(compIonClusterPair+",");
+                sb.append(Integer.toString(currentCompIonClusterPairNumber)+",");
+                medianRatio = medianCalc(currentRatioList);
+                sb.append(Double.toString(medianRatio)+",");
+                for (double value : currentRatioList){
+                    sumRatiosForMean =+ value;
+                }
+                if (currentRatioList.size() !=0)
+                meanRatio = sumRatiosForMean / currentRatioList.size();
+                else
+                    meanRatio = 0;
+                sb.append(Double.toString(meanRatio) + "\n");
+
+                csvWriter.write(sb.toString());
+                csvWriter.flush();
+                handeledClusters++;
+                System.out.println("Peptide added: "+activePeptide+" Total Peptides handeled: "+handeledClusters);
+
+
+                //reset all the values
+                sb.setLength(0);
+                scanNumberList.clear();
+                scanNumber="";
+                currentRatioList.clear();
+                sumRatiosForMean = 0;
+                medianRatio = 0;
+                meanRatio = 0;
+                compIonClusterPair = "";
+                currentCompIonClusterPairNumber = 0;
+
+
+
+
+                //set new active peptide
+                activePeptide = currentPeptide;
+                activeLeadingProteins = currentLeadingProteins;
+            }
+
+            //now handle the other stuff
+
+            //only add scan Number to list if not already in there
+            currentScanNumber = Integer.parseInt(currentValues[captionPositions.get("Scan Number")]);
+            if (!scanNumberList.contains(currentScanNumber)){
+                scanNumberList.add(currentScanNumber);
+                scanNumber += Integer.toString(currentScanNumber) + "; ";
+            }
+
+            compIonClusterPair += currentValues[captionPositions.get("Complementary Ion Cluster Pair")] + "; ";
+            currentCompIonClusterPairNumber++;
+
+            currentRatioList.add(Double.parseDouble(currentValues[captionPositions.get("ratio SOT179c/SOT180c")]));
+        }
+        //handle last peptide
+
+        sb.append(activePeptide+",");
+        sb.append(Integer.toString(scanNumberList.size())+",");
+        sb.append(scanNumber+",");
+        sb.append(activeLeadingProteins+",");
+        sb.append(compIonClusterPair+",");
+        sb.append(Integer.toString(currentCompIonClusterPairNumber)+",");
+        medianRatio = medianCalc(currentRatioList);
+        sb.append(Double.toString(medianRatio)+",");
+        for (double value : currentRatioList){
+            sumRatiosForMean =+ value;
+        }
+        if (currentRatioList.size() !=0)
+            meanRatio = sumRatiosForMean / currentRatioList.size();
+        else
+            meanRatio = 0;
+        sb.append(Double.toString(meanRatio) + "\n");
+        handeledClusters++;
+        System.out.println("Peptide added: "+activePeptide+" Total Peptides handeled: "+handeledClusters);
+
+        csvWriter.write(sb.toString());
+        csvWriter.flush();
+        csvWriter.close();
+        scanner.close();
     }
 
 
