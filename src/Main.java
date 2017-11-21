@@ -108,7 +108,7 @@ public class Main {
         String fragmentIonFilePath = "C:\\Programmierordner\\SOT_Revisions\\3to1\\Analysis\\SOT_HEK_3to1_fragments_EC.csv";
         //CSVAnalyzer.cicRatioCalculator(fragmentIonFilePath);
 
-        //Section 5
+        //Section 6
         //Complementary Ion Cluster analysis per Peptide
         String cicFilePath = "C:\\Programmierordner\\SOT_Revisions\\30HCD\\Analysis\\09112017_SOT_HEK_1to1_labelFragmentIons_EC_complementaryClusters_withY1.csv";
         CSVAnalyzer.clusterRatioPerPeptide(cicFilePath);
