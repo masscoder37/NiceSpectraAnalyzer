@@ -31,7 +31,7 @@ public class Main {
     //follow the instructions in the sections
     //if you are done with a section, please comment the respective section. To do so, put /* at the beginning and */ at the end of a section
     //if a section you want to use is in a comment block, remove the comment block by removing /* at the beginning and */ at the end
-    //please be advised that the jmzreader and the mzxml-parser class have to be imported for this application to function
+    //please be advised that the jmzreader and the mzxml-parser modules have to be imported for this application to work
     //you can find the source code of these classes here: https://github.com/PRIDE-Utilities/jmzReader
 
 
@@ -49,7 +49,7 @@ public class Main {
         //Here, the spectrum to be analyzed has to be specified
         //It has to be a .mzXML-File which was centroided on MS1 and MS2-levels (see supporting information)
         //TODO: Please change your file path accordingly.
-        String filePathSpectrum =  "C:\\Programmierordner\\SOT_Revisions\\3to1\\20171114_stamch_HEK_SOT_3to1_30HCD.mzXML";
+        String filePathSpectrum =  "C:\\Universität\\Doktorarbeit\\Paper\\SOT-paper\\Revisions\\Data\\021117_HEK_SOT_1to1_fixed\\20171102_stamch_HEK_SOT_1to1_3p5uL.mzXML";
         File completemzXMLSource = new File(filePathSpectrum);
         //generating the MzXMLFile object might take a few minutes and will display some warnings.
         //MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
@@ -59,10 +59,10 @@ public class Main {
         //At the moment, the software assumes static carbamidomethylation on cysteine residues and variable methionine-oxidation
         //please filter out other modifications
         //TODO: Please change your file path accordingly.
-        String evidenceLocation = "C:\\Programmierordner\\SOT_Revisions\\3to1\\evidence_SOT_HEK_3to1.txt";
+        String evidenceLocation = "C:\\Universität\\Doktorarbeit\\Paper\\SOT-paper\\Revisions\\Data\\021117_HEK_SOT_1to1_fixed\\021117_HEK_SOT_1to1_fixed_evidence_filtered.txt";
         File evidence = new File(evidenceLocation);
         //TODO: Please provide a directory were the output Files will be saved
-        String csvOutPath = "C:\\Programmierordner\\SOT_Revisions\\3to1\\Analysis\\";
+        String csvOutPath = "C:\\Universität\\Doktorarbeit\\Paper\\SOT-paper\\Revisions\\Data\\021117_HEK_SOT_1to1_fixed\\Java Analysis\\";
 
 
 
@@ -91,7 +91,7 @@ public class Main {
         //TODO: Remove the comments from this section and be sure that there are comments before and after sections 1 and 2
         //TODO: Change the file path to your file to analyze; in this case, to complete analysis
 
-        String toAnalyze = "C:\\Programmierordner\\SOT_Revisions\\3to1\\Analysis\\SOT_HEK_3to1_fragments_EC.csv";
+        String toAnalyze = "C:\\Universität\\Doktorarbeit\\Paper\\SOT-paper\\Revisions\\Data\\021117_HEK_SOT_1to1_fixed\\Java Analysis\\021117_HEK_SOT_1to1_fixed_EC_fragments.csv";
         //CSVAnalyzer.cicStatistics(toAnalyze);
 
 
@@ -99,18 +99,18 @@ public class Main {
         //in this section, you can analyse the reporter ion intensities of the files
         //TODO:Remove the comments from this section and be sure that there are comments before and after sections 1, 2 and 3
         //TODO: You can specify the allowed reporter ion mass deviation [ppm]. Standard parameter is 5 ppm; 3rd entry
-        String statisticsFilePath = "C:\\Programmierordner\\SOT_Revisions\\3to1\\Analysis\\SOT_HEK_3to1_fragments_EC_statistics.csv";
+        String statisticsFilePath = "C:\\Universität\\Doktorarbeit\\Paper\\SOT-paper\\Revisions\\Data\\021117_HEK_SOT_1to1_fixed\\Java Analysis\\021117_HEK_SOT_1to1_fixed_EC_fragments_statistics.csv";
         File statisticsFile = new File(statisticsFilePath);
         //CSVReader.wholeRunRepFinder(completemzXML, statisticsFile ,5);
 
         //Section 5
         //Complementary Ion Cluster analysis
-        String fragmentIonFilePath = "C:\\Programmierordner\\SOT_Revisions\\3to1\\Analysis\\SOT_HEK_3to1_fragments_EC.csv";
+        String fragmentIonFilePath = "C:\\Universität\\Doktorarbeit\\Paper\\SOT-paper\\Revisions\\Data\\021117_HEK_SOT_1to1_fixed\\Java Analysis\\021117_HEK_SOT_1to1_fixed_EC_fragments.csv";
         //CSVAnalyzer.cicRatioCalculator(fragmentIonFilePath);
 
         //Section 6
         //Complementary Ion Cluster analysis per Peptide
-        String cicFilePath = "C:\\Programmierordner\\SOT_Revisions\\30HCD\\Analysis\\09112017_SOT_HEK_1to1_labelFragmentIons_EC_complementaryClusters_withY1.csv";
+        String cicFilePath = "C:\\Universität\\Doktorarbeit\\Paper\\SOT-paper\\Revisions\\Data\\021117_HEK_SOT_1to1_fixed\\Java Analysis\\021117_HEK_SOT_1to1_fixed_EC_fragments_complementaryClusters_nocutoff.csv";
         CSVAnalyzer.clusterRatioPerPeptide(cicFilePath);
 
         String testFilePath = "C:\\Programmierordner\\BSA_MS1Diff_Analysis\\TMT\\20171009_stamch_NEB_BSA_TMT_1to1_2uL.mzXML";

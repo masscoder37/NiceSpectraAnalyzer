@@ -26,9 +26,9 @@ public class CSVAnalyzer {
             System.out.println("Could not read file: " + filePath);
         }
 
-        //check if file name contains EC
+        //check if file name contains EC or SOT
         boolean ec = false;
-        if (filePath.contains("EC"))
+        if (filePath.contains("EC")||filePath.contains("SOT"))
             ec = true;
 
         //scanner set up
@@ -81,16 +81,16 @@ public class CSVAnalyzer {
         //only write this part of the header if csv contains EC
         if (ec){
             sb.append(',');
-            header = "Number EC179 fragments";
+            header = "Number SOT179 fragments";
             sb.append(header);
             sb.append(',');
-            header = "Median intensity EC179 fragments [%]";
+            header = "Median intensity SOT179 fragments [%]";
             sb.append(header);
             sb.append(',');
-            header = "Number EC180 fragments";
+            header = "Number SOT180 fragments";
             sb.append(header);
             sb.append(',');
-            header = "Median intensity EC180 fragments [%]";
+            header = "Median intensity SOT180 fragments [%]";
             sb.append(header);
         }
         sb.append('\n');
