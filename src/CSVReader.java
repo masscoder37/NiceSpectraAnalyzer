@@ -275,18 +275,24 @@ public class CSVReader {
         System.out.println("Processed spectra: " + processedSpectra);
     }
 
-public static void wholeRunRepFinder(MzXMLFile runIn, File statisticsAnalysis, double ppmDev) throws FileNotFoundException, JMzReaderException {
+public static void wholeRunRepFinder(MzXMLFile runIn, File statisticsAnalysis, double ppmDev, String labelIn) throws FileNotFoundException, JMzReaderException {
     DecimalFormat twoDec = new DecimalFormat("0.00");
     DecimalFormat scientific = new DecimalFormat("0.00E0");
         //first, set label name
     String labelName = "";
-    String fileName = statisticsAnalysis.getName();
-    if (!fileName.contains("TMT")&&!fileName.contains("EC"))
-        throw new IllegalArgumentException("Unknown label! Use Filename with EC or TMT. Filename: "+fileName);
-    if (fileName.contains("TMT"))
+    boolean labelKnown = false;
+    if (labelIn.contains("TMT")) {
         labelName = "TMT";
-    if (fileName.contains("EC"))
+        labelKnown = true;
+    }
+
+    if (labelIn.contains("EC")||labelIn.contains("SOT")) {
         labelName = "EC";
+        labelKnown = true;
+    }
+
+    if (!labelKnown)
+        throw new   IllegalArgumentException("Label not recognized! Please use TMT or EC/SOT. Unrecognized label: "+labelIn);
 
     //initialize scanner
     Scanner scanner = null;

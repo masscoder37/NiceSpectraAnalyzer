@@ -16,7 +16,7 @@ public class CSVAnalyzer {
 
     private static DecimalFormat twoDec = new DecimalFormat("0.00");
     //analyzes created comp-Cluster Matches list
-    public static void cicStatistics(String filePath) throws FileNotFoundException {
+    public static void cicStatistics(String filePath, String labelIn) throws FileNotFoundException {
         File cicAnalysis = new File(filePath);
         //scanner reads through results
         Scanner scanner = null;
@@ -28,8 +28,10 @@ public class CSVAnalyzer {
 
         //check if file name contains EC or SOT
         boolean ec = false;
-        if (filePath.contains("EC")||filePath.contains("SOT"))
+        if (labelIn.equals("EC")||labelIn.equals("SOT"))
             ec = true;
+        if (!labelIn.equals("TMT")&&!ec)
+            throw new IllegalArgumentException("Label not recognized! Please use TMT or SOT/EC! Unrecognized Label: "+labelIn);
 
         //scanner set up
         //set up Stringbuilder and PrinterWriter
