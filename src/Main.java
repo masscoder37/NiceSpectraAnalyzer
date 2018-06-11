@@ -49,8 +49,8 @@ public class Main {
         //Here, the spectrum to be analyzed has to be specified
         //It has to be a .mzXML-File which was centroided on MS1 and MS2-levels (see supporting information)
         //TODO: Please change your file path accordingly.
-        String filePathSpectrum =  "C:\\SOT-paper\\Revisions\\Data\\BSA_SpikeIn Experiment\\20171124_stamch_SOT_HEKbkgrnd_norm_BSA_4to1.mzXML";
-        File completemzXMLSource = new File(filePathSpectrum);
+       // String filePathSpectrum =  "C:\\SOT-paper\\Revisions\\Data\\BSA_SpikeIn Experiment\\20171124_stamch_SOT_HEKbkgrnd_norm_BSA_4to1.mzXML";
+        //File completemzXMLSource = new File(filePathSpectrum);
         //generating the MzXMLFile object might take a few minutes and will display some warnings.
         //MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
 
@@ -59,10 +59,10 @@ public class Main {
         //At the moment, the software assumes static carbamidomethylation on cysteine residues and variable methionine-oxidation
         //please filter out other modifications
         //TODO: Please change your file path accordingly.
-        String evidenceLocation = "C:\\SOT-paper\\Revisions\\Data\\BSA_SpikeIn Experiment\\20171124_stamch_SOT_HEKbkgrnd_norm_BSA_4to1_evidence_filtered.txt";
-        File evidence = new File(evidenceLocation);
+        //String evidenceLocation = "C:\\SOT-paper\\Revisions\\Data\\BSA_SpikeIn Experiment\\20171124_stamch_SOT_HEKbkgrnd_norm_BSA_4to1_evidence_filtered.txt";
+        //File evidence = new File(evidenceLocation);
         //TODO: Please provide a directory were the output Files will be saved
-        String csvOutPath = "C:\\SOT-paper\\Revisions\\Data\\BSA_SpikeIn Experiment\\Java Analysis 5 ppm\\";
+        //String csvOutPath = "C:\\SOT-paper\\Revisions\\Data\\BSA_SpikeIn Experiment\\Java Analysis 5 ppm\\";
 
 
 
@@ -91,7 +91,7 @@ public class Main {
         //TODO: Remove the comments from this section and be sure that there are comments before and after sections 1 and 2
         //TODO: Change the file path to your file to analyze; in this case, to complete analysis
 
-        String toAnalyze = "C:\\SOT-paper\\Revisions\\Data\\BSA_SpikeIn Experiment\\Java Analysis\\BSA_SpikeIn Experiment_fragments.csv";
+        //String toAnalyze = "C:\\SOT-paper\\Revisions\\Data\\BSA_SpikeIn Experiment\\Java Analysis\\BSA_SpikeIn Experiment_fragments.csv";
         //CSVAnalyzer.cicStatistics(toAnalyze, "EC");
 
 
@@ -99,77 +99,26 @@ public class Main {
         //in this section, you can analyse the reporter ion intensities of the files
         //TODO:Remove the comments from this section and be sure that there are comments before and after sections 1, 2 and 3
         //TODO: You can specify the allowed reporter ion mass deviation [ppm]. Standard parameter is 5 ppm; 3rd entry
-        String statisticsFilePath = "C:\\SOT-paper\\Revisions\\Data\\BSA_SpikeIn Experiment\\Java Analysis\\BSA_SpikeIn Experiment_fragments_statistics.csv";
-        File statisticsFile = new File(statisticsFilePath);
+        //String statisticsFilePath = "C:\\SOT-paper\\Revisions\\Data\\BSA_SpikeIn Experiment\\Java Analysis\\BSA_SpikeIn Experiment_fragments_statistics.csv";
+        //File statisticsFile = new File(statisticsFilePath);
         //CSVReader.wholeRunRepFinder(completemzXML, statisticsFile ,5, "EC");
 
         //Section 5
         //Complementary Ion Cluster analysis
-        String fragmentIonFilePath = "C:\\SOT-paper\\Revisions\\Data\\BSA_SpikeIn Experiment\\Java Analysis 5 ppm\\labelFragmentIons_5ppm.csv";
+        //String fragmentIonFilePath = "C:\\SOT-paper\\Revisions\\Data\\BSA_SpikeIn Experiment\\Java Analysis 5 ppm\\labelFragmentIons_5ppm.csv";
         //CSVAnalyzer.cicRatioCalculator(fragmentIonFilePath);
 
         //Section 6
         //Complementary Ion Cluster analysis per Peptide
-        String cicFilePath = "C:\\SOT-paper\\Revisions\\Data\\BSA_SpikeIn Experiment\\Java Analysis 5 ppm\\labelFragmentIons_5ppm_complementaryClusters_nocutoff.csv";
-        CSVAnalyzer.clusterRatioPerPeptide(cicFilePath);
+        //String cicFilePath = "C:\\SOT-paper\\Revisions\\Data\\BSA_SpikeIn Experiment\\Java Analysis 5 ppm\\labelFragmentIons_5ppm_complementaryClusters_nocutoff.csv";
+        //CSVAnalyzer.clusterRatioPerPeptide(cicFilePath);
 
-        String testFilePath = "C:\\Programmierordner\\BSA_MS1Diff_Analysis\\TMT\\20171009_stamch_NEB_BSA_TMT_1to1_2uL.mzXML";
-        //File testFileSource = new File(testFilePath);
-        //MzXMLFile testmzXML = new MzXMLFile(testFileSource);
-
-        /*ArrayList<String> peptidesToCheck = new ArrayList<>();
-        peptidesToCheck.add("HLVDEPQNLIK");
-        peptidesToCheck.add("HPEYAVSLLR");
-        peptidesToCheck.add("VPQVSTPTLVEVSR");
-        peptidesToCheck.add("QTALVELLK");
-        peptidesToCheck.add("LVTDLTK");
-        peptidesToCheck.add("TVMENFVAFVDK");
-        peptidesToCheck.add("LVTDLTK");
-        peptidesToCheck.add("NECFLSHK");
-        peptidesToCheck.add("YCDNQDTISSK");
-        peptidesToCheck.add("AEFVEVTK");
-        peptidesToCheck.add("YLYEIAR");*/
-
-
-
-        /*ArrayList<Double> massDiffList = new ArrayList<>();
-        massDiffList = PrecursorMassDiffBinner.precursorMassDiffBinner(testmzXML, peptidesToCheck, aminoAcidsList);
-        System.out.println("List size: "+massDiffList.size());
-        String csvMassDiffOut = "C:\\Programmierordner\\BSA_MS1Diff_Analysis\\TMT\\";
-        CSVCreator.createMassDiffCSV(massDiffList, csvMassDiffOut);
-        System.out.println("MS2-scans: "+testmzXML.getMS2ScanCount());*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        String testFasta = "THISISAFASTAMVP";
+        ArrayList<String> testDigest = new ArrayList<>();
+        testDigest = FastaDigester.digestFasta(testFasta, "Test", 0);
+        for (String pep : testDigest){
+            System.out.println(pep);
+        }
 
 
     }
