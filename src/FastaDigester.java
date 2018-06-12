@@ -48,32 +48,37 @@ public class FastaDigester {
         for (int m = 0; m<missedCleavagesIn+1; m++) {
             for (int a = 0; a < sizeOfFasta; a++) {
                 //loop through all the AAs to be cut
-                for (String toCut : cutAA) {
                     //if this occurs, a cut was detected
                     //create new Sequence if no missed cleavages shall occur
-                    if (toCut.equals(allIndividualAAs[a])) {
+                    if (cutAA.contains(allIndividualAAs[a])) {
                         if (missedCounter < m) {
                             missedCounter++;
                             lastMissedPosition = a;
                             continue;
                         }
+                        //TODO let P inhibit cut!
                         //empty sb; maybe unnecessary
                         sb.setLength(0);
                         //add all the letters to the Stringbuilder and put them into a String
-                        for (int b = lastCutPosition + 1; b < a + 1; b++) {
+                        for (int b = lastCutPosition+1; b < a + 1; b++) {
                             sb.append(allIndividualAAs[b]);
                         }
                         //add the generated String to the ArrayList
                         cutSequences.add(sb.toString());
                         //set all the variables correctly
-                        lastCutPosition = a;
                         generatedPeptides++;
-                        a = lastMissedPosition;
+                        if (m != 0) {
+                            a = lastMissedPosition;
+                        }
+                        lastCutPosition = a;
                         missedCounter = 0;
                     }
-                }
+
                     //handle last peptide
                     if (a == sizeOfFasta-1){
+                    //if only missed cleavages are concerned, unnecessary to put out last peptide again
+                    if (missedCounter<m)
+                        continue;
                         sb.setLength(0);
                         for (int b = lastCutPosition + 1; b < a+1; b++) {
                             sb.append(allIndividualAAs[b]);
@@ -83,6 +88,8 @@ public class FastaDigester {
                         }
 
                     }
+                    lastCutPosition = -1;
+                    missedCounter = 0;
         }
 
 
