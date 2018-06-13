@@ -57,6 +57,14 @@ public class FastaDigester {
                             continue;
                         }
                         //TODO let P inhibit cut!
+                        if (proteaseIn.equals("Trypsin")) {
+                            if (a < sizeOfFasta-1) {
+                                if (allIndividualAAs[a + 1].equals("P")) {
+                                    continue;
+                                }
+                            }
+                        }
+
                         //empty sb; maybe unnecessary
                         sb.setLength(0);
                         //add all the letters to the Stringbuilder and put them into a String
