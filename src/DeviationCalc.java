@@ -16,6 +16,17 @@ public class DeviationCalc {
         return Math.abs(massInMeasured-massInReal)/massInReal*(Math.pow(10,6));
     }
 
+    //compares to masses and returns if they are within a specified ppm difference
+    public static  boolean ppmMatch (double massInReal, double massInMeasured, double ppmDevAllowed){
+        double ppmCalculated = ppmDeviationCalc(massInReal, massInMeasured);
+        return (ppmCalculated <= ppmDevAllowed);
+    }
+
+    public static  boolean isotopeMatch (double massInReal, double massInMeasured, double daAllowed){
+        double massDiff = Math.abs(massInReal - massInMeasured);
+        return (massDiff<=daAllowed);
+    }
+
 
 
 

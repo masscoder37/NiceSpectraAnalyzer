@@ -23,7 +23,6 @@ public class MySpectrum {
         peaksIn = MassQuickSort.peakListQuickSort(peaksIn);
         this.peakList = peakPacker(peaksIn);
         this.numberOfPeaks = this.peakList.size();
-
     }
 
 
@@ -71,9 +70,65 @@ public class MySpectrum {
         return peaksToPack;
     }
 
+    //TODO make function which can assign charge states to peaks in spectrum
+    public void chargeStateAssigner(){
+        ArrayList<Peak> peaksIn = new ArrayList<>();
+        //all peaks from MySpectrum are already ordered. Using Quicksort again would be the worst possible case
+        peaksIn =this.getPeakList();
+        int numberOfPeaks = peaksIn.size();
+        //this variable sets the ppm tolerance and can be tweaked!
+        double daTol = 0.00015;
+        //for every peak, look at 10 neighbours
+        ArrayList<Peak> neighbours = new ArrayList<>();
+        //loop through all the peaks in the peaklist
+        //starting from a low charge state, assign charge state if correct neighbours are detected
+        for (int i = 0; i<numberOfPeaks; i++){
+            Peak current = peaksIn.get(i);
+            //assemble neighbours of current
+                for (int m = -5; m < 6; m++){
+                    //m == 0 would be current peak, skip
+                    if(m == 0)
+                        continue;
+                    //try...catch deals with not enough neighbours
+                    try {
+                        neighbours.add(peaksIn.get(i + m));
+                    }
+                    catch (IndexOutOfBoundsException e) {
+                        continue;
+                    }
+                }
+                //create list of mass differences
+            ArrayList<Double> massDiffs = new ArrayList<>();
+            for (Peak neighbour : neighbours){
+                double massDiffValue = Math.abs(current.getMass()-neighbour.getMass());
+                massDiffs.add(massDiffValue);
+            }
+
+            //check the whole list of mass differences for multiples of isotope mass
+            //start with charge state 1, then loop through until charge state 10
+            //if a higher charge state is detected, it is detected later and therefore will be assigned
+            int chargeState = 0;
+            for (int z = 1; z <11; z++){
+                double supposedDiff = AtomicMasses.getNEUTRON()/z;
+                for (double massDiff : massDiffs){
+                    if (DeviationCalc.isotopeMatch(supposedDiff, massDiff, daTol))
+                    chargeState = z;
+                }
+            }
+            //now set the determined charge state
+            current.setCharge(chargeState);
+            //clear all the variables just in case
+            neighbours.clear();
+            massDiffs.clear();
+            chargeState = 0;
+        }
+    }
 
 
 
+
+
+    //getter
     public ArrayList<Peak> getPeakList(){ return this.peakList;}
     public int getScanNumber(){return   this.scanNumber;}
     public int getNumberOfPeaks(){return this.numberOfPeaks;}
@@ -128,17 +183,22 @@ int[] chargeStateDistri = new int[6];
         System.out.println("Scan Header: "+this.scanHeader);
         System.out.println("Scan Number: "+this.scanNumber);
         double summedIntensity = 0;
+        int printedPeaks = 0;
         for (Peak peak : this.peakList){
-            System.out.println("Peak mass: "+fourDec.format(peak.getMass())
-                    +"   Charge: "+peak.getCharge()
-                    +"   Rel. Int.: "+twoDec.format(peak.getRelIntensity())
-                    +"   Base Peak: "+peak.getBasePeak());
+            if (peak.getRelIntensity()>25) {
+                System.out.println("Peak mass: " + fourDec.format(peak.getMass())
+                        + "   Charge: " + peak.getCharge()
+                        + "   Rel. Int.: " + twoDec.format(peak.getRelIntensity())
+                        + "   Base Peak: " + peak.getBasePeak());
+                printedPeaks++;
+            }
             summedIntensity += peak.getRelIntensity();
         }
         System.out.println("");
         System.out.println("General spectra properties:");
         System.out.println("");
         System.out.println("Number of Peaks: "+this.peakList.size());
+        System.out.println("Number of printed Peaks (>25% rel. Int.): "+printedPeaks);
         System.out.println("Mean rel. Intensity: "+twoDec.format((summedIntensity / this.peakList.size()))+"%");
         int basePeakIndex = this.getBasePeakIndex();
         double maxInt = this.peakList.get(basePeakIndex).getIntensity();
