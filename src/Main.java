@@ -123,6 +123,8 @@ public class Main {
        String filePathTestSpectrum = "C:\\Programmierordner\\20171004_SOT180_HEK_5uLTag_ST.mzXML";
        File testSpectrum = new File(filePathTestSpectrum);
        MzXMLFile completeMzXML = new MzXMLFile(testSpectrum);
+       //String location = "C:\\Programmierordner\\11633_chargeStates.csv";
+       //File testFile = new File(location);
        MySpectrum newMySpectrum = MzXMLReadIn.mzXMLToMySpectrum(completeMzXML, "11633");
        newMySpectrum.chargeStateAssigner();
        newMySpectrum.spectrumPrinter();
