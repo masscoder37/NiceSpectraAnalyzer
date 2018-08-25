@@ -49,7 +49,7 @@ public class Main {
         //Here, the spectrum to be analyzed has to be specified
         //It has to be a .mzXML-File which was centroided on MS1 and MS2-levels (see supporting information)
         //TODO: Please change your file path accordingly.
-        String filePathSpectrum =  "C:\\Programmierordner\\Analyse_Wuehr\\20171102_stamch_HEK_SOT_1to1_3p5uL.mzXML";
+        String filePathSpectrum =  "C:\\Programmierordner\\20171004_SOT180_HEK_5uLTag_ST.mzXML";
         File completemzXMLSource = new File(filePathSpectrum);
         //generating the MzXMLFile object might take a few minutes and will display some warnings.
         MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
@@ -60,7 +60,7 @@ public class Main {
         //please filter out other modifications
         //TODO: Please change your file path accordingly.
         String evidenceLocation = "C:\\Programmierordner\\Analyse_Wuehr\\evidence_filtered.txt";
-        File evidence = new File(evidenceLocation);
+        //File evidence = new File(evidenceLocation);
         //TODO: Please provide a directory were the output Files will be saved
         String csvOutPath = "C:\\Programmierordner\\Analyse_Wuehr\\My Analysis\\";
 
@@ -111,7 +111,7 @@ public class Main {
         //Section 6
         //Complementary Ion Cluster analysis per Peptide
         String cicFilePath = "C:\\Programmierordner\\Analyse_Wuehr\\My Analysis\\labelFragmentIons_complementaryClusters_nocutoff.csv";
-        CSVAnalyzer.clusterRatioPerPeptide(cicFilePath);
+        //CSVAnalyzer.clusterRatioPerPeptide(cicFilePath);
 
         /*String testFasta = "DTHKSEIAHRFKDLGEEHFKGLVLIAFSQYLQQCPFDEHVKLVNELTEFAKTCVADESHAGCEKSLHTLFGDELCKVASLRETYGDMADCCEKQEPERNECFLSHKDDSPDLPKLKPDPNTLCDEFKADEKKFWGKYLYEIARRHPYFYAPELLYYANKYNGVFQECCQAEDKGACLLPKIETMREKVLASSARQRLRCASIQKFGERALKAWSVARLSQKFPKAEFVEVTKLVTDLTKVHKECCHGDLLECADDRADLAKYICDNQDTISSKLKECCDKPLLEKSHCIAEVEKDAIPENLPPLTADFAEDKDVCKNYQEAKDAFLGSFLYEYSRRHPEYAVSVLLRLAKEYEATLEECCAKDDPHACYSTVFDKLKHLVDEPQNLIKQNCDQFEKLGEYGFQNALIVRYTRKVPQVSTPTLVEVSRSLGKVGTRCCTKPESERMPCTEDYLSLILNRLCVLHEKTPVSEKVTKCCTESLVNRRPCFSALTPDETYVPKAFDEKLFTFHADICTLPDTEKQIKKQTALVELLKHKPKATEEQLKTVMENFVAFVDKCCAADDKEACFAVEGPKLVVSTQTALA";
         ArrayList<String> testDigest = new ArrayList<>();
