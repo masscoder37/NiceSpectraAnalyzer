@@ -78,7 +78,7 @@ public class MySpectrum {
         //this variable sets the ppm tolerance and can be tweaked!
         double daTol = 0.001;
         //for every peak, look at 10 neighbours
-        ArrayList<Peak> neighbours = new ArrayList<>();
+        ArrayList<Neighbour> neighbours = new ArrayList<>();
         //loop through all the peaks in the peaklist
         //starting from a low charge state, assign charge state if correct neighbours are detected
         for (int i = 0; i<numberOfPeaks; i++){
@@ -90,18 +90,12 @@ public class MySpectrum {
                         continue;
                     //try...catch deals with not enough neighbours
                     try {
-                        neighbours.add(peaksIn.get(i + m));
+                        neighbours.add(new Neighbour(peaksIn.get(i + m), current.getMass()));
                     }
                     catch (IndexOutOfBoundsException e) {
                         continue;
                     }
                 }
-                //create list of mass differences
-            ArrayList<Double> massDiffs = new ArrayList<>();
-            for (Peak neighbour : neighbours){
-                double massDiffValue = Math.abs(current.getMass()-neighbour.getMass());
-                massDiffs.add(massDiffValue);
-            }
 
             //TODO refine to take also into account if multiple neighbours give same charge state and so that high intensity peaks are favored
             //check the whole list of mass differences for multiples of isotope mass
@@ -109,18 +103,25 @@ public class MySpectrum {
             //if a higher charge state is detected, it is detected later and therefore will be assigned
 
             int chargeState = 0;
-            for (int z = 1; z <11; z++){
+            ChargeStateOccurence[] possibleChargeStates = new ChargeStateOccurence[11];
+            for (int z = 1; z <11; z++) {
+                possibleChargeStates[z] = new ChargeStateOccurence(z);
                 double supposedDiff = AtomicMasses.getNEUTRON()/z;
-                for (double massDiff : massDiffs){
-                    if (DeviationCalc.isotopeMatch(supposedDiff, massDiff, daTol))
-                    chargeState = z;
+                for (Neighbour neighbour : neighbours) {
+                    if (DeviationCalc.isotopeMatch(supposedDiff, neighbour.getMassDiff(), daTol)){
+                        possibleChargeStates[z].increaseOccurence();
+                        possibleChargeStates[z].addIntensity(neighbour.getNeighbourPeak().getIntensity());
+                    }
                 }
             }
+            //now, all charge state occurences are set and can be analyzed
+            //TODO: analyze the carge state occurences, weigh according to highest max int. and occurence
+
+
             //now set the determined charge state
             current.setCharge(chargeState);
             //clear all the variables just in case
             neighbours.clear();
-            massDiffs.clear();
             chargeState = 0;
         }
     }
