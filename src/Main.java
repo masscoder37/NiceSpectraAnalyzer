@@ -50,9 +50,9 @@ public class Main {
         //It has to be a .mzXML-File which was centroided on MS1 and MS2-levels (see supporting information)
         //TODO: Please change your file path accordingly.
         String filePathSpectrum =  "C:\\Programmierordner\\20171004_SOT180_HEK_5uLTag_ST.mzXML";
-        File completemzXMLSource = new File(filePathSpectrum);
+       // File completemzXMLSource = new File(filePathSpectrum);
         //generating the MzXMLFile object might take a few minutes and will display some warnings.
-        MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
+        //MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
 
 
         //In this section, you have to supply the evidence.txt file from your MaxQuant analysis.
@@ -100,7 +100,7 @@ public class Main {
         //TODO:Remove the comments from this section and be sure that there are comments before and after sections 1, 2 and 3
         //TODO: You can specify the allowed reporter ion mass deviation [ppm]. Standard parameter is 5 ppm; 3rd entry
         String statisticsFilePath = "C:\\Programmierordner\\Analyse_Wuehr\\My Analysis\\labelFragmentIons_statistics.csv";
-        File statisticsFile = new File(statisticsFilePath);
+        //File statisticsFile = new File(statisticsFilePath);
         //CSVReader.wholeRunRepFinder(completemzXML, statisticsFile ,5, "EC");
 
         //Section 5
@@ -131,6 +131,19 @@ public class Main {
        newMySpectrum.chargeStateAssigner();
        newMySpectrum.spectrumPrinter();
 */
+
+      Peptide aila = new Peptide("AILA", aminoAcidsList);
+      System.out.println("Peptidsequenz: "+aila.getSequence());
+      System.out.println("Molare Masse: "+aila.getExactMass());
+      aila.peptidePrinter();
+      ArrayList<FragmentIon> fragsB =  aila.getbIons();
+      ArrayList<FragmentIon> fragsY =  aila.getyIons();
+      for (FragmentIon frag : fragsB){
+          System.out.println(""+frag.getAASequence());
+          System.out.println(""+frag.getExactMass());
+
+      }
+
 
 
     }
