@@ -121,28 +121,18 @@ public class Main {
         }*/
 
 
-      /*
+
        String filePathTestSpectrum = "C:\\Programmierordner\\20171004_SOT180_HEK_5uLTag_ST.mzXML";
-       File testSpectrum = new File(filePathTestSpectrum);
-       MzXMLFile completeMzXML = new MzXMLFile(testSpectrum);
-       //String location = "C:\\Programmierordner\\11633_chargeStates.csv";
-       //File testFile = new File(location);
-       MySpectrum newMySpectrum = MzXMLReadIn.mzXMLToMySpectrum(completeMzXML, "11633");
+       //File testSpectrum = new File(filePathTestSpectrum);
+       //MzXMLFile completeMzXML = new MzXMLFile(testSpectrum);
+       String location = "C:\\Programmierordner\\20377_chargeStates.csv";
+       File testFile = new File(location);
+       //MySpectrum newMySpectrum = MzXMLReadIn.mzXMLToMySpectrum(completeMzXML, "11633");
+       MySpectrum newMySpectrum = CSVReader.spectrumParse(testFile);
+       newMySpectrum.spectrumPrinter();
        newMySpectrum.chargeStateAssigner();
        newMySpectrum.spectrumPrinter();
-*/
 
-      Peptide aila = new Peptide("AILA", aminoAcidsList);
-      System.out.println("Peptidsequenz: "+aila.getSequence());
-      System.out.println("Molare Masse: "+aila.getExactMass());
-      aila.peptidePrinter();
-      ArrayList<FragmentIon> fragsB =  aila.getbIons();
-      ArrayList<FragmentIon> fragsY =  aila.getyIons();
-      for (FragmentIon frag : fragsB){
-          System.out.println(""+frag.getAASequence());
-          System.out.println(""+frag.getExactMass());
-
-      }
 
 
 
