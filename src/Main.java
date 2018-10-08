@@ -1,5 +1,6 @@
 import com.sun.org.apache.xpath.internal.operations.Mod;
 import uk.ac.ebi.pride.tools.jmzreader.JMzReaderException;
+import uk.ac.ebi.pride.tools.jmzreader.model.Param;
 import uk.ac.ebi.pride.tools.jmzreader.model.Spectrum;
 import uk.ac.ebi.pride.tools.jmzreader.model.impl.CvParam;
 import uk.ac.ebi.pride.tools.jmzreader.model.impl.ParamGroup;
@@ -122,7 +123,7 @@ public class Main {
 
 
 
-       String filePathTestSpectrum = "C:\\Programmierordner\\20171004_SOT180_HEK_5uLTag_ST.mzXML";
+       /*String filePathTestSpectrum = "C:\\Programmierordner\\20171004_SOT180_HEK_5uLTag_ST.mzXML";
        //File testSpectrum = new File(filePathTestSpectrum);
        //MzXMLFile completeMzXML = new MzXMLFile(testSpectrum);
        String location = "C:\\Programmierordner\\20377_chargeStates.csv";
@@ -131,7 +132,11 @@ public class Main {
        MySpectrum newMySpectrum = CSVReader.spectrumParse(testFile);
        newMySpectrum.spectrumPrinter();
        newMySpectrum.chargeStateAssigner();
-       newMySpectrum.spectrumPrinter();
+       newMySpectrum.spectrumPrinter();*/
+
+
+
+
 
 
 

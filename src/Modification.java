@@ -106,4 +106,19 @@ public class Modification {
         return acetylation;
     }
 
+    public static Modification ncHSEC_A(int pos){
+        Modification ncHSECA = new Modification("ncHSEC_A", "C12H13NO4", pos);
+        return ncHSECA;
+    }
+
+    public static Modification cHSEC_A(int pos){
+        Modification cHSECA = new Modification("cHSEK_A", "C7H9NO3", pos);
+        return cHSECA;
+    }
+
+    public static Modification ncHSEC_SH(int pos){
+        Modification ncHSECSH = new Modification("ncHSEC_SH", "C12H13NO4S", pos);
+        return ncHSECSH;
+    }
+
 }
