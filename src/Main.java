@@ -135,6 +135,8 @@ public class Main {
        newMySpectrum.spectrumPrinter();*/
 
 
+       SumFormula test = new SumFormula("C5H10N2O2");
+        System.out.println("one additional neutron: "+IsotopicDistributer.abundanceAddNeutron(test));
 
 
 
