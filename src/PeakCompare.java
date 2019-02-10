@@ -38,12 +38,12 @@ public class PeakCompare {
                 if (peak.getMass() >= massRange[0]&& peak.getMass()<= massRange[1]){
                     double deviation = DeviationCalc.ppmDeviationCalc(fragment.getMToZ(), peak.getMass());
                     matches.add(new IonMatch(fragment, peak, deviation));
-                    /*System.out.println("Match! Ion: "+fragment.getCompleteIon()
+                    System.out.println("Match! Ion: "+fragment.getCompleteIon()
                             +" "+fragment.getCharge()+"+"
                             +"  Mass found: "+fiveDec.format(peak.getMass()) + " m/z"
                             +"   Deviation: " +twoDec.format(deviation)+" ppm"
                             +"  rel. Int.: "+twoDec.format(peak.getRelIntensity())+"%"+
-                    "        is modfied: "+fragment.getModificationStatus());*/
+                    "        is modfied: "+fragment.getModificationStatus());
                 }
             }
 

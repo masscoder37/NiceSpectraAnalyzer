@@ -122,7 +122,7 @@ public class Main {
 
 
 
-       String filePathTestSpectrum = "C:\\Programmierordner\\20171004_SOT180_HEK_5uLTag_ST.mzXML";
+       /*String filePathTestSpectrum = "C:\\Programmierordner\\20171004_SOT180_HEK_5uLTag_ST.mzXML";
        //File testSpectrum = new File(filePathTestSpectrum);
        //MzXMLFile completeMzXML = new MzXMLFile(testSpectrum);
        String location = "C:\\Programmierordner\\20377_chargeStates.csv";
@@ -131,7 +131,27 @@ public class Main {
        MySpectrum newMySpectrum = CSVReader.spectrumParse(testFile);
        newMySpectrum.spectrumPrinter();
        newMySpectrum.chargeStateAssigner();
-       newMySpectrum.spectrumPrinter();
+       newMySpectrum.spectrumPrinter(); */
+       String spectrumPath = "C:\\Programmierordner\\Phosphozeugs\\20160525_stamch_GluCTrypsin_endogenTet1fl_unphosph.mzXML";
+       File spectrum = new File(spectrumPath);
+       MzXMLFile mzxml = new MzXMLFile(spectrum);
+       MySpectrum toCheck = MzXMLReadIn.mzXMLToMySpectrum(mzxml, "5619");
+
+       String peptideSeq = "LHATTSLRSPK";
+       Peptide pep = new Peptide(peptideSeq, aminoAcidsList);
+       pep.peptidePrinter();
+
+       ArrayList<Modification> modList = new ArrayList<>();
+       modList.add(Modification.phosphorylation(6));
+
+       Peptide pepMod = pep.peptideModifier(modList);
+
+       pepMod.peptidePrinter();
+
+       PeakCompare.peakCompare(toCheck, pepMod, 5);
+
+
+
 
 
 

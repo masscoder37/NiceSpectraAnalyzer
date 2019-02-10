@@ -42,6 +42,9 @@ public class Element {
                 case "F":
                     this.elementMass = AtomicMasses.getFMASS();
                     break;
+                case "P":
+                    this.elementMass = AtomicMasses.getPMASS();
+                    break;
 
                 default:
                     throw new NoSuchElementException("Element unknown: " + elementName);
@@ -59,6 +62,7 @@ public class Element {
         int quantHPlus = 0;
         int quantCx = 0;
         int quantF = 0;
+        int quantP = 0;
         //this loop gets the element counts for each element
         for (Element e : elements) {
             String currentName = e.getElementName();
@@ -87,6 +91,10 @@ public class Element {
                 case "F":
                     quantF++;
                     break;
+                case "P":
+                    quantP++;
+                    break;
+
             }
         }
         //Strings for the elements, to filter out quantities with 0
@@ -98,6 +106,7 @@ public class Element {
         String HPlus = "H+" + quantHPlus;
         String Cx = "Cx" + quantCx;
         String F = "F" + quantF;
+        String P = "P"+ quantP;
 
         if (quantH == 0) {
             H = "";
@@ -123,8 +132,12 @@ public class Element {
         if (quantF == 0) {
             F = "";
         }
+        if (quantP == 0){
+            P = "";
+        }
 
-        formula = ""+ C + H  + N + O + S + Cx + F + HPlus;
+
+        formula = ""+ C + H  + N + O + S + Cx + F + P + HPlus;
 
 
 

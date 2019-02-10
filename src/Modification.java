@@ -106,4 +106,9 @@ public class Modification {
         return acetylation;
     }
 
+    public static  Modification phosphorylation (int pos){
+        Modification phosphorylation = new Modification("phos.", "HO3P", pos);
+        return phosphorylation;
+    }
+
 }
