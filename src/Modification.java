@@ -106,9 +106,43 @@ public class Modification {
         return acetylation;
     }
 
-    public static  Modification phosphorylation (int pos){
+
+    public static  Modification phosphorylation (int pos) {
         Modification phosphorylation = new Modification("phos.", "HO3P", pos);
         return phosphorylation;
+    }
+
+    public static Modification ncHSEC_A(int pos){
+        Modification ncHSECA = new Modification("ncHSEC_A", "C12H13NO4", pos);
+        return ncHSECA;
+    }
+
+    public static Modification cHSEC_A(int pos){
+        Modification cHSECA = new Modification("cHSEK_A", "C7H9NO3", pos);
+        return cHSECA;
+    }
+
+    public static Modification ncHSEC_SH(int pos){
+        Modification ncHSECSH = new Modification("ncHSEC_SH", "C12H13NO4S", pos);
+        return ncHSECSH;
+
+    }
+
+    //predefined lsST-modification
+    public static Modification uncleavedlsST(int pos){
+        Modification intactlsST =  new Modification("lsST_intact", "C9H16N2O2S",pos);
+        intactlsST.isLabel = true;
+        return intactlsST;
+    }
+
+
+    //cleaved lsST, reporter known but structure of complementary ion not clear
+    //assume alkene residue?
+    public static Modification cleavedlsST(int pos) {
+        Modification cleavedlsST = new Modification("lsST_cleaved", "C3H2O",pos);
+        cleavedlsST.isLabel = true;
+        cleavedlsST.isCleaved = true;
+        return cleavedlsST;
     }
 
 }

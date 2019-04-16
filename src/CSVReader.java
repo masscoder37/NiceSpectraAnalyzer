@@ -83,8 +83,8 @@ public class CSVReader {
     public static void wholeRunCICChecker(MzXMLFile runIn, File evidence,
                                           ArrayList<AminoAcid> aminoAcids, double accuracy,
                                           String filePath, String labelIn) throws JMzReaderException, FileNotFoundException, MzXMLParsingException {
-        if (!labelIn.equals("TMT") && !labelIn.equals("EC"))
-            throw new IllegalArgumentException("Unknown label: "+labelIn+"! Please use TMT or EC");
+       /* if (!labelIn.equals("TMT") && !labelIn.equals("EC"))
+            throw new IllegalArgumentException("Unknown label: "+labelIn+"! Please use TMT or EC");*/
 
         Scanner scanner = null;
         try {
@@ -209,6 +209,8 @@ public class CSVReader {
                     currentSpectrumMatches = LabelFragmentIonChecker.compClusterCheckerEC(aminoAcids, sequence, mods, scanNumber, runIn, accuracy, leadingProteins);
                 if (labelIn.equals("TMT"))
                     currentSpectrumMatches = LabelFragmentIonChecker.compClusterCheckerTMT(aminoAcids, sequence, mods, scanNumber, runIn, accuracy, leadingProteins);
+                if (labelIn.equals("lsST"))
+                    currentSpectrumMatches = LabelFragmentIonChecker.compClusterCheckerlsST(aminoAcids, sequence, mods, scanNumber, runIn, accuracy, leadingProteins);
                 //TODO: here, the current spectral matches have to be handled
                 //the compClusterCSVPrinter-Function has to provide a String for the String Builder in this case, or even a String Builder
                 processedSpectra++;
@@ -254,6 +256,8 @@ public class CSVReader {
                 currentSpectrumMatches = LabelFragmentIonChecker.compClusterCheckerEC(aminoAcids, sequence, mods, scanNumber, runIn, accuracy, leadingProteins);
             if (labelIn.equals("TMT"))
                 currentSpectrumMatches = LabelFragmentIonChecker.compClusterCheckerTMT(aminoAcids, sequence, mods, scanNumber, runIn, accuracy, leadingProteins);
+            if (labelIn.equals("lsST"))
+                currentSpectrumMatches = LabelFragmentIonChecker.compClusterCheckerlsST(aminoAcids, sequence, mods, scanNumber, runIn, accuracy, leadingProteins);
             processedSpectra++;
             System.out.println("Processed spectrum number: " + scanNumber);
             System.out.println("Processed spectra: " + processedSpectra);

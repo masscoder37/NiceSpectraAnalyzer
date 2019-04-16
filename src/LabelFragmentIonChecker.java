@@ -371,6 +371,115 @@ public class LabelFragmentIonChecker {
     }
 
 
+    public static ArrayList<CompClusterIonMatch> compClusterCheckerlsST (ArrayList<AminoAcid> acids,
+                                                                        String SequenceIn,
+                                                                        ArrayList<Modification> modsIn,
+                                                                        String spectrumID, MzXMLFile completeFileIn,
+                                                                        double accuracy, String leadProtsIn) throws JMzReaderException {
+        ArrayList<IonMatch> successfulMatches = new ArrayList<>();
+        //generate spectrum to look at:
+        MySpectrum spectrumToCheck = MzXMLReadIn.mzXMLToMySpectrum(completeFileIn, spectrumID);
+        String spectrumHeader = spectrumToCheck.getScanHeader();
+
+
+        //create unmodified peptide
+        Peptide idPeptide = new Peptide(SequenceIn, acids);
+        //determine how many lsST modifications are present
+        int lysCount = 0;
+        ArrayList<AminoAcid> sequence = new ArrayList<>();
+        sequence.addAll(idPeptide.getAminoAcidsList());
+        for (AminoAcid acid : sequence){
+            if (acid.get1Let() == 'K')
+                lysCount++;
+        }
+        int countTag = lysCount+1;
+        //create different mods for the different possibilities (cleaved/noncleaved)
+        ArrayList<ArrayList<Modification>> allMods = new ArrayList<>();
+        allMods = modCreatorlsST(idPeptide, countTag, modsIn);
+
+        //generate List of different modified peptides to check for every possibility (lsST cleaved/lsST not cleaved)
+        ArrayList<Peptide> modifiedPeptides = new ArrayList<>();
+        for (ArrayList<Modification> modList : allMods){
+            Peptide modifiedPeptide = new Peptide(SequenceIn, acids);
+            modifiedPeptides.add(modifiedPeptide.peptideModifier(modList));
+        }
+        //invoke PeakCompare function and store result matches in List of IonMatches
+        for (Peptide modPeptide : modifiedPeptides){
+            //System.out.println("Peptide: "+modPeptide.getSequence());
+            successfulMatches.addAll(PeakCompare.peakCompare(spectrumToCheck, modPeptide, accuracy));
+            //System.out.println();
+        }
+
+        //relevant Matches Picker doesn't change in regard to EC
+        ArrayList<CompClusterIonMatch> relevantMatches = new ArrayList<>();
+        relevantMatches = relevantMatchesPicker(successfulMatches, spectrumHeader, leadProtsIn);
+
+        //relevantMatches still contains multiple instances of the same modification, since the fragment ions from different modified peptides can be the same
+        //same matches Consolidator Method can be utilized
+        ArrayList<CompClusterIonMatch> noDuplicateMatches = new ArrayList<>();
+        noDuplicateMatches = matchesConsolidator(relevantMatches);
+
+        return noDuplicateMatches;
+    }
+
+    public static ArrayList<ArrayList<Modification>> modCreatorlsST(Peptide pepToModify, int countlsSOTIn, ArrayList<Modification> modsIn) {
+        //create positions of modified lysines
+        //lysPos is int[] with all the positions of TMT-Modifications(N-Term + Lys) in the sequence
+        int lysCount = countlsSOTIn - 1;
+        int[] lysPos = new int[lysCount];
+        int lysPosPointer = 0;
+        ArrayList<AminoAcid> sequence = new ArrayList<>();
+        sequence.addAll(pepToModify.getAminoAcidsList());
+        for (int a = 0; a < sequence.size(); a++) {
+            if (sequence.get(a).get1Let() == 'K') {
+                lysPos[lysPosPointer] = a + 1;
+                lysPosPointer++;
+            }
+        }
+        //create new list of modification lists
+        ArrayList<ArrayList<Modification>> completeList = new ArrayList<>();
+        //create the first 2 lists: 2 different possible modifications, all on NTerm
+        for (int e = 0; e < 2; e++) {
+            ArrayList<Modification> current = new ArrayList<>();
+            current.addAll(modsIn);
+            current.add(modChooserlsST(e, 1));
+            completeList.add(current);
+        }
+        //now loop through all the lysines and overwrite the existing list
+        //do so by using the listMultiplierlsST method
+        for (int f = 0; f < lysCount; f++) {
+            completeList = listMultiplierlsST(completeList, lysPos[f]);
+        }
+
+        return completeList;
+    }
+
+    private static Modification modChooserlsST(int modChooser, int pos){
+        Modification mod = null;
+        switch(modChooser){
+            case 0:
+                mod = Modification.uncleavedlsST(pos);
+                break;
+            case 1:
+                mod = Modification.cleavedlsST(pos);
+                break;
+        }
+        return mod;
+    }
+
+    private static ArrayList<ArrayList<Modification>> listMultiplierlsST(ArrayList<ArrayList<Modification>> listIn, int pos){
+        ArrayList<ArrayList<Modification>> listOut = new ArrayList<>();
+        for (ArrayList<Modification> modLists : listIn){
+            for (int i = 0; i<2;i++){
+                ArrayList<Modification> currentList = new ArrayList<>();
+                currentList.addAll(modLists);
+                currentList.add(modChooserlsST(i, pos));
+                listOut.add(currentList);
+            }
+        }
+        return listOut;
+    }
+
 
 
 }

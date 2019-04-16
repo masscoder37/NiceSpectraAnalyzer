@@ -1,5 +1,6 @@
 import com.sun.org.apache.xpath.internal.operations.Mod;
 import uk.ac.ebi.pride.tools.jmzreader.JMzReaderException;
+import uk.ac.ebi.pride.tools.jmzreader.model.Param;
 import uk.ac.ebi.pride.tools.jmzreader.model.Spectrum;
 import uk.ac.ebi.pride.tools.jmzreader.model.impl.CvParam;
 import uk.ac.ebi.pride.tools.jmzreader.model.impl.ParamGroup;
@@ -9,6 +10,7 @@ import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLParsingException;
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLSpectrum;
 import uk.ac.ebi.pride.tools.mzxml_parser.mzxml.model.PrecursorMz;
 import uk.ac.ebi.pride.tools.mzxml_parser.mzxml.model.Scan;
+import uk.ac.ebi.pride.tools.mzxml_parser.mzxml.model.ScanOrigin;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -49,20 +51,20 @@ public class Main {
         //Here, the spectrum to be analyzed has to be specified
         //It has to be a .mzXML-File which was centroided on MS1 and MS2-levels (see supporting information)
         //TODO: Please change your file path accordingly.
-        String filePathSpectrum =  "C:\\Programmierordner\\20171004_SOT180_HEK_5uLTag_ST.mzXML";
-       // File completemzXMLSource = new File(filePathSpectrum);
+        String filePathSpectrum =  "C:\\MeroX Massedaten\\CMT labeling\\lsSOT\\20190315_LabelTest_EColi_lsSOT_1x_1p5uL.mzXML";
+        File completemzXMLSource = new File(filePathSpectrum);
         //generating the MzXMLFile object might take a few minutes and will display some warnings.
-        //MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
+        MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
 
 
         //In this section, you have to supply the evidence.txt file from your MaxQuant analysis.
         //At the moment, the software assumes static carbamidomethylation on cysteine residues and variable methionine-oxidation
         //please filter out other modifications
         //TODO: Please change your file path accordingly.
-        String evidenceLocation = "C:\\Programmierordner\\Analyse_Wuehr\\evidence_filtered.txt";
-        //File evidence = new File(evidenceLocation);
+        String evidenceLocation = "C:\\MeroX Massedaten\\CMT labeling\\lsSOT\\txt\\evidence.txt";
+        File evidence = new File(evidenceLocation);
         //TODO: Please provide a directory were the output Files will be saved
-        String csvOutPath = "C:\\Programmierordner\\Analyse_Wuehr\\My Analysis\\";
+        String csvOutPath = "C:\\MeroX Massedaten\\CMT labeling\\lsSOT\\Analyse\\";
 
 
 
@@ -72,7 +74,7 @@ public class Main {
         //it creates multiple .csv-Files (one for 500 analyzed spectra each) in the specified directory, containing all matched label-containing fragment ions
         //TODO: change the max. allowed mass deviation in ppm. Currently: 5 ppm; 4th entry
         //TODO: change the used label: use "EC" for the SOT-duplex or "TMT" for the TMT-duplex
-        //CSVReader.wholeRunCICChecker(completemzXML, evidence, aminoAcidsList, 5, csvOutPath, "EC");
+        CSVReader.wholeRunCICChecker(completemzXML, evidence, aminoAcidsList, 5, csvOutPath, "lsST");
         //TODO: after compilation, the files should be created! Put section 1 in a comment block!
 
 
@@ -132,29 +134,23 @@ public class Main {
        newMySpectrum.spectrumPrinter();
        newMySpectrum.chargeStateAssigner();
        newMySpectrum.spectrumPrinter(); */
-       String spectrumPath = "C:\\Programmierordner\\Phosphozeugs\\20160525_stamch_GluCTrypsin_endogenTet1fl_unphosph.mzXML";
-       File spectrum = new File(spectrumPath);
-       MzXMLFile mzxml = new MzXMLFile(spectrum);
-       MySpectrum toCheck = MzXMLReadIn.mzXMLToMySpectrum(mzxml, "5619");
 
-       String peptideSeq = "LHATTSLRSPK";
-       Peptide pep = new Peptide(peptideSeq, aminoAcidsList);
-       pep.peptidePrinter();
-
-       ArrayList<Modification> modList = new ArrayList<>();
-       modList.add(Modification.phosphorylation(6));
-
-       Peptide pepMod = pep.peptideModifier(modList);
-
-       pepMod.peptidePrinter();
-
-       PeakCompare.peakCompare(toCheck, pepMod, 5);
-
-
+       /*String path = "C:\\Programmierordner\\20151127_stamch_ArgXlinking_DSSO_2zu1_pseuMS2_low.mzXML";
+       File file = new File(path);
+       MzXMLFile mzxml = new MzXMLFile(file);
+       String out = "C:\\Programmierordner\\";
+       ArrayList<Double> massList = new ArrayList<>();
+       massList.add(254.1208);
+        massList.add(279.11215);
+        massList.add(261.10159);
+        massList.add(229.12952);
+        for (double mass : massList) {
+            IntensityReadout.intensityReadout(mzxml, mass, out);*/
+        }
 
 
 
 
 
     }
-}
+
