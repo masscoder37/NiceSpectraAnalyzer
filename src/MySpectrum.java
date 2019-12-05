@@ -77,7 +77,7 @@ public class MySpectrum {
         peaksIn = this.getPeakList();
         int numberOfPeaks = peaksIn.size();
         //this variable sets the ppm tolerance and can be tweaked!
-        double daTol = 0.005;
+        double daTol = 0.03;
         //for every peak, look at 10 neighbours
         ArrayList<Neighbour> neighbours = new ArrayList<>();
         //loop through all the peaks in the peaklist
@@ -103,11 +103,12 @@ public class MySpectrum {
 
 
             int chargeState = 0;
-            ChargeStateOccurence[] possibleChargeStates = new ChargeStateOccurence[11];
-            for (int z = 1; z < 11; z++) {
+            ChargeStateOccurence[] possibleChargeStates = new ChargeStateOccurence[9];
+            for (int z = 1; z < 9; z++) {
                 possibleChargeStates[z] = new ChargeStateOccurence(z);
                 //include another for loop to check different multiples of the isotope envelope
                 for (int n = 1; n < 5; n++) {
+                    //supposed Diff is the expected absolute mass difference
                     double supposedDiff = n * AtomicMasses.getNEUTRON() / z;
                     for (Neighbour neighbour : neighbours) {
                         if (DeviationCalc.isotopeMatch(supposedDiff, neighbour.getMassDiff(), daTol)) {
@@ -127,7 +128,7 @@ public class MySpectrum {
             ArrayList<ChargeStateOccurence> topOccurences = new ArrayList<>();
             int topOccurenceNumber = 0;
             int currentOccurence = 0;
-            for (int z = 1; z < 11; z++) {
+            for (int z = 1; z < 9; z++) {
                 try {
                     currentOccurence = possibleChargeStates[z].getOccurence();
                 } catch (ArrayIndexOutOfBoundsException e) {
@@ -139,7 +140,7 @@ public class MySpectrum {
             }
 
             //it is possible that multiple charge states have the same abundance. In this case, put them into a list
-            for (int z = 1; z < 11; z++) {
+            for (int z = 1; z < 9; z++) {
                 if (possibleChargeStates[z].getOccurence() == topOccurenceNumber) {
                     topOccurences.add(possibleChargeStates[z]);
                 }
@@ -275,8 +276,9 @@ public class MySpectrum {
         System.out.println("Scan Number: " + this.scanNumber);
         double summedIntensity = 0;
         int printedPeaks = 0;
+        double cutOff = 0;
         for (Peak peak : this.peakList) {
-            if (peak.getRelIntensity() > 5) {
+            if (peak.getRelIntensity() > cutOff) {
                 System.out.println("Peak mass: " + fourDec.format(peak.getMass())
                         + "   Charge: " + peak.getCharge()
                         + "   Rel. Int.: " + twoDec.format(peak.getRelIntensity())
@@ -289,7 +291,7 @@ public class MySpectrum {
         System.out.println("General spectra properties:");
         System.out.println("");
         System.out.println("Number of Peaks: " + this.peakList.size());
-        System.out.println("Number of printed Peaks (>5% rel. Int.): " + printedPeaks);
+        System.out.println("Number of printed Peaks (>"+cutOff+"% rel. Int.): " + printedPeaks);
         System.out.println("Mean rel. Intensity: " + twoDec.format((summedIntensity / this.peakList.size())) + "%");
         int basePeakIndex = this.getBasePeakIndex();
         double maxInt = this.peakList.get(basePeakIndex).getIntensity();

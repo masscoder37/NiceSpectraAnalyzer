@@ -15,7 +15,7 @@ public class AtomicMasses {
     private static final Double Cx_MASS =   13.00335484;
     private static final Double F_MASS =  18.99840316;
     private static final Double P_MASS = 30.973763;
-    private static final Double NEUTRON = Cx_MASS-C_MASS;
+    private static final Double NEUTRON = Cx_MASS-C_MASS; //1.00335484
 
     public static Double getHMASS(){
         return H_MASS;

@@ -1,4 +1,3 @@
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLFile;
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLParsingException;
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLSpectrum;

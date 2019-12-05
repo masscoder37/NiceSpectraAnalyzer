@@ -1,4 +1,3 @@
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import uk.ac.ebi.pride.tools.jmzreader.JMzReaderException;
 import uk.ac.ebi.pride.tools.jmzreader.model.Param;
 import uk.ac.ebi.pride.tools.jmzreader.model.Spectrum;
@@ -44,7 +43,7 @@ public class Main {
         //The provided amino acids list is read.
         //TODO: Please change your file path accordingly so that it points to the provided amino acids list
         //This has to stay for the complete analysis
-        String filePathAcids = "C:\\Programmierordner\\Aminoacids_list.csv";
+        String filePathAcids = "C:\\Applications\\IntelliJIdea\\Projects\\NiceSpectraAnalyzer\\Aminoacids_list.csv";
         File aminoAcids = new File(filePathAcids);
         ArrayList<AminoAcid> aminoAcidsList = CSVReader.aminoAcidParse(aminoAcids);
 
@@ -52,9 +51,9 @@ public class Main {
         //It has to be a .mzXML-File which was centroided on MS1 and MS2-levels (see supporting information)
         //TODO: Please change your file path accordingly.
         String filePathSpectrum =  "C:\\MeroX Massedaten\\CMT labeling\\lsSOT\\20190315_LabelTest_EColi_lsSOT_1x_1p5uL.mzXML";
-        File completemzXMLSource = new File(filePathSpectrum);
+        //File completemzXMLSource = new File(filePathSpectrum);
         //generating the MzXMLFile object might take a few minutes and will display some warnings.
-        MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
+        //MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
 
 
         //In this section, you have to supply the evidence.txt file from your MaxQuant analysis.
@@ -62,7 +61,7 @@ public class Main {
         //please filter out other modifications
         //TODO: Please change your file path accordingly.
         String evidenceLocation = "C:\\MeroX Massedaten\\CMT labeling\\lsSOT\\txt\\evidence.txt";
-        File evidence = new File(evidenceLocation);
+        //File evidence = new File(evidenceLocation);
         //TODO: Please provide a directory were the output Files will be saved
         String csvOutPath = "C:\\MeroX Massedaten\\CMT labeling\\lsSOT\\Analyse\\";
 
@@ -74,7 +73,7 @@ public class Main {
         //it creates multiple .csv-Files (one for 500 analyzed spectra each) in the specified directory, containing all matched label-containing fragment ions
         //TODO: change the max. allowed mass deviation in ppm. Currently: 5 ppm; 4th entry
         //TODO: change the used label: use "EC" for the SOT-duplex or "TMT" for the TMT-duplex
-        CSVReader.wholeRunCICChecker(completemzXML, evidence, aminoAcidsList, 5, csvOutPath, "lsST");
+        //CSVReader.wholeRunCICChecker(completemzXML, evidence, aminoAcidsList, 5, csvOutPath, "lsST");
         //TODO: after compilation, the files should be created! Put section 1 in a comment block!
 
 
@@ -93,7 +92,7 @@ public class Main {
         //TODO: Remove the comments from this section and be sure that there are comments before and after sections 1 and 2
         //TODO: Change the file path to your file to analyze; in this case, to complete analysis
 
-        String toAnalyze = "C:\\Programmierordner\\Analyse_Wuehr\\My Analysis\\labelFragmentIons.csv";
+        //String toAnalyze = "C:\\Programmierordner\\Analyse_Wuehr\\My Analysis\\labelFragmentIons.csv";
         //CSVAnalyzer.cicStatistics(toAnalyze, "EC");
 
 
@@ -122,30 +121,18 @@ public class Main {
             System.out.println(pep);
         }*/
 
+        String loc = "C:\\MeroX MS Data\\Experiments\\XL1\\mgf\\TGR_08199\\TGR_08199_8456_8700.mzXML";
+        File testFile = new File(loc);
+        MzXMLFile testMzXML = new MzXMLFile(testFile);
+        Spectrum testSpectrum = testMzXML.getSpectrumById("8457");
+        ParamGroup testGrp = testSpectrum.getAdditional();
+        List<Param> testList = testGrp.getParams();
+        System.out.println("blablbalvlalal");
 
 
-       /*String filePathTestSpectrum = "C:\\Programmierordner\\20171004_SOT180_HEK_5uLTag_ST.mzXML";
-       //File testSpectrum = new File(filePathTestSpectrum);
-       //MzXMLFile completeMzXML = new MzXMLFile(testSpectrum);
-       String location = "C:\\Programmierordner\\20377_chargeStates.csv";
-       File testFile = new File(location);
-       //MySpectrum newMySpectrum = MzXMLReadIn.mzXMLToMySpectrum(completeMzXML, "11633");
-       MySpectrum newMySpectrum = CSVReader.spectrumParse(testFile);
-       newMySpectrum.spectrumPrinter();
-       newMySpectrum.chargeStateAssigner();
-       newMySpectrum.spectrumPrinter(); */
 
-       /*String path = "C:\\Programmierordner\\20151127_stamch_ArgXlinking_DSSO_2zu1_pseuMS2_low.mzXML";
-       File file = new File(path);
-       MzXMLFile mzxml = new MzXMLFile(file);
-       String out = "C:\\Programmierordner\\";
-       ArrayList<Double> massList = new ArrayList<>();
-       massList.add(254.1208);
-        massList.add(279.11215);
-        massList.add(261.10159);
-        massList.add(229.12952);
-        for (double mass : massList) {
-            IntensityReadout.intensityReadout(mzxml, mass, out);*/
+
+
         }
 
 

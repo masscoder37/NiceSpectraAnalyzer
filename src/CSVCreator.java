@@ -1,4 +1,3 @@
-import com.sun.org.apache.xpath.internal.SourceTree;
 import uk.ac.ebi.pride.tools.mzxml_parser.mzxml.model.Scan;
 
 import java.io.File;

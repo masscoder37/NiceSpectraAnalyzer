@@ -1,4 +1,3 @@
-import com.sun.org.apache.xpath.internal.SourceTree;
 import uk.ac.ebi.pride.tools.jmzreader.JMzReaderException;
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLFile;
 
@@ -33,8 +32,8 @@ public class IntensityReadout {
         }
 
         StringBuilder sb = new StringBuilder();
-        sb.append(fileName + ',');
-        sb.append(massToCheck + '\n');
+        sb.append(fileName).append(',');
+        sb.append(massToCheck).append('\n');
         pw.write(sb.toString());
         pw.flush();
         sb.setLength(0);

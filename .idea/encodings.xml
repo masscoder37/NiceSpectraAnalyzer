@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
-    <file url="file://$PROJECT_DIR$/../jmzReader-jmzreader-library-1.2.5" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/../jmzReader-jmzreader-library-1.2.5/apl-parser" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/../jmzReader-jmzreader-library-1.2.5/braf" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/../jmzReader-jmzreader-library-1.2.5/dta-parser" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/../jmzReader-jmzreader-library-1.2.5/jmzreader" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/../jmzReader-jmzreader-library-1.2.5/mgf-parser" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/../jmzReader-jmzreader-library-1.2.5/ms2-parser" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/../jmzReader-jmzreader-library-1.2.5/mzdata-parser" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/../jmzReader-jmzreader-library-1.2.5/mzml-wrapper" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/../jmzReader-jmzreader-library-1.2.5/mzxml-parser" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/../jmzReader-jmzreader-library-1.2.5/pkl-parser" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/../jmzReader-jmzreader-library-1.2.5/pride-wrapper" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../../Libs/jmzReader-jmzreader-library-1.2.5/apl-parser/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../../Libs/jmzReader-jmzreader-library-1.2.5/braf/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../../Libs/jmzReader-jmzreader-library-1.2.5/dta-parser/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../../Libs/jmzReader-jmzreader-library-1.2.5/jmzreader/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../../Libs/jmzReader-jmzreader-library-1.2.5/mgf-parser/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../../Libs/jmzReader-jmzreader-library-1.2.5/ms2-parser/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../../Libs/jmzReader-jmzreader-library-1.2.5/mzdata-parser/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../../Libs/jmzReader-jmzreader-library-1.2.5/mzdata-parser/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../../Libs/jmzReader-jmzreader-library-1.2.5/mzml-wrapper/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../../Libs/jmzReader-jmzreader-library-1.2.5/mzxml-parser/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../../Libs/jmzReader-jmzreader-library-1.2.5/mzxml-parser/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../../Libs/jmzReader-jmzreader-library-1.2.5/pkl-parser/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../../Libs/jmzReader-jmzreader-library-1.2.5/pride-wrapper/src/main/java" charset="UTF-8" />
   </component>
 </project>
