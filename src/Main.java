@@ -124,7 +124,7 @@ public class Main {
         String loc = "C:\\MeroX MS Data\\Experiments\\XL1\\mgf\\TGR_08199\\TGR_08199_8456_8700.mzXML";
         File testFile = new File(loc);
         MzXMLFile testMzXML = new MzXMLFile(testFile);
-        Spectrum testSpectrum = testMzXML.getSpectrumById("8457");
+        Spectrum testSpectrum = testMzXML.getSpectrumById("8458");
         ParamGroup testGrp = testSpectrum.getAdditional();
         List<Param> testList = testGrp.getParams();
         System.out.println("blablbalvlalal");
