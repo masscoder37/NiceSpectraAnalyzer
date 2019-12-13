@@ -179,6 +179,7 @@ public class Peptide {
 
 
     //this method uses an ArrayList of Modifications to attach modifications to existing peptides
+    //TODO: can't this be static?
     public Peptide peptideModifier(ArrayList<Modification> modListIn) {
         ArrayList<AminoAcid> modAAList = this.getAminoAcidsList();
         boolean modStatus = false;

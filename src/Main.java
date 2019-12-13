@@ -43,7 +43,7 @@ public class Main {
         //The provided amino acids list is read.
         //TODO: Please change your file path accordingly so that it points to the provided amino acids list
         //This has to stay for the complete analysis
-        String filePathAcids = "C:\\Applications\\IntelliJIdea\\Projects\\NiceSpectraAnalyzer\\Aminoacids_list.csv";
+        String filePathAcids = "C:\\Programmingfolder\\AAList\\Aminoacids_list.csv";
         File aminoAcids = new File(filePathAcids);
         ArrayList<AminoAcid> aminoAcidsList = CSVReader.aminoAcidParse(aminoAcids);
 
@@ -121,13 +121,17 @@ public class Main {
             System.out.println(pep);
         }*/
 
-        String loc = "C:\\MeroX MS Data\\Experiments\\XL1\\mgf\\TGR_08199\\TGR_08199_8456_8700.mzXML";
+        /*String loc = "C:\\MeroX MS Data\\Experiments\\XL1\\mgf\\TGR_08199\\TGR_08199_8456_8700.mzXML";
         File testFile = new File(loc);
         MzXMLFile testMzXML = new MzXMLFile(testFile);
         Spectrum testSpectrum = testMzXML.getSpectrumById("8458");
         ParamGroup testGrp = testSpectrum.getAdditional();
         List<Param> testList = testGrp.getParams();
-        System.out.println("blablbalvlalal");
+        System.out.println("blablbalvlalal");*/
+
+        Peptide peptide = new Peptide("DFLGm", aminoAcidsList);
+        System.out.println(peptide.getSequence());
+
 
 
 

@@ -129,6 +129,12 @@ public class SumFormula {
         SumFormula protonFormula = new SumFormula("H+");
         return protonFormula;
     }
+
+    public static SumFormula getCliXlinkFormula (){
+        SumFormula cliXlinkFormula =new SumFormula("C12H13NO4S");
+        return cliXlinkFormula;
+    }
+
     public int getProtonNumber(){
         int protonNumber =0;
 
