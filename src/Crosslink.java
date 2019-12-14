@@ -5,6 +5,11 @@ public class Crosslink {
 
     private Peptide peptideAlpha;   // alpha is the longer peptide
     private Peptide peptideBeta;    //beta is the smaller peptide
+    private int xlPosAlpha;
+    private int xlPosBeta;
+    //TODO: implement list of crosslink specific fragment ions
+    private ArrayList<CrosslinkFragmentIon> alphaXLFragments;
+    private ArrayList<CrosslinkFragmentIon> betaXLFragments;
     private String xlUsed;
     private SumFormula xlSumFormula;
     private Ion theoreticalXLIon;
@@ -13,9 +18,11 @@ public class Crosslink {
     private String fragmentationMethod;
     private boolean monoisotopicSelected;
     private int monoisotopicPeakOffset;
+    //implement list of crosslink specific ions for each of the peptides
 
     public Crosslink (String peptide1In, String peptide2In, String xlIn, int chargeStateIn,
-                      int scanNumberIn, String fragmentationMethodIn, double isolatedMassToChargeIn, ArrayList<AminoAcid> aaIn){
+                      int scanNumberIn, String fragmentationMethodIn, double isolatedMassToChargeIn,
+                      int xlPos1In, int xlPos2In, ArrayList<AminoAcid> aaIn){
 
         //only cliXlink is supported atm
         if (!xlIn.equals("cliXlink"))
@@ -29,11 +36,16 @@ public class Crosslink {
         //utilize the xlPeptideModification function to prepare the peptides with their modifications from merox
         if (peptide1In.length() > peptide2In.length()){
             this.peptideAlpha = xlPeptideModification(peptide1In,aaIn);
+            this.xlPosAlpha = xlPos1In;
             this.peptideBeta = xlPeptideModification(peptide2In, aaIn);
+            this.xlPosBeta = xlPos2In;
         }
         else{
             this.peptideAlpha = xlPeptideModification(peptide2In,aaIn);
+            this.xlPosAlpha = xlPos2In;
             this.peptideBeta = xlPeptideModification(peptide1In, aaIn);
+            this.xlPosBeta = xlPos1In;
+
         }
 
         //create the combined theoretical ion
@@ -70,23 +82,6 @@ public class Crosslink {
             }
 
         }
-
-
-
-
-
-
-        this.theoreticalXLIon = new Ion();
-
-
-
-
-
-
-
-
-
-
 
     }
     //this functions deals with adding the static modifications and the optional Methionine-Oxidation
@@ -131,5 +126,45 @@ public class Crosslink {
             out = new Peptide(sequenceIn, aaListIn);
 
         return out;
+    }
+
+    public Peptide getPeptideAlpha() {
+        return peptideAlpha;
+    }
+
+    public Peptide getPeptideBeta() {
+        return peptideBeta;
+    }
+
+    public String getXlUsed() {
+        return xlUsed;
+    }
+
+    public SumFormula getXlSumFormula() {
+        return xlSumFormula;
+    }
+
+    public Ion getTheoreticalXLIon() {
+        return theoreticalXLIon;
+    }
+
+    public double getIsolatedMassToCharge() {
+        return isolatedMassToCharge;
+    }
+
+    public int getScanNumber() {
+        return scanNumber;
+    }
+
+    public String getFragmentationMethod() {
+        return fragmentationMethod;
+    }
+
+    public boolean isMonoisotopicSelected() {
+        return monoisotopicSelected;
+    }
+
+    public int getMonoisotopicPeakOffset() {
+        return monoisotopicPeakOffset;
     }
 }
