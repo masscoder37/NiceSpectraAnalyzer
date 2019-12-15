@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 /**
  * Created by Michael Stadlmeier on 6/17/2017.
  */
@@ -110,6 +112,46 @@ public class Modification {
     public static  Modification phosphorylation (int pos) {
         Modification phosphorylation = new Modification("phos.", "HO3P", pos);
         return phosphorylation;
+    }
+
+    public static Modification cliXlinkShortAlk (int pos) {
+        Modification cliXlinkShortAlk = new Modification("alk_s", "C3H2O", pos);
+        return cliXlinkShortAlk;
+    }
+    public static Modification cliXlinkShortSO(int pos) {
+        Modification cliXlinkShortSO = new Modification("SO_s", "C3H4O2S", pos);
+        return cliXlinkShortSO;
+    }
+    public static Modification cliXlinkShortThial (int pos) {
+        Modification cliXlinkShortThial = new Modification("thial_s", "C3H2OS", pos);
+        return cliXlinkShortThial;
+    }
+    public static ArrayList<Modification> cliXlinkShortModList (int pos){
+        ArrayList<Modification> modListOut = new ArrayList<>();
+        modListOut.add(cliXlinkShortAlk(pos));
+        modListOut.add(cliXlinkShortSO(pos));
+        modListOut.add(cliXlinkShortThial(pos));
+        return modListOut;
+    }
+    public static ArrayList<Modification> cliXlinkLongModList (int pos){
+        ArrayList<Modification> modListOut = new ArrayList<>();
+        modListOut.add(cliXlinkLongAlk(pos));
+        modListOut.add(cliXlinkLongSO(pos));
+        modListOut.add(cliXlinkLongThial(pos));
+        return modListOut;
+    }
+
+    public static Modification cliXlinkLongAlk (int pos) {
+        Modification cliXlinkShortAlk = new Modification("alk_l", "C9H9NO2", pos);
+        return cliXlinkShortAlk;
+    }
+    public static Modification cliXlinkLongSO(int pos) {
+        Modification cliXlinkShortSO = new Modification("SO_l", "C9H11NO3S", pos);
+        return cliXlinkShortSO;
+    }
+    public static Modification cliXlinkLongThial (int pos) {
+        Modification cliXlinkShortThial = new Modification("thial_l", "C9H9NO2S", pos);
+        return cliXlinkShortThial;
     }
 
     public static Modification ncHSEC_A(int pos){

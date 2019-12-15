@@ -1,3 +1,4 @@
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Crosslink {
@@ -83,7 +84,12 @@ public class Crosslink {
 
         }
 
+        this.alphaXLFragments = new ArrayList<CrosslinkFragmentIon>();
+        this.betaXLFragments = new ArrayList<CrosslinkFragmentIon>();
+        fragIonCreator();
+
     }
+
     //this functions deals with adding the static modifications and the optional Methionine-Oxidation
     //oxidation is specified by small letter 'm'
     private static Peptide xlPeptideModification(String sequenceIn, ArrayList<AminoAcid> aaListIn){
@@ -127,6 +133,49 @@ public class Crosslink {
 
         return out;
     }
+    //in this class, the specific fragment ions of the XL will be set
+    //the generation of a XLFragmentIon needs:
+    //modified peptide, original peptide sequence peptideType(alpha or beta), clixlinkside (long or short)
+    //charge state, sum formula (with correct number of protons), clixlinkpos (where was the modification happening)
+    //TODO: finish that part here!
+    private void fragIonCreator (){
+        //first populate alpha peptide list
+        //create all possible fragments:long, short, and all charge states up to XL-charge state -1
+        //for each charge state, 6 possible fragments: alkene, SO and thial, and long and short
+        ArrayList<Modification> shortModListAlpha = Modification.cliXlinkShortModList(this.xlPosAlpha);
+        //loop through all the different short modifications
+        for (Modification mod:shortModListAlpha){
+            ArrayList<Modification> currentModList = new ArrayList<>();
+            currentModList.add(mod);
+            //loop through all the different charge states
+            for (int z = 1; z < this.theoreticalXLIon.getCharge(); z++){
+                //first, adjustPeptide and sumFormula of peptide
+                Peptide modPeptide = this.peptideAlpha;
+                modPeptide= modPeptide.peptideModifier(currentModList);
+
+
+            }
+            currentModList.clear();
+        }
+
+
+    }
+
+    public int getXlPosAlpha() {
+        return xlPosAlpha;
+    }
+
+    public int getXlPosBeta() {
+        return xlPosBeta;
+    }
+
+    public ArrayList<CrosslinkFragmentIon> getAlphaXLFragments() {
+        return alphaXLFragments;
+    }
+
+    public ArrayList<CrosslinkFragmentIon> getBetaXLFragments() {
+        return betaXLFragments;
+    }
 
     public Peptide getPeptideAlpha() {
         return peptideAlpha;
@@ -167,4 +216,5 @@ public class Crosslink {
     public int getMonoisotopicPeakOffset() {
         return monoisotopicPeakOffset;
     }
+
 }
