@@ -1,7 +1,6 @@
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class Crosslink {
+public class Xl {
 
 
     private Peptide peptideAlpha;   // alpha is the longer peptide
@@ -9,8 +8,8 @@ public class Crosslink {
     private int xlPosAlpha;
     private int xlPosBeta;
     //TODO: implement list of crosslink specific fragment ions
-    private ArrayList<CrosslinkFragmentIon> alphaXLFragments;
-    private ArrayList<CrosslinkFragmentIon> betaXLFragments;
+    private ArrayList<XlFragmentIon> alphaXLFragments;
+    private ArrayList<XlFragmentIon> betaXLFragments;
     private String xlUsed;
     private SumFormula xlSumFormula;
     private Ion theoreticalXLIon;
@@ -21,9 +20,9 @@ public class Crosslink {
     private int monoisotopicPeakOffset;
     //implement list of crosslink specific ions for each of the peptides
 
-    public Crosslink (String peptide1In, String peptide2In, String xlIn, int chargeStateIn,
-                      int scanNumberIn, String fragmentationMethodIn, double isolatedMassToChargeIn,
-                      int xlPos1In, int xlPos2In, ArrayList<AminoAcid> aaIn){
+    public Xl(String peptide1In, String peptide2In, String xlIn, int chargeStateIn,
+              int scanNumberIn, String fragmentationMethodIn, double isolatedMassToChargeIn,
+              int xlPos1In, int xlPos2In, ArrayList<AminoAcid> aaIn){
 
         //only cliXlink is supported atm
         if (!xlIn.equals("cliXlink"))
@@ -84,8 +83,8 @@ public class Crosslink {
 
         }
 
-        this.alphaXLFragments = new ArrayList<CrosslinkFragmentIon>();
-        this.betaXLFragments = new ArrayList<CrosslinkFragmentIon>();
+        this.alphaXLFragments = new ArrayList<XlFragmentIon>();
+        this.betaXLFragments = new ArrayList<XlFragmentIon>();
         fragIonCreator();
 
     }
@@ -137,28 +136,95 @@ public class Crosslink {
     //the generation of a XLFragmentIon needs:
     //modified peptide, original peptide sequence peptideType(alpha or beta), clixlinkside (long or short)
     //charge state, sum formula (with correct number of protons), clixlinkpos (where was the modification happening)
-    //TODO: finish that part here!
     private void fragIonCreator (){
         //first populate alpha peptide list
         //create all possible fragments:long, short, and all charge states up to XL-charge state -1
         //for each charge state, 6 possible fragments: alkene, SO and thial, and long and short
         ArrayList<Modification> shortModListAlpha = Modification.cliXlinkShortModList(this.xlPosAlpha);
+        ArrayList<Modification> longModListAlpha = Modification.cliXlinkLongModList(this.xlPosAlpha);
+        ArrayList<Modification> shortModListBeta = Modification.cliXlinkShortModList(this.xlPosBeta);
+        ArrayList<Modification> longModListBeta = Modification.cliXlinkLongModList(this.xlPosBeta);
         //loop through all the different short modifications
         for (Modification mod:shortModListAlpha){
             ArrayList<Modification> currentModList = new ArrayList<>();
             currentModList.add(mod);
+            //first, adjustPeptide and sumFormula of peptide
+            Peptide modPeptide = this.peptideAlpha;
+            modPeptide= modPeptide.peptideModifier(currentModList);
             //loop through all the different charge states
             for (int z = 1; z < this.theoreticalXLIon.getCharge(); z++){
-                //first, adjustPeptide and sumFormula of peptide
-                Peptide modPeptide = this.peptideAlpha;
-                modPeptide= modPeptide.peptideModifier(currentModList);
-
-
+                SumFormula modPeptideFormula = modPeptide.getSumFormula();
+                //to this formula, the protons have to be added
+                //add the proton formula as often as it is charged
+                for (int i = 1; i > z+1; i++){
+                    modPeptideFormula = SumFormula.sumFormulaJoiner(modPeptideFormula, SumFormula.getProtonFormula());
+                }
+                //now, create a xlfragmention and add it to the list of alpha-fragment ions
+                this.alphaXLFragments.add(new XlFragmentIon(modPeptide, this.peptideAlpha.getSequence(),
+                        "alpha", "short", z, modPeptideFormula, this.xlPosAlpha));
             }
             currentModList.clear();
         }
-
-
+        for (Modification mod:longModListAlpha){
+            ArrayList<Modification> currentModList = new ArrayList<>();
+            currentModList.add(mod);
+            //first, adjustPeptide and sumFormula of peptide
+            Peptide modPeptide = this.peptideAlpha;
+            modPeptide= modPeptide.peptideModifier(currentModList);
+            //loop through all the different charge states
+            for (int z = 1; z < this.theoreticalXLIon.getCharge(); z++){
+                SumFormula modPeptideFormula = modPeptide.getSumFormula();
+                //to this formula, the protons have to be added
+                //add the proton formula as often as it is charged
+                for (int i = 1; i > z+1; i++){
+                    modPeptideFormula = SumFormula.sumFormulaJoiner(modPeptideFormula, SumFormula.getProtonFormula());
+                }
+                //now, create a xlfragmention and add it to the list of alpha-fragment ions
+                this.alphaXLFragments.add(new XlFragmentIon(modPeptide, this.peptideAlpha.getSequence(),
+                        "alpha", "long", z, modPeptideFormula, this.xlPosAlpha));
+            }
+            currentModList.clear();
+        }
+        for (Modification mod:shortModListBeta){
+            ArrayList<Modification> currentModList = new ArrayList<>();
+            currentModList.add(mod);
+            //first, adjustPeptide and sumFormula of peptide
+            Peptide modPeptide = this.peptideBeta;
+            modPeptide= modPeptide.peptideModifier(currentModList);
+            //loop through all the different charge states
+            for (int z = 1; z < this.theoreticalXLIon.getCharge(); z++){
+                SumFormula modPeptideFormula = modPeptide.getSumFormula();
+                //to this formula, the protons have to be added
+                //add the proton formula as often as it is charged
+                for (int i = 1; i > z+1; i++){
+                    modPeptideFormula = SumFormula.sumFormulaJoiner(modPeptideFormula, SumFormula.getProtonFormula());
+                }
+                //now, create a xlfragmention and add it to the list of alpha-fragment ions
+                this.betaXLFragments.add(new XlFragmentIon(modPeptide, this.peptideBeta.getSequence(),
+                        "beta", "short", z, modPeptideFormula, this.xlPosBeta));
+            }
+            currentModList.clear();
+        }
+        for (Modification mod:longModListBeta){
+            ArrayList<Modification> currentModList = new ArrayList<>();
+            currentModList.add(mod);
+            //first, adjustPeptide and sumFormula of peptide
+            Peptide modPeptide = this.peptideBeta;
+            modPeptide= modPeptide.peptideModifier(currentModList);
+            //loop through all the different charge states
+            for (int z = 1; z < this.theoreticalXLIon.getCharge(); z++){
+                SumFormula modPeptideFormula = modPeptide.getSumFormula();
+                //to this formula, the protons have to be added
+                //add the proton formula as often as it is charged
+                for (int i = 1; i > z+1; i++){
+                    modPeptideFormula = SumFormula.sumFormulaJoiner(modPeptideFormula, SumFormula.getProtonFormula());
+                }
+                //now, create a xlfragmention and add it to the list of alpha-fragment ions
+                this.betaXLFragments.add(new XlFragmentIon(modPeptide, this.peptideBeta.getSequence(),
+                        "beta", "long", z, modPeptideFormula, this.xlPosBeta));
+            }
+            currentModList.clear();
+        }
     }
 
     public int getXlPosAlpha() {
@@ -169,11 +235,11 @@ public class Crosslink {
         return xlPosBeta;
     }
 
-    public ArrayList<CrosslinkFragmentIon> getAlphaXLFragments() {
+    public ArrayList<XlFragmentIon> getAlphaXLFragments() {
         return alphaXLFragments;
     }
 
-    public ArrayList<CrosslinkFragmentIon> getBetaXLFragments() {
+    public ArrayList<XlFragmentIon> getBetaXLFragments() {
         return betaXLFragments;
     }
 
