@@ -19,12 +19,23 @@ public class XlFragmentIon extends Ion {
         this.cliXlinkPos = cliXlinkPosIn;
     }
 
+    public Peptide getModPeptide() {
+        return modPeptide;
+    }
 
+    public String getOriginPeptideSequence() {
+        return originPeptideSequence;
+    }
 
+    public String getPepType() {
+        return pepType;
+    }
 
+    public String getCliXlinkSide() {
+        return cliXlinkSide;
+    }
 
-
-
-
-
+    public int getCliXlinkPos() {
+        return cliXlinkPos;
+    }
 }

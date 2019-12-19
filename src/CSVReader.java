@@ -418,4 +418,36 @@ public static void wholeRunRepFinder(MzXMLFile runIn, File statisticsAnalysis, d
     System.out.println("Analysis complete! .csv File with "+ (handledSpectra-1)+" peptides created!");
 
 }
+//this function checks the mod. resultfile from merox and a provided mzxml file
+    //it analyzes the corresponding MS2-spectra (CID or HCD) of an identified crosslink
+    //it gives the number of matched peaks, type (long or short), structure (alkene, thial, SO), rel intensities, rel. intensities towards highest signature peak,
+    //overall proportion of signature peaks compared to spectrum, missaligned M0 precursor info
+public static void xlHCDSpectraChecker(File resultFileIn, MzXMLFile runIn, String fragTypeIn, String xlIn){
+        //check if correct crosslinker and fragmentation type is used
+    if (!xlIn.equals("cliXlink"))
+        throw new IllegalArgumentException("Unknown cross-linker! Only 'cliXlink' is supported! Input: "+xlIn);
+    if (!fragTypeIn.equals("HCD"))
+        throw new IllegalArgumentException("This function supports only 'HCD' as a fragmentation type. Input: "+fragTypeIn);
+
+    //initialize scanner
+    Scanner scanner = null;
+    try {
+        scanner = new Scanner(resultFileIn);
+    } catch (FileNotFoundException e) {
+        System.out.println("File not found! Location: " +resultFileIn.getAbsolutePath());
+    }
+    //the following information is necessary:
+    //
+
+
+
+
+
+
+
+
+}
+
+
+
 }

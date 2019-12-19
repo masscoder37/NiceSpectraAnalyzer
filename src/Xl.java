@@ -18,11 +18,15 @@ public class Xl {
     private String fragmentationMethod;
     private boolean monoisotopicSelected;
     private int monoisotopicPeakOffset;
-    //implement list of crosslink specific ions for each of the peptides
+    private double retentionTime; //the retention time of the XL in seconds
+    private boolean alphaEqualsBeta; //for unwanted skewing of the data
+    //TODO: implement an ArrayList of xlFragIonMatches
+    //doing so will associate all the matches automatically with the respective XL
+    private ArrayList<SpecificXLIonMatch> xlIonMatches;
 
     public Xl(String peptide1In, String peptide2In, String xlIn, int chargeStateIn,
               int scanNumberIn, String fragmentationMethodIn, double isolatedMassToChargeIn,
-              int xlPos1In, int xlPos2In, ArrayList<AminoAcid> aaIn){
+              int xlPos1In, int xlPos2In, ArrayList<AminoAcid> aaIn, double retentionTimeIn){
 
         //only cliXlink is supported atm
         if (!xlIn.equals("cliXlink"))
@@ -47,6 +51,10 @@ public class Xl {
             this.xlPosBeta = xlPos1In;
 
         }
+        if (peptide1In.equals(peptide2In))
+            this.alphaEqualsBeta = true;
+        else
+            this.alphaEqualsBeta = false;
 
         //create the combined theoretical ion
         //combine sum formulas from the peptides and the sum formula of the crosslinker
@@ -83,6 +91,7 @@ public class Xl {
 
         }
 
+        this.retentionTime = retentionTimeIn;
         this.alphaXLFragments = new ArrayList<XlFragmentIon>();
         this.betaXLFragments = new ArrayList<XlFragmentIon>();
         fragIonCreator();
@@ -283,4 +292,15 @@ public class Xl {
         return monoisotopicPeakOffset;
     }
 
+    public double getRetentionTime() {
+        return retentionTime;
+    }
+
+    public ArrayList<SpecificXLIonMatch> getXlIonMatches() {
+        return xlIonMatches;
+    }
+
+    public boolean getAlphaEqualsBeta() {
+        return alphaEqualsBeta;
+    }
 }
