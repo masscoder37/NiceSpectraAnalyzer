@@ -437,7 +437,7 @@ public static void xlHCDSpectraChecker(File resultFileIn, MzXMLFile runIn, Strin
         System.out.println("File not found! Location: " +resultFileIn.getAbsolutePath());
     }
     //the following information is necessary:
-    //
+    //Pep1 String, Pep2 String, xl1Pos, xl2Pos, charge state of XL, scan number, isolated m/z, retention time
 
 
 
