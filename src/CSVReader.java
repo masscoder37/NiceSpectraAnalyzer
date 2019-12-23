@@ -421,15 +421,17 @@ public static void wholeRunRepFinder(MzXMLFile runIn, File statisticsAnalysis, d
 //this function checks the mod. resultfile from merox and a provided mzxml file
     //it analyzes the corresponding MS2-spectra (CID or HCD) of an identified crosslink
     //it gives the number of matched peaks, type (long or short), structure (alkene, thial, SO), rel intensities, rel. intensities towards highest signature peak,
-    //overall proportion of signature peaks compared to spectrum, missaligned M0 precursor info
-public static void xlHCDSpectraChecker(File resultFileIn, MzXMLFile runIn, String fragTypeIn, String xlIn){
+    //overall proportion of signature peaks compared to spectrum, misaligned M0 precursor info
+public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String fragMethodIn, String xlIn) throws FileNotFoundException {
         //check if correct crosslinker and fragmentation type is used
     if (!xlIn.equals("cliXlink"))
         throw new IllegalArgumentException("Unknown cross-linker! Only 'cliXlink' is supported! Input: "+xlIn);
-    if (!fragTypeIn.equals("HCD"))
-        throw new IllegalArgumentException("This function supports only 'HCD' as a fragmentation type. Input: "+fragTypeIn);
+    if(!fragMethodIn.equals("HCD")) {
+        if (!fragMethodIn.equals("CID"))
+            throw new IllegalArgumentException("Unknown frag method! Input: " + fragMethodIn);
+    }
 
-    //initialize scanner
+    //initialize scanner for MeroX data
     Scanner scanner = null;
     try {
         scanner = new Scanner(resultFileIn);
@@ -438,6 +440,98 @@ public static void xlHCDSpectraChecker(File resultFileIn, MzXMLFile runIn, Strin
     }
     //the following information is necessary:
     //Pep1 String, Pep2 String, xl1Pos, xl2Pos, charge state of XL, scan number, isolated m/z, retention time
+    //the MeroX results are structured in this way
+    //[0] "Peptide 1" [1] "Peptide 2" [2] "Scan number" [3] "Retention time in sec" [4] "best linkage position peptide 1" [5] "best linkage position peptide 2"
+
+    //get header positions
+    String header = scanner.nextLine();
+    String headerCaptions[] = header.split(",");
+    HashMap<String, Integer> captionPositions = new HashMap<>();
+    int index = 0;
+    for (String captions : headerCaptions){
+        switch (captions){
+            case "Peptide 1":
+                captionPositions.put("Peptide 1", index);
+                break;
+            case "Peptide 2":
+                captionPositions.put("Peptide 2", index);
+                break;
+            case "Scan Number":
+                captionPositions.put("Scan Number", index);
+                break;
+            case "Retention time in sec":
+                captionPositions.put("Retention time in sec", index);
+                break;
+            case "best linkage position peptide 1":
+                captionPositions.put("best linkage position peptide 1", index);
+                break;
+            case "best linkage position peptide 2":
+                captionPositions.put("best linkage position peptide 2", index);
+                break;
+        }
+        index++;
+    }
+    //prepare new File and write header
+    String newFilePath = resultFileIn.getAbsolutePath().replace(".csv", "")+"_XLIonsAnalysis.csv";
+    File outputCSV = new File(newFilePath);
+    PrintWriter csvWriter = new PrintWriter(outputCSV);
+    StringBuilder sb = new StringBuilder();
+    String[] newHeader = new String[50];
+    newHeader[0] = "Peptide alpha";
+    newHeader[1] = "Peptide beta";
+    newHeader[2] = "Alpha amino acid";
+    newHeader[3] = "Beta amino acid";
+    newHeader[4] = "Alpha position";
+    newHeader[5] = "Beta position";
+    newHeader[6] = "Scan Number";
+    newHeader[7] = "Precursor m/z";
+    newHeader[8] = "Precursor Charge";
+    newHeader[9] = "Precursor mass dev [ppm]";
+    newHeader[10] = "Precursor monoisotopic offset";
+    newHeader[11] = "Precursor rel. intensity [%]";
+    newHeader[12] = "Precursor abs. intensity [au]";
+    newHeader[13] = "Signature peaks detected"; //0-6
+    newHeader[14] = "Signature peaks summed rel int. [%]";
+    newHeader[15] = "Alpha charge states detected";
+    newHeader[16] = "Beta charge states detected";
+    newHeader[17] = "Alpha dominant charge state";
+    newHeader[18] = "Beta dominant charge state";
+    newHeader[19] = "Alpha residue detected"; //short, long, both
+    newHeader[20] = "Beta residue detected";
+    newHeader[21] = "Alpha dominant residue detected";
+    newHeader[22] = "Beta dominant residue detected";
+    newHeader[23] = "Alpha alkene short detected"; //true||false
+    newHeader[24] = "Alpha SO short detected";
+    newHeader[25] = "Alpha thial short detected";
+    newHeader[26] = "Alpha alkene long detected";
+    newHeader[27] = "Alpha SO long detected";
+    newHeader[28] = "Alpha thial long detected";
+    newHeader[29] = "Beta alkene short detected"; //true||false
+    newHeader[30] = "Beta SO short detected";
+    newHeader[31] = "Beta thial short detected";
+    newHeader[32] = "Beta alkene long detected";
+    newHeader[33] = "Beta SO long detected";
+    newHeader[34] = "Beta thial long detected";
+
+
+
+
+
+
+
+
+
+
+    String sep = "";
+    for (String s : newHeader){
+        sb.append(sep);
+        sb.append(s);
+        sep = ",";
+    }
+    sb.append("\n");
+    csvWriter.write(sb.toString());
+    sb.setLength(0);
+
 
 
 
