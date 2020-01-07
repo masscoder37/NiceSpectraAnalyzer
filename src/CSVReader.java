@@ -1,6 +1,7 @@
 import uk.ac.ebi.pride.tools.jmzreader.JMzReaderException;
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLFile;
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLParsingException;
+import uk.ac.ebi.pride.tools.mzxml_parser.mzxml.model.Scan;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -422,7 +423,7 @@ public static void wholeRunRepFinder(MzXMLFile runIn, File statisticsAnalysis, d
     //it analyzes the corresponding MS2-spectra (CID or HCD) of an identified crosslink
     //it gives the number of matched peaks, type (long or short), structure (alkene, thial, SO), rel intensities, rel. intensities towards highest signature peak,
     //overall proportion of signature peaks compared to spectrum, misaligned M0 precursor info
-public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String fragMethodIn, String xlIn) throws FileNotFoundException {
+public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String fragMethodIn, String xlIn) throws FileNotFoundException, MzXMLParsingException {
         //check if correct crosslinker and fragmentation type is used
     if (!xlIn.equals("cliXlink"))
         throw new IllegalArgumentException("Unknown cross-linker! Only 'cliXlink' is supported! Input: "+xlIn);
@@ -476,20 +477,22 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
     File outputCSV = new File(newFilePath);
     PrintWriter csvWriter = new PrintWriter(outputCSV);
     StringBuilder sb = new StringBuilder();
-    String[] newHeader = new String[50];
+    String[] newHeader = new String[59];
+    //general XL information
     newHeader[0] = "Peptide alpha";
     newHeader[1] = "Peptide beta";
     newHeader[2] = "Alpha amino acid";
     newHeader[3] = "Beta amino acid";
     newHeader[4] = "Alpha position";
     newHeader[5] = "Beta position";
-    newHeader[6] = "Scan Number";
+    newHeader[6] = "Scan Number MeroX";
     newHeader[7] = "Precursor m/z";
     newHeader[8] = "Precursor Charge";
     newHeader[9] = "Precursor mass dev [ppm]";
     newHeader[10] = "Precursor monoisotopic offset";
     newHeader[11] = "Precursor rel. intensity [%]";
     newHeader[12] = "Precursor abs. intensity [au]";
+    //information about Signature peaks and the dominant residues
     newHeader[13] = "Signature peaks detected"; //0-6
     newHeader[14] = "Signature peaks summed rel int. [%]";
     newHeader[15] = "Alpha charge states detected";
@@ -500,6 +503,8 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
     newHeader[20] = "Beta residue detected";
     newHeader[21] = "Alpha dominant residue detected";
     newHeader[22] = "Beta dominant residue detected";
+
+    //information about the detected fragments
     newHeader[23] = "Alpha alkene short detected"; //true||false
     newHeader[24] = "Alpha SO short detected";
     newHeader[25] = "Alpha thial short detected";
@@ -513,15 +518,33 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
     newHeader[33] = "Beta SO long detected";
     newHeader[34] = "Beta thial long detected";
 
+    newHeader[35] = "Alpha alkene short rel. int. [%]";
+    newHeader[36] = "Alpha SO short rel. int. [%]";
+    newHeader[37] = "Alpha thial short rel. int. [%]";
+    newHeader[38] = "Alpha alkene long rel. int. [%]";
+    newHeader[39] = "Alpha SO long rel. int. [%]";
+    newHeader[40] = "Alpha thial long rel. int. [%]";
+    newHeader[41] = "Beta alkene short rel. int. [%]";
+    newHeader[42] = "Beta SO short rel. int. [%]";
+    newHeader[43] = "Beta thial short rel. int. [%]";
+    newHeader[44] = "Beta alkene long rel. int. [%]";
+    newHeader[45] = "Beta SO long rel. int. [%]";
+    newHeader[46] = "Beta thial long rel. int. [%]";
 
+    newHeader[47] = "Alpha alkene short abs. int. [au]";
+    newHeader[48] = "Alpha SO short abs. int. [au]";
+    newHeader[49] = "Alpha thial short abs. int. [au]";
+    newHeader[50] = "Alpha alkene long abs. int. [au]";
+    newHeader[51] = "Alpha SO long abs. int. [au]";
+    newHeader[52] = "Alpha thial long abs. int. [au]";
+    newHeader[53] = "Beta alkene short abs. int. [au]";
+    newHeader[54] = "Beta SO short abs. int. [au]";
+    newHeader[55] = "Beta thial short abs. int. [au]";
+    newHeader[56] = "Beta alkene long abs. int. [au]";
+    newHeader[57] = "Beta SO long abs. int. [au]";
+    newHeader[58] = "Beta thial long abs. int. [au]";
 
-
-
-
-
-
-
-
+    //this loop generates the header
     String sep = "";
     for (String s : newHeader){
         sb.append(sep);
@@ -532,10 +555,28 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
     csvWriter.write(sb.toString());
     sb.setLength(0);
 
+    //TODO:generate new XL object and check if CID exists
+    //Prepare Spectrum Lists
+    //getScanNumbers outputs Long type
+    List<Long> spectrumList = runIn.getScanNumbers();
+
+    for (int i = 0; i < spectrumList.size(); i++ ){
+        Scan current = runIn.getScanByNum(spectrumList.get(i));
+
+    }
 
 
-    //TODO:check if CID exists
 
+
+
+    while(scanner.hasNext()){
+        String values = scanner.nextLine();
+        String[] splitValues = values.split(",");
+
+        //first, check if CID-scan is present
+        int hcdScanNumber = Integer.parseInt(splitValues[captionPositions.get("Scan Number")]);
+
+    }
 
 
 

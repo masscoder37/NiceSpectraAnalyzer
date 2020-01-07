@@ -1,4 +1,5 @@
 import uk.ac.ebi.pride.tools.jmzreader.JMzReaderException;
+import uk.ac.ebi.pride.tools.jmzreader.model.IndexElement;
 import uk.ac.ebi.pride.tools.jmzreader.model.Param;
 import uk.ac.ebi.pride.tools.jmzreader.model.Spectrum;
 import uk.ac.ebi.pride.tools.jmzreader.model.impl.CvParam;
@@ -124,13 +125,18 @@ public class Main {
         String loc = "C:\\MeroX MS Data\\Experiments\\XL1\\mgf\\HCD_CID\\TGR_08199_8456_8700.mzXML";
         File testFile = new File(loc);
         MzXMLFile testMzXML = new MzXMLFile(testFile);
-        Spectrum testSpectrum = testMzXML.getSpectrumById("8458");
-        ParamGroup testGrp = testSpectrum.getAdditional();
-        List<Param> testList = testGrp.getParams();
-        System.out.println("blablbalvlalal");
+        System.out.println("# of MS2 scans: "+ testMzXML.getMS2ScanCount());
+        List<Long> alala = testMzXML.getScanNumbers();
 
-        Peptide peptide = new Peptide("DFLGm", aminoAcidsList);
-        System.out.println(peptide.getSequence());
+        //TODO : THIS IS HOW YOU GET THE ACTIVATION TYPE
+        Scan scan = testMzXML.getScanByNum(alala.get(4));
+        System.out.println("activation: "+scan.getActivationMethod());
+        String s = scan.getPrecursorMz().get(0).getActivationMethod();
+
+
+
+        System.out.println("tgraoiwe");
+
 
 
 
