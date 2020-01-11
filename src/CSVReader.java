@@ -423,7 +423,7 @@ public static void wholeRunRepFinder(MzXMLFile runIn, File statisticsAnalysis, d
     //it analyzes the corresponding MS2-spectra (CID or HCD) of an identified crosslink
     //it gives the number of matched peaks, type (long or short), structure (alkene, thial, SO), rel intensities, rel. intensities towards highest signature peak,
     //overall proportion of signature peaks compared to spectrum, misaligned M0 precursor info
-public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String fragMethodIn, String xlIn) throws FileNotFoundException, MzXMLParsingException {
+public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String fragMethodIn, String xlIn, ArrayList<AminoAcid> aaListIn, double ppmDevIn) throws FileNotFoundException, MzXMLParsingException, JMzReaderException {
         //check if correct crosslinker and fragmentation type is used
     if (!xlIn.equals("cliXlink"))
         throw new IllegalArgumentException("Unknown cross-linker! Only 'cliXlink' is supported! Input: "+xlIn);
@@ -556,25 +556,81 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
     sb.setLength(0);
 
     //TODO:generate new XL object and check if CID exists
-    //Prepare Spectrum Lists
-    //getScanNumbers outputs Long type
-    List<Long> spectrumList = runIn.getScanNumbers();
-
-    for (int i = 0; i < spectrumList.size(); i++ ){
-        Scan current = runIn.getScanByNum(spectrumList.get(i));
-
-    }
-
-
-
-
 
     while(scanner.hasNext()){
+        //read in all the values
         String values = scanner.nextLine();
         String[] splitValues = values.split(",");
-
-        //first, check if CID-scan is present
         int hcdScanNumber = Integer.parseInt(splitValues[captionPositions.get("Scan Number")]);
+        String peptide1 = splitValues[captionPositions.get("Peptide 1")];
+        String peptide2 = splitValues[captionPositions.get("Peptide 2")];
+        double hcdRetentionTime = Double.parseDouble(splitValues[captionPositions.get("Retention time in sec")]);
+        String linkagePep1 = splitValues[captionPositions.get("best linkage position peptide 1")];
+        String linkagePep2 = splitValues[captionPositions.get("best linkage position peptide 2")];
+
+        //use hcd scan number and look if CID scan is present and for the number
+        boolean cidPresent = false;
+        int cidScanNumber = 0;
+        Scan hcdScan = runIn.getScanByStringNum(Integer.toString(hcdScanNumber));
+        double hcdPrecursorMZ = (double) hcdScan.getPrecursorMz().get(0).getValue();
+        //TODO: error handling if scannumber -6 or +6 is out of bounds
+        //TODO: e.g. by determining the numbers beforehand
+        for (int a = hcdScanNumber-6; a < hcdScanNumber +6; a++){
+            Scan potentialCIDScan = runIn.getScanByStringNum(Integer.toString(a));
+            int msLevel = Math.toIntExact(potentialCIDScan.getMsLevel());
+            if (msLevel == 2){
+                String activationMethod = potentialCIDScan.getPrecursorMz().get(0).getActivationMethod();
+                if (activationMethod.contains("CID")){
+                    double cidScanPrec = (double) potentialCIDScan.getPrecursorMz().get(0).getValue();
+                    if (DeviationCalc.ppmMatch(hcdPrecursorMZ, cidScanPrec, ppmDevIn)){
+                        String cidRTString = potentialCIDScan.getRetentionTime().toString();
+                        cidRTString = cidRTString.replace("PT", "");
+                        cidRTString = cidRTString.replace("S","");
+                        double cidRT = Double.parseDouble(cidRTString);
+                        if (cidRT < hcdRetentionTime+2 ||cidRT > hcdRetentionTime-2 ) {
+                            cidPresent = true;
+                            cidScanNumber = a;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        //escapes the loop if CID scan isn't present
+        if (!cidPresent)
+            continue;
+        //cidScanNumber now contains the information about the cidScan
+        Scan cidMatchScan = runIn.getScanByStringNum(Integer.toString(cidScanNumber));
+        //prepare values for XL generation
+        int xlChargeState = Math.toIntExact(cidMatchScan.getPrecursorMz().get(0).getPrecursorCharge());
+        double cidIsoMassToCharge = (double) cidMatchScan.getPrecursorMz().get(0).getValue();
+        String cidRTString = cidMatchScan.getRetentionTime().toString();
+        cidRTString = cidRTString.replace("PT", "");
+        cidRTString = cidRTString.replace("S","");
+        double cidRT = Double.parseDouble(cidRTString);
+        int xlPos1 = Integer.parseInt(linkagePep1);
+        int xlPos2 = Integer.parseInt(linkagePep2);
+
+        //invoke XL constructor
+        Xl currentXl = new Xl(peptide1, peptide2, xlIn, xlChargeState, cidScanNumber, fragMethodIn, cidIsoMassToCharge, xlPos1,
+                xlPos2, aaListIn, cidRT);
+        //XL is now present, prepare CID spectrum to search against
+        //TODO: implement scan to mySpectrum conversion?
+        MySpectrum currentSpectrum = MzXMLReadIn.mzXMLToMySpectrum(runIn,Integer.toString(cidScanNumber));
+        currentSpectrum.chargeStateAssigner();
+        //TODO: use the specificXlIonMatch class to check the spectrum for the specific peaks
+
+
+
+
+
+
+
+
+
+
+
+
 
     }
 
