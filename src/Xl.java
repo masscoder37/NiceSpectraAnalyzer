@@ -7,7 +7,6 @@ public class Xl {
     private Peptide peptideBeta;    //beta is the smaller peptide
     private int xlPosAlpha;
     private int xlPosBeta;
-    //TODO: implement list of crosslink specific fragment ions
     private ArrayList<XlFragmentIon> alphaXLFragments;
     private ArrayList<XlFragmentIon> betaXLFragments;
     private String xlUsed;
@@ -20,7 +19,6 @@ public class Xl {
     private int monoisotopicPeakOffset;
     private double retentionTime; //the retention time of the XL in seconds
     private boolean alphaEqualsBeta; //for unwanted skewing of the data
-    //TODO: implement an ArrayList of xlFragIonMatches
     //doing so will associate all the matches automatically with the respective XL
     private ArrayList<SpecificXLIonMatch> xlIonMatches;
 
@@ -235,6 +233,36 @@ public class Xl {
             currentModList.clear();
         }
     }
+
+    //this function matches the theoretical fragments to the spectrum
+    //specificXLIonMatch needs: matched peak, matched fragment Ion and ppm Dev
+    public void xlIonMatcher (MySpectrum spectrumIn, double ppmDevAllowed){
+        ArrayList<SpecificXLIonMatch> matchList = new ArrayList<>();
+        //MySpectrum to check was already created by CSVReader class
+        //loop through the lists of specific fragment ions and check if they match the spectrum
+        //also keep in mind the charge state of the fragment ion and the peak
+        //for now, also allow undetermined charge states (=0)
+        for(XlFragmentIon alphaFragments : this.alphaXLFragments){
+            boolean matchFound = false;
+            while (!matchFound){
+                for(Peak toCheck : spectrumIn.getPeakList()){
+
+                }
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+        this.xlIonMatches = matchList;
+    }
+
 
     public int getXlPosAlpha() {
         return xlPosAlpha;

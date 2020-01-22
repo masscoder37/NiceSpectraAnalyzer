@@ -518,6 +518,7 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
     newHeader[33] = "Beta SO long detected";
     newHeader[34] = "Beta thial long detected";
 
+
     newHeader[35] = "Alpha alkene short rel. int. [%]";
     newHeader[36] = "Alpha SO short rel. int. [%]";
     newHeader[37] = "Alpha thial short rel. int. [%]";
@@ -618,7 +619,9 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
         //TODO: implement scan to mySpectrum conversion?
         MySpectrum currentSpectrum = MzXMLReadIn.mzXMLToMySpectrum(runIn,Integer.toString(cidScanNumber));
         currentSpectrum.chargeStateAssigner();
-        //TODO: use the specificXlIonMatch class to check the spectrum for the specific peaks
+        //TODO: use the Xl class to check the spectrum for the specific peaks
+        currentXl.xlIonMatcher(currentSpectrum, ppmDevIn);
+
 
 
 

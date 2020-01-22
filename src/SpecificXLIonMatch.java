@@ -5,14 +5,12 @@
 public class SpecificXLIonMatch {
 
     private Peak matchedPeak;
-    private Xl parentXL;
     private XlFragmentIon matchedFragIon;
     private double massDeviation;
 
 
-    public SpecificXLIonMatch (Peak peakIn, Xl xlIn, XlFragmentIon fragIonIn, String fragTypeIn, String pepTypeIn, String modTypeIn){
+    public SpecificXLIonMatch (Peak peakIn,XlFragmentIon fragIonIn){
         this.matchedPeak = peakIn;
-        this.parentXL = xlIn;
         this.matchedFragIon = fragIonIn;
         this.massDeviation = DeviationCalc.ppmDeviationCalc(this.matchedFragIon.getMToZ(), this.matchedPeak.getMass());
     }
@@ -33,12 +31,10 @@ public class SpecificXLIonMatch {
 
 
 
+
+
     public Peak getMatchedPeak() {
         return matchedPeak;
-    }
-
-    public Xl getParentXL() {
-        return parentXL;
     }
 
     public XlFragmentIon getMatchedFragIon() {
