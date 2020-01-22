@@ -242,24 +242,30 @@ public class Xl {
         //loop through the lists of specific fragment ions and check if they match the spectrum
         //also keep in mind the charge state of the fragment ion and the peak
         //for now, also allow undetermined charge states (=0)
-        for(XlFragmentIon alphaFragments : this.alphaXLFragments){
+        for(XlFragmentIon alphaFragment : this.alphaXLFragments){
             boolean matchFound = false;
             while (!matchFound){
                 for(Peak toCheck : spectrumIn.getPeakList()){
-
+                    if(DeviationCalc.massAndChargeMatch(alphaFragment.getMToZ(), alphaFragment.getCharge(), toCheck, ppmDevAllowed)){
+                        matchList.add(new SpecificXLIonMatch(toCheck, alphaFragment));
+                        matchFound = true;
+                        break;
+                    }
                 }
             }
         }
-
-
-
-
-
-
-
-
-
-
+        for(XlFragmentIon betaFragment : this.betaXLFragments){
+            boolean matchFound = false;
+            while (!matchFound){
+                for(Peak toCheck : spectrumIn.getPeakList()){
+                    if(DeviationCalc.massAndChargeMatch(betaFragment.getMToZ(), betaFragment.getCharge(), toCheck, ppmDevAllowed)){
+                        matchList.add(new SpecificXLIonMatch(toCheck, betaFragment));
+                        matchFound = true;
+                        break;
+                    }
+                }
+            }
+        }
         this.xlIonMatches = matchList;
     }
 

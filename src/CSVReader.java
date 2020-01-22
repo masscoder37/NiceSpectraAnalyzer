@@ -572,11 +572,16 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
         //use hcd scan number and look if CID scan is present and for the number
         boolean cidPresent = false;
         int cidScanNumber = 0;
+        int numberOfScans = runIn.getSpectraCount();
+        int spectraOffset = 10;
+        if (hcdScanNumber-spectraOffset <= 0)
+            spectraOffset = hcdScanNumber -1;
+
+        if (hcdScanNumber+spectraOffset > numberOfScans)
+            spectraOffset = numberOfScans-hcdScanNumber;
         Scan hcdScan = runIn.getScanByStringNum(Integer.toString(hcdScanNumber));
         double hcdPrecursorMZ = (double) hcdScan.getPrecursorMz().get(0).getValue();
-        //TODO: error handling if scannumber -6 or +6 is out of bounds
-        //TODO: e.g. by determining the numbers beforehand
-        for (int a = hcdScanNumber-6; a < hcdScanNumber +6; a++){
+        for (int a = hcdScanNumber-spectraOffset; a < hcdScanNumber +spectraOffset; a++){
             Scan potentialCIDScan = runIn.getScanByStringNum(Integer.toString(a));
             int msLevel = Math.toIntExact(potentialCIDScan.getMsLevel());
             if (msLevel == 2){
@@ -619,8 +624,9 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
         //TODO: implement scan to mySpectrum conversion?
         MySpectrum currentSpectrum = MzXMLReadIn.mzXMLToMySpectrum(runIn,Integer.toString(cidScanNumber));
         currentSpectrum.chargeStateAssigner();
-        //TODO: use the Xl class to check the spectrum for the specific peaks
+        //use the Xl class to check the spectrum for the specific peaks
         currentXl.xlIonMatcher(currentSpectrum, ppmDevIn);
+        //TODO:get all the information into the string to parse to CSV 
 
 
 
