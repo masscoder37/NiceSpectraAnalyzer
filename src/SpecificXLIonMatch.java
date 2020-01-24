@@ -15,11 +15,6 @@ public class SpecificXLIonMatch {
         this.massDeviation = DeviationCalc.ppmDeviationCalc(this.matchedFragIon.getMToZ(), this.matchedPeak.getMass());
     }
 
-    //TODO: this method should provide the String for the output file
-    public static String matchStringProducer (){
-        String out = "";
-        return out;
-    }
 
 
 

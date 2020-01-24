@@ -132,6 +132,7 @@ public class Main {
         Scan scan = testMzXML.getScanByNum(alala.get(4));
         System.out.println("activation: "+scan.getActivationMethod());
         String s = scan.getPrecursorMz().get(0).getActivationMethod();
+        int precursorScanNumber = scan.getPrecursorMz().get(0).getPrecursorScanNum().intValue();
 
 
 

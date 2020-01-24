@@ -1,8 +1,7 @@
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class Xl {
-
-
     private Peptide peptideAlpha;   // alpha is the longer peptide
     private Peptide peptideBeta;    //beta is the smaller peptide
     private int xlPosAlpha;
@@ -13,7 +12,8 @@ public class Xl {
     private SumFormula xlSumFormula;
     private Ion theoreticalXLIon;
     private double isolatedMassToCharge;
-    private int scanNumber;
+    private int hcdScanNumber;
+    private int cidScanNumber;
     private String fragmentationMethod;
     private boolean monoisotopicSelected;
     private int monoisotopicPeakOffset;
@@ -23,7 +23,7 @@ public class Xl {
     private ArrayList<SpecificXLIonMatch> xlIonMatches;
 
     public Xl(String peptide1In, String peptide2In, String xlIn, int chargeStateIn,
-              int scanNumberIn, String fragmentationMethodIn, double isolatedMassToChargeIn,
+              int hcdScanNumberIn,int cidScanNumberIn, String fragmentationMethodIn, double isolatedMassToChargeIn,
               int xlPos1In, int xlPos2In, ArrayList<AminoAcid> aaIn, double retentionTimeIn){
 
         //only cliXlink is supported atm
@@ -31,7 +31,8 @@ public class Xl {
             throw new IllegalArgumentException("Unknown crosslinker: "+ xlIn);
         //easy to set variables
         this.xlUsed = xlIn;
-        this.scanNumber = scanNumberIn;
+        this.hcdScanNumber = hcdScanNumberIn;
+        this.cidScanNumber = cidScanNumberIn;
         this.fragmentationMethod = fragmentationMethodIn;
         this.isolatedMassToCharge = isolatedMassToChargeIn;
 
@@ -268,6 +269,77 @@ public class Xl {
         }
         this.xlIonMatches = matchList;
     }
+    //TODO: generate String output for stringbuilder
+    //comma is the used separator for the .csv file
+    public String xlMatchesStringProducer(MySpectrum fullScanIn, MySpectrum hcdScanIn, MySpectrum cidScanIn){
+        DecimalFormat twoDec = new DecimalFormat("0.00");
+        DecimalFormat fourDec = new DecimalFormat("0.0000");
+        DecimalFormat scientific = new DecimalFormat("0.00E0");
+        String output = "";
+        StringBuilder sb = new StringBuilder();
+
+        //pep alpha, pep beta, alpha amino acid, beta amino acid, alpha pos, beta pos
+        sb.append(this.getPeptideAlpha().getSequence()).append(",");
+        sb.append((this.getPeptideBeta().getSequence())).append(",");
+
+        //to figure out mod. amino acid, go to position in sequence.
+        String alphaAA = Character.toString(this.getPeptideAlpha().getSequence().charAt(this.getXlPosAlpha()-1));
+        sb.append(alphaAA).append(",");
+        String betaAA = Character.toString(this.getPeptideBeta().getSequence().charAt(this.getXlPosBeta()-1));
+        sb.append(alphaAA).append(",");
+        sb.append(""+this.xlPosAlpha).append(",");
+        sb.append(""+this.xlPosBeta).append(",");
+
+        //set HCD and CID scan Numbers
+        sb.append(""+this.hcdScanNumber).append(",");
+        sb.append(""+this.cidScanNumber).append(",");
+
+        //information about the theoretical xl precursor
+        sb.append(fourDec.format(this.theoreticalXLIon.getMToZ())).append(",");;
+        sb.append(""+this.theoreticalXLIon.getCharge()).append(",");
+        sb.append(fourDec.format(this.isolatedMassToCharge)).append(",");
+        double detectedPPMDev = DeviationCalc.ppmDeviationCalc(this.theoreticalXLIon.getMToZ(), this.isolatedMassToCharge);
+        sb.append(twoDec.format(detectedPPMDev)).append(",");
+        sb.append(""+this.monoisotopicPeakOffset).append(",");
+        //check full scan spectrum for the precursor information
+        ArrayList<Peak> fullScanPeakList = fullScanIn.getPeakList();
+        double peakRelInt = 0;
+        double peakAbsInt = 0;
+
+        for (Peak peak : fullScanPeakList){
+                if (DeviationCalc.ppmMatch(this.isolatedMassToCharge, peak.getMass(), 6)){
+                    peakRelInt = peak.getRelIntensity();
+                    peakAbsInt = peak.getIntensity();
+                    break;
+                }
+            }
+        sb.append(twoDec.format(peakRelInt)).append(",");
+        sb.append(scientific.format(peakAbsInt)).append(",");
+        //information about the specific signature peaks
+        //all the matches are contained in the xlIonMatches list
+        //split them up into individual lists
+
+        //TODO: is there anywhere the information what is SO, thial, alk???
+        ArrayList<SpecificXLIonMatch> alphaAlkMatches = new ArrayList<>();
+        ArrayList<SpecificXLIonMatch> alphaSOMatches = new ArrayList<>();
+        ArrayList<SpecificXLIonMatch> alphaThialMatches = new ArrayList<>();
+
+        ArrayList<SpecificXLIonMatch> betaAlkMatches = new ArrayList<>();
+        ArrayList<SpecificXLIonMatch> betaSOMatches = new ArrayList<>();
+        ArrayList<SpecificXLIonMatch> betaThialMatches = new ArrayList<>();
+
+
+
+
+
+
+
+
+
+
+
+        return output;
+    }
 
 
     public int getXlPosAlpha() {
@@ -310,9 +382,8 @@ public class Xl {
         return isolatedMassToCharge;
     }
 
-    public int getScanNumber() {
-        return scanNumber;
-    }
+    public int getHCDScanNumber() {return hcdScanNumber;}
+    public int getCidScanNumber() {return cidScanNumber;}
 
     public String getFragmentationMethod() {
         return fragmentationMethod;

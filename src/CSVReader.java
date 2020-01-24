@@ -485,7 +485,8 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
     newHeader[3] = "Beta amino acid";
     newHeader[4] = "Alpha position";
     newHeader[5] = "Beta position";
-    newHeader[6] = "Scan Number MeroX";
+    newHeader[6] = "HCD Scan Number";
+    newHeader[7] = "CID Scan Number";
     newHeader[7] = "Precursor m/z";
     newHeader[8] = "Precursor Charge";
     newHeader[9] = "Precursor mass dev [ppm]";
@@ -618,35 +619,28 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
         int xlPos2 = Integer.parseInt(linkagePep2);
 
         //invoke XL constructor
-        Xl currentXl = new Xl(peptide1, peptide2, xlIn, xlChargeState, cidScanNumber, fragMethodIn, cidIsoMassToCharge, xlPos1,
+        Xl currentXl = new Xl(peptide1, peptide2, xlIn, xlChargeState, hcdScanNumber, cidScanNumber, fragMethodIn, cidIsoMassToCharge, xlPos1,
                 xlPos2, aaListIn, cidRT);
         //XL is now present, prepare CID spectrum to search against
         //TODO: implement scan to mySpectrum conversion?
-        MySpectrum currentSpectrum = MzXMLReadIn.mzXMLToMySpectrum(runIn,Integer.toString(cidScanNumber));
-        currentSpectrum.chargeStateAssigner();
+        MySpectrum currentCIDSpectrum = MzXMLReadIn.mzXMLToMySpectrum(runIn,Integer.toString(cidScanNumber));
+        currentCIDSpectrum.chargeStateAssigner();
         //use the Xl class to check the spectrum for the specific peaks
-        currentXl.xlIonMatcher(currentSpectrum, ppmDevIn);
-        //TODO:get all the information into the string to parse to CSV 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        currentXl.xlIonMatcher(currentCIDSpectrum, ppmDevIn);
+        //TODO:get all the information into the string to parse to CSV
+        //Stringproducer needs 3 spectra: precursor, HCD, CID
+        int fullScanNumber = hcdScan.getPrecursorMz().get(0).getPrecursorScanNum().intValue();
+        MySpectrum fullMySpectrum = MzXMLReadIn.mzXMLToMySpectrum(runIn, Integer.toString(fullScanNumber));
+        MySpectrum hcdMySpectrum = MzXMLReadIn.mzXMLToMySpectrum(runIn, Integer.toString(hcdScanNumber));
+        String output = currentXl.xlMatchesStringProducer(fullMySpectrum, hcdMySpectrum, currentCIDSpectrum);
+        //new line is already attached from function
+        csvWriter.write(output);
+        csvWriter.flush();
+        System.out.println("Analyzed crosslink from spectrum: "+hcdScanNumber);
     }
-
-
-
-
-
+    scanner.close();
+    csvWriter.close();
+    System.out.println("Analysis complete!");
 }
 
 
