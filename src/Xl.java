@@ -319,7 +319,8 @@ public class Xl {
         //all the matches are contained in the xlIonMatches list
         //split them up into individual lists
 
-        //TODO: is there anywhere the information what is SO, thial, alk???
+        // is there anywhere the information what is SO, thial, alk???
+        //TODO: added the information to the specificXLionMatches
         ArrayList<SpecificXLIonMatch> alphaAlkMatches = new ArrayList<>();
         ArrayList<SpecificXLIonMatch> alphaSOMatches = new ArrayList<>();
         ArrayList<SpecificXLIonMatch> alphaThialMatches = new ArrayList<>();
@@ -327,6 +328,37 @@ public class Xl {
         ArrayList<SpecificXLIonMatch> betaAlkMatches = new ArrayList<>();
         ArrayList<SpecificXLIonMatch> betaSOMatches = new ArrayList<>();
         ArrayList<SpecificXLIonMatch> betaThialMatches = new ArrayList<>();
+        for (SpecificXLIonMatch match : this.xlIonMatches){
+            if (match.getMatchedFragIon().getPepType().equals("alpha")){
+                if (match.getModType().equals("alk")){
+                    alphaAlkMatches.add(match);
+                    continue;
+                }
+                if (match.getModType().equals("thial")){
+                    alphaThialMatches.add(match);
+                    continue;
+                }
+                if (match.getModType().equals("SO")){
+                    alphaSOMatches.add(match);
+                    continue;
+                }
+            }
+            if (match.getMatchedFragIon().getPepType().equals("beta")){
+                if (match.getModType().equals("alk")){
+                    betaAlkMatches.add(match);
+                    continue;
+                }
+                if (match.getModType().equals("thial")){
+                    betaThialMatches.add(match);
+                    continue;
+                }
+                if (match.getModType().equals("SO")){
+                    betaSOMatches.add(match);
+                }
+            }
+        }
+        //ordered lists are now populated
+        //TODO: get the information from the ordered lists
 
 
 

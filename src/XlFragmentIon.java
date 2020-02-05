@@ -6,7 +6,7 @@ public class XlFragmentIon extends Ion {
     private Peptide modPeptide;
     private String originPeptideSequence;
     private String pepType; //alpha or beta peptide
-    private String cliXlinkSide; //long or short side of clixlink
+    private String cliXlinkSize; //long or short side of clixlink
     private int cliXlinkPos; //where is the peptide modified
 
     public XlFragmentIon(Peptide modPeptideIn, String originPeptideSequenceIn, String pepTypeIn, String cliXlinkSideIn,
@@ -15,7 +15,7 @@ public class XlFragmentIon extends Ion {
         this.modPeptide = modPeptideIn;
         this.originPeptideSequence = originPeptideSequenceIn;
         this.pepType = pepTypeIn;
-        this.cliXlinkSide = cliXlinkSideIn;
+        this.cliXlinkSize = cliXlinkSideIn;
         this.cliXlinkPos = cliXlinkPosIn;
     }
 
@@ -31,8 +31,8 @@ public class XlFragmentIon extends Ion {
         return pepType;
     }
 
-    public String getCliXlinkSide() {
-        return cliXlinkSide;
+    public String getCliXlinkSize() {
+        return cliXlinkSize;
     }
 
     public int getCliXlinkPos() {

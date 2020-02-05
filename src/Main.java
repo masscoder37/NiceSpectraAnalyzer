@@ -122,17 +122,13 @@ public class Main {
             System.out.println(pep);
         }*/
 
-        String loc = "C:\\MeroX MS Data\\Experiments\\XL1\\mgf\\HCD_CID\\TGR_08199_8456_8700.mzXML";
-        File testFile = new File(loc);
-        MzXMLFile testMzXML = new MzXMLFile(testFile);
-        System.out.println("# of MS2 scans: "+ testMzXML.getMS2ScanCount());
-        List<Long> alala = testMzXML.getScanNumbers();
+       String test = "PEPTIDE";
+       Peptide testPep = new Peptide(test, aminoAcidsList);
+       ArrayList<Modification> modList = new ArrayList<>();
+       modList.add(Modification.cliXlinkShortThial(3));
+       Peptide modPep = testPep.peptideModifier(modList);
 
-        //TODO : THIS IS HOW YOU GET THE ACTIVATION TYPE
-        Scan scan = testMzXML.getScanByNum(alala.get(4));
-        System.out.println("activation: "+scan.getActivationMethod());
-        String s = scan.getPrecursorMz().get(0).getActivationMethod();
-        int precursorScanNumber = scan.getPrecursorMz().get(0).getPrecursorScanNum().intValue();
+       modPep.getAminoAcidsList().get(2).getModification().getModificationName();
 
 
 
