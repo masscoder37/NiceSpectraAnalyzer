@@ -360,6 +360,40 @@ public class Xl {
         //ordered lists are now populated
         //TODO: get the information from the ordered lists
 
+        //determine number of signature peaks detected; 0-6
+        //signature peaks summed abs intensity and in relation to MS2 TIC
+        int numberOfSignaturePeaks = 0;
+        double absIntSignaturePeaks = 0;
+        ArrayList<ArrayList<SpecificXLIonMatch>> matchedLists = new ArrayList<>();
+        matchedLists.add(alphaAlkMatches);
+        matchedLists.add(alphaThialMatches);
+        matchedLists.add(alphaSOMatches);
+        matchedLists.add(betaAlkMatches);
+        matchedLists.add(betaThialMatches);
+        matchedLists.add(betaSOMatches);
+
+        for (ArrayList<SpecificXLIonMatch> individualMatchList : matchedLists){
+            if (individualMatchList.size() != 0) {
+                numberOfSignaturePeaks++;
+                for (SpecificXLIonMatch matchedIon : individualMatchList){
+                    absIntSignaturePeaks += matchedIon.getMatchedPeak().getIntensity();
+                }
+            }
+        }
+        sb.append(""+numberOfSignaturePeaks).append(",");
+        //figure out total TIC intensity in respective MS2 CID scan
+        ArrayList<Peak> cidPeakList = new ArrayList<>();
+        cidPeakList = cidScanIn.getPeakList();
+        double cidTIC = 0;
+        for (Peak cidPeak : cidPeakList){
+            cidTIC += cidPeak.getIntensity();
+        }
+        double ratio = absIntSignaturePeaks / cidTIC *100;
+        sb.append(twoDec.format(ratio)).append(",");
+        
+
+
+
 
 
 
