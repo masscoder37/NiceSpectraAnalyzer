@@ -500,10 +500,10 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
     newHeader[16] = "Beta charge states detected";
     newHeader[17] = "Alpha dominant charge state";
     newHeader[18] = "Beta dominant charge state";
-    newHeader[19] = "Alpha residue detected"; //short, long, both
-    newHeader[20] = "Beta residue detected";
-    newHeader[21] = "Alpha dominant residue detected";
-    newHeader[22] = "Beta dominant residue detected";
+    newHeader[19] = "Alpha side detected"; //short, long, both
+    newHeader[20] = "Beta side detected";
+    newHeader[21] = "Alpha dominant side detected";
+    newHeader[22] = "Beta dominant side detected";
 
     //information about the detected fragments
     newHeader[23] = "Alpha alkene short detected"; //true||false

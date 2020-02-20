@@ -390,7 +390,137 @@ public class Xl {
         }
         double ratio = absIntSignaturePeaks / cidTIC *100;
         sb.append(twoDec.format(ratio)).append(",");
+
+        //figure out charge states detected for alpha and beta and dominant charge states
+        //charge state information is stored in XLFragmentIon
+        //to determine which charge state is the dominant one, use the one with the highest abs. intensity
+        //possible: 1 through charge state of xl
+        int maximumChargeState = this.theoreticalXLIon.getCharge();
+        double [] alphaChargeStateIntensities = new double[maximumChargeState];
+        double [] betaChargeStateIntensities = new double[maximumChargeState];
+
+        ArrayList<SpecificXLIonMatch> alphaMatches = new ArrayList<>();
+        ArrayList<SpecificXLIonMatch> betaMatches = new ArrayList<>();
+
+        alphaMatches.addAll(alphaAlkMatches);
+        alphaMatches.addAll(alphaThialMatches);
+        alphaMatches.addAll(alphaSOMatches);
+        betaMatches.addAll(betaAlkMatches);
+        betaMatches.addAll(betaThialMatches);
+        betaMatches.addAll(betaSOMatches);
+        for (SpecificXLIonMatch alphaMatch : alphaMatches){
+            int currentCharge = alphaMatch.getMatchedFragIon().getCharge();
+            double currentAbsIntensity = alphaMatch.getMatchedPeak().getIntensity();
+            //should work since array is initialized to 0.0
+            alphaChargeStateIntensities[currentCharge-1] += currentAbsIntensity;
+        }
+        for (SpecificXLIonMatch betaMatch : betaMatches){
+            int currentCharge = betaMatch.getMatchedFragIon().getCharge();
+            double currentAbsIntensity = betaMatch.getMatchedPeak().getIntensity();
+            //should work since array is initialized to 0.0
+            betaChargeStateIntensities[currentCharge-1] += currentAbsIntensity;
+        }
+        //alpha and beta charge states are now set as arrays with intensities; if intensity is 0, charge state was not detected
+        String alphaZdetected = "";
+        String betaZdetected = "";
+        int alphaDominantZ = 0;
+        int betaDominantZ = 0;
+        double alphaMaxIntensity = 0;
+        double betaMaxIntensity = 0;
+        //this loop can handle both arrays
+        //zSep is used to add a semicolon after an entry
+        String zSepAlpha = "";
+        String zSepBeta = "";
+        for (int i = 0; i < maximumChargeState; i++){
+            double alphaCurrentIntensity = alphaChargeStateIntensities[i];
+            double betaCurrentIntensity = betaChargeStateIntensities[i];
+            if (alphaCurrentIntensity != 0){
+                alphaZdetected = alphaZdetected + zSepAlpha + (i+1);
+                zSepAlpha = ";";
+                if (alphaCurrentIntensity>alphaMaxIntensity){
+                    alphaMaxIntensity = alphaCurrentIntensity;
+                    alphaDominantZ = (i+1);
+                }
+            }
+            if (betaCurrentIntensity != 0){
+                betaZdetected = betaZdetected + zSepBeta + (i+1);
+                zSepBeta = ";";
+                if (betaCurrentIntensity>betaMaxIntensity){
+                    betaMaxIntensity = betaCurrentIntensity;
+                    betaDominantZ = (i+1);
+                }
+            }
+        }
+        //handle if nothing is detected
+        if (alphaZdetected.equals(""))
+            alphaZdetected = "0";
+        if (betaZdetected.equals(""))
+            betaZdetected = "0";
+
+
+        sb.append(alphaZdetected).append(",");
+        sb.append(betaZdetected).append(",");
+        sb.append(alphaDominantZ).append(",");
+        sb.append(betaDominantZ).append(",");
+
+        //sides detected: short, long or both and dominant side
+        //dominant side is chosen with abs Int again
+        double alphaShortAbsInt = 0;
+        double alphaLongAbsInt = 0;
+        double betaShortAbsInt = 0;
+        double betaLongAbsInt = 0;
+        for (SpecificXLIonMatch alphaMatch : alphaMatches){
+            String currentAlpha = alphaMatch.getMatchedFragIon().getCliXlinkSize();
+            if (currentAlpha.equals("short"))
+                alphaShortAbsInt += alphaMatch.getMatchedPeak().getIntensity();
+            if (currentAlpha.equals("long"))
+                alphaLongAbsInt += alphaMatch.getMatchedPeak().getIntensity();
+        }
+        for (SpecificXLIonMatch betaMatch : betaMatches){
+            String currentBeta = betaMatch.getMatchedFragIon().getCliXlinkSize();
+            if (currentBeta.equals("short"))
+                betaShortAbsInt += betaMatch.getMatchedPeak().getIntensity();
+            if (currentBeta.equals("long"))
+                betaLongAbsInt += betaMatch.getMatchedPeak().getIntensity();
+        }
+
+        String alphaSideDetected = "NA";
+        if (alphaShortAbsInt != 0)
+            alphaSideDetected = "short";
+        if (alphaLongAbsInt != 0)
+            alphaSideDetected = "long";
+        if (alphaShortAbsInt != 0 && alphaLongAbsInt !=0)
+            alphaSideDetected = "both";
+
+        String betaSideDetected = "NA";
+        if (betaShortAbsInt != 0)
+            betaSideDetected = "short";
+        if (betaLongAbsInt != 0)
+            betaSideDetected = "long";
+        if (betaShortAbsInt != 0 && betaLongAbsInt !=0)
+            betaSideDetected = "both";
+
+
+        String alphaDominantSide = "NA";
+        String betaDominantSide = "NA";
+        if (alphaShortAbsInt > alphaLongAbsInt)
+            alphaDominantSide = "short";
+        else
+            alphaDominantSide = "long";
+        if (betaShortAbsInt > betaLongAbsInt)
+            betaDominantSide = "short";
+        else
+            betaDominantSide = "long";
+        sb.append(alphaSideDetected).append(",");
+        sb.append(betaSideDetected).append(",");
+        sb.append(alphaDominantSide).append(",");
+        sb.append(betaDominantSide).append(",");
+
+        //TODO: alpha and beta modifications (SO, alk, thial, all)
+        //handle in the same way as the sides
         
+
+
 
 
 
