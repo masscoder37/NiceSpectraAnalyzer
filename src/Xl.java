@@ -518,6 +518,43 @@ public class Xl {
 
         //TODO: alpha and beta modifications (SO, alk, thial, all)
         //handle in the same way as the sides
+        String alphaModsDetected = "";
+        String alphaDominantMod = "";
+        String betaModsDetected = "";
+        String betaDominantMod = "";
+        double alphaAlkAbsIntensities = 0;
+        double alphaThialAbsIntensities = 0;
+        double alphaSOAbsIntensities = 0;
+        double betaAlkAbsIntensities = 0;
+        double betaThialAbsIntensities = 0;
+        double betaSOAbsIntensities = 0;
+
+        //all fragments in this list are already sorted, so just sum intensities
+
+        for (SpecificXLIonMatch alphaAlkMatch : alphaAlkMatches){
+            alphaAlkAbsIntensities += alphaAlkMatch.getMatchedPeak().getIntensity();
+        }
+        for (SpecificXLIonMatch alphaThialMatch : alphaThialMatches){
+            alphaThialAbsIntensities += alphaThialMatch.getMatchedPeak().getIntensity();
+        }
+        for (SpecificXLIonMatch alphaSOMatch : alphaSOMatches){
+            alphaSOAbsIntensities += alphaSOMatch.getMatchedPeak().getIntensity();
+        }
+        for (SpecificXLIonMatch betaAlkMatch : betaAlkMatches){
+            betaAlkAbsIntensities += betaAlkMatch.getMatchedPeak().getIntensity();
+        }
+        for (SpecificXLIonMatch betaThialMatch : betaThialMatches){
+            betaThialAbsIntensities += betaThialMatch.getMatchedPeak().getIntensity();
+        }
+        for (SpecificXLIonMatch betaSOMatch : betaSOMatches){
+            betaSOAbsIntensities += betaSOMatch.getMatchedPeak().getIntensity();
+        }
+
+        String modSep = "";
+
+        if (alphaAlkAbsIntensities != 0){
+            
+        }
         
 
 

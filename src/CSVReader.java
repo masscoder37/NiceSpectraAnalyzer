@@ -507,44 +507,44 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
 
     //information about the detected fragments
     newHeader[23] = "Alpha alkene short detected"; //true||false
-    newHeader[24] = "Alpha SO short detected";
-    newHeader[25] = "Alpha thial short detected";
+    newHeader[24] = "Alpha thial short detected";
+    newHeader[25] = "Alpha SO short detected";
     newHeader[26] = "Alpha alkene long detected";
-    newHeader[27] = "Alpha SO long detected";
-    newHeader[28] = "Alpha thial long detected";
+    newHeader[27] = "Alpha thial long detected";
+    newHeader[28] = "Alpha SO long detected";
     newHeader[29] = "Beta alkene short detected"; //true||false
-    newHeader[30] = "Beta SO short detected";
-    newHeader[31] = "Beta thial short detected";
+    newHeader[30] = "Beta thial short detected";
+    newHeader[31] = "Beta SO short detected";
     newHeader[32] = "Beta alkene long detected";
-    newHeader[33] = "Beta SO long detected";
-    newHeader[34] = "Beta thial long detected";
+    newHeader[33] = "Beta thial long detected";
+    newHeader[34] = "Beta SO long detected";
 
 
     newHeader[35] = "Alpha alkene short rel. int. [%]";
-    newHeader[36] = "Alpha SO short rel. int. [%]";
-    newHeader[37] = "Alpha thial short rel. int. [%]";
+    newHeader[36] = "Alpha thial short rel. int. [%]";
+    newHeader[37] = "Alpha SO short rel. int. [%]";
     newHeader[38] = "Alpha alkene long rel. int. [%]";
-    newHeader[39] = "Alpha SO long rel. int. [%]";
-    newHeader[40] = "Alpha thial long rel. int. [%]";
+    newHeader[39] = "Alpha thial long rel. int. [%]";
+    newHeader[40] = "Alpha SO long rel. int. [%]";
     newHeader[41] = "Beta alkene short rel. int. [%]";
-    newHeader[42] = "Beta SO short rel. int. [%]";
-    newHeader[43] = "Beta thial short rel. int. [%]";
+    newHeader[42] = "Beta thial short rel. int. [%]";
+    newHeader[43] = "Beta SO short rel. int. [%]";
     newHeader[44] = "Beta alkene long rel. int. [%]";
-    newHeader[45] = "Beta SO long rel. int. [%]";
-    newHeader[46] = "Beta thial long rel. int. [%]";
+    newHeader[45] = "Beta thial long rel. int. [%]";
+    newHeader[46] = "Beta SO long rel. int. [%]";
 
     newHeader[47] = "Alpha alkene short abs. int. [au]";
-    newHeader[48] = "Alpha SO short abs. int. [au]";
-    newHeader[49] = "Alpha thial short abs. int. [au]";
+    newHeader[48] = "Alpha thial short abs. int. [au]";
+    newHeader[49] = "Alpha SO short abs. int. [au]";
     newHeader[50] = "Alpha alkene long abs. int. [au]";
-    newHeader[51] = "Alpha SO long abs. int. [au]";
-    newHeader[52] = "Alpha thial long abs. int. [au]";
+    newHeader[51] = "Alpha thial long abs. int. [au]";
+    newHeader[52] = "Alpha SO long abs. int. [au]";
     newHeader[53] = "Beta alkene short abs. int. [au]";
-    newHeader[54] = "Beta SO short abs. int. [au]";
-    newHeader[55] = "Beta thial short abs. int. [au]";
+    newHeader[54] = "Beta thial short abs. int. [au]";
+    newHeader[55] = "Beta SO short abs. int. [au]";
     newHeader[56] = "Beta alkene long abs. int. [au]";
-    newHeader[57] = "Beta SO long abs. int. [au]";
-    newHeader[58] = "Beta thial long abs. int. [au]";
+    newHeader[57] = "Beta thial long abs. int. [au]";
+    newHeader[58] = "Beta SO long abs. int. [au]";
 
     //this loop generates the header
     String sep = "";
