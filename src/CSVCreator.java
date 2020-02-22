@@ -228,5 +228,27 @@ public class CSVCreator {
         csvWriter.close();
         System.out.println(".csv-File created!");
     }
+    public static void aminoAcidCounter(String filepathIn, String sequence, char toCheck) throws FileNotFoundException {
+        String fileName = filepathIn + "AACount_" + toCheck + ".csv";
+        File outputCSV = new File(fileName);
+        PrintWriter csvWriter = new PrintWriter(outputCSV);
+        StringBuilder sb = new StringBuilder();
+        ArrayList<Integer> positions = new ArrayList<>();
+        int occurences = 0;
+        for (int i = 0; i < sequence.length(); i++){
+            if (sequence.charAt(i) == toCheck){
+                positions.add(i+1);
+                occurences++;
+            }
+        }
+        for (int current : positions){
+            sb.append(current).append("\n");
+            csvWriter.write(sb.toString());
+            csvWriter.flush();
+            sb.setLength(0);
+        }
+        csvWriter.close();
+        System.out.println("Counting complete! Occurences: "+occurences);
+    }
 
 }
