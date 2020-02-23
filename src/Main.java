@@ -51,7 +51,7 @@ public class Main {
         //Here, the spectrum to be analyzed has to be specified
         //It has to be a .mzXML-File which was centroided on MS1 and MS2-levels (see supporting information)
         //TODO: Please change your file path accordingly.
-        String filePathSpectrum =  "C:\\MeroX Massedaten\\CMT labeling\\lsSOT\\20190315_LabelTest_EColi_lsSOT_1x_1p5uL.mzXML";
+        //String filePathSpectrum =  "C:\\MeroX Massedaten\\CMT labeling\\lsSOT\\20190315_LabelTest_EColi_lsSOT_1x_1p5uL.mzXML";
         //File completemzXMLSource = new File(filePathSpectrum);
         //generating the MzXMLFile object might take a few minutes and will display some warnings.
         //MzXMLFile completemzXML = new MzXMLFile(completemzXMLSource);
@@ -61,10 +61,10 @@ public class Main {
         //At the moment, the software assumes static carbamidomethylation on cysteine residues and variable methionine-oxidation
         //please filter out other modifications
         //TODO: Please change your file path accordingly.
-        String evidenceLocation = "C:\\MeroX Massedaten\\CMT labeling\\lsSOT\\txt\\evidence.txt";
+        //String evidenceLocation = "C:\\MeroX Massedaten\\CMT labeling\\lsSOT\\txt\\evidence.txt";
         //File evidence = new File(evidenceLocation);
         //TODO: Please provide a directory were the output Files will be saved
-        String csvOutPath = "C:\\MeroX Massedaten\\CMT labeling\\lsSOT\\Analyse\\";
+        //String csvOutPath = "C:\\MeroX Massedaten\\CMT labeling\\lsSOT\\Analyse\\";
 
 
 
@@ -101,18 +101,18 @@ public class Main {
         //in this section, you can analyse the reporter ion intensities of the files
         //TODO:Remove the comments from this section and be sure that there are comments before and after sections 1, 2 and 3
         //TODO: You can specify the allowed reporter ion mass deviation [ppm]. Standard parameter is 5 ppm; 3rd entry
-        String statisticsFilePath = "C:\\Programmierordner\\Analyse_Wuehr\\My Analysis\\labelFragmentIons_statistics.csv";
+        //String statisticsFilePath = "C:\\Programmierordner\\Analyse_Wuehr\\My Analysis\\labelFragmentIons_statistics.csv";
         //File statisticsFile = new File(statisticsFilePath);
         //CSVReader.wholeRunRepFinder(completemzXML, statisticsFile ,5, "EC");
 
         //Section 5
         //Complementary Ion Cluster analysis
-        String fragmentIonFilePath = "C:\\Programmierordner\\Analyse_Wuehr\\My Analysis\\labelFragmentIons.csv";
+        //String fragmentIonFilePath = "C:\\Programmierordner\\Analyse_Wuehr\\My Analysis\\labelFragmentIons.csv";
         //CSVAnalyzer.cicRatioCalculator(fragmentIonFilePath);
 
         //Section 6
         //Complementary Ion Cluster analysis per Peptide
-        String cicFilePath = "C:\\Programmierordner\\Analyse_Wuehr\\My Analysis\\labelFragmentIons_complementaryClusters_nocutoff.csv";
+        //String cicFilePath = "C:\\Programmierordner\\Analyse_Wuehr\\My Analysis\\labelFragmentIons_complementaryClusters_nocutoff.csv";
         //CSVAnalyzer.clusterRatioPerPeptide(cicFilePath);
 
         /*String testFasta = "DTHKSEIAHRFKDLGEEHFKGLVLIAFSQYLQQCPFDEHVKLVNELTEFAKTCVADESHAGCEKSLHTLFGDELCKVASLRETYGDMADCCEKQEPERNECFLSHKDDSPDLPKLKPDPNTLCDEFKADEKKFWGKYLYEIARRHPYFYAPELLYYANKYNGVFQECCQAEDKGACLLPKIETMREKVLASSARQRLRCASIQKFGERALKAWSVARLSQKFPKAEFVEVTKLVTDLTKVHKECCHGDLLECADDRADLAKYICDNQDTISSKLKECCDKPLLEKSHCIAEVEKDAIPENLPPLTADFAEDKDVCKNYQEAKDAFLGSFLYEYSRRHPEYAVSVLLRLAKEYEATLEECCAKDDPHACYSTVFDKLKHLVDEPQNLIKQNCDQFEKLGEYGFQNALIVRYTRKVPQVSTPTLVEVSRSLGKVGTRCCTKPESERMPCTEDYLSLILNRLCVLHEKTPVSEKVTKCCTESLVNRRPCFSALTPDETYVPKAFDEKLFTFHADICTLPDTEKQIKKQTALVELLKHKPKATEEQLKTVMENFVAFVDKCCAADDKEACFAVEGPKLVVSTQTALA";
@@ -122,10 +122,19 @@ public class Main {
             System.out.println(pep);
         }*/
 
-       String path = "C:\\Programmingfolder\\";
-       String sequence = "MKWVTFISLLLLFSSAYSRGVFRRDTHKSEIAHRFKDLGEEHFKGLVLIAFSQYLQQCPFDEHVKLVNELTEFAKTCVADESHAGCEKSLHTLFGDELCKVASLRETYGDMADCCEKQEPERNECFLSHKDDSPDLPKLKPDPNTLCDEFKADEKKFWGKYLYEIARRHPYFYAPELLYYANKYNGVFQECCQAEDKGACLLPKIETMREKVLASSARQRLRCASIQKFGERALKAWSVARLSQKFPKAEFVEVTKLVTDLTKVHKECCHGDLLECADDRADLAKYICDNQDTISSKLKECCDKPLLEKSHCIAEVEKDAIPENLPPLTADFAEDKDVCKNYQEAKDAFLGSFLYEYSRRHPEYAVSVLLRLAKEYEATLEECCAKDDPHACYSTVFDKLKHLVDEPQNLIKQNCDQFEKLGEYGFQNALIVRYTRKVPQVSTPTLVEVSRSLGKVGTRCCTKPESERMPCTEDYLSLILNRLCVLHEKTPVSEKVTKCCTESLVNRRPCFSALTPDETYVPKAFDEKLFTFHADICTLPDTEKQIKKQTALVELLKHKPKATEEQLKTVMENFVAFVDKCCAADDKEACFAVEGPKLVVSTQTALA";
+       //String path = "C:\\Programmingfolder";
+       //String sequence = "MKWVTFISLLLLFSSAYSRGVFRRDTHKSEIAHRFKDLGEEHFKGLVLIAFSQYLQQCPFDEHVKLVNELTEFAKTCVADESHAGCEKSLHTLFGDELCKVASLRETYGDMADCCEKQEPERNECFLSHKDDSPDLPKLKPDPNTLCDEFKADEKKFWGKYLYEIARRHPYFYAPELLYYANKYNGVFQECCQAEDKGACLLPKIETMREKVLASSARQRLRCASIQKFGERALKAWSVARLSQKFPKAEFVEVTKLVTDLTKVHKECCHGDLLECADDRADLAKYICDNQDTISSKLKECCDKPLLEKSHCIAEVEKDAIPENLPPLTADFAEDKDVCKNYQEAKDAFLGSFLYEYSRRHPEYAVSVLLRLAKEYEATLEECCAKDDPHACYSTVFDKLKHLVDEPQNLIKQNCDQFEKLGEYGFQNALIVRYTRKVPQVSTPTLVEVSRSLGKVGTRCCTKPESERMPCTEDYLSLILNRLCVLHEKTPVSEKVTKCCTESLVNRRPCFSALTPDETYVPKAFDEKLFTFHADICTLPDTEKQIKKQTALVELLKHKPKATEEQLKTVMENFVAFVDKCCAADDKEACFAVEGPKLVVSTQTALA";
 
-       CSVCreator.aminoAcidCounter(path, sequence, 'Y');
+       //CSVCreator.aminoAcidCounter(path, sequence, 'K');
+
+        String runFilePath = "C:\\Programmingfolder\\CID_HCD_Comparison\\TGR_08304.mzXML";
+        File runFile = new File(runFilePath);
+        MzXMLFile mzXMLRun = new MzXMLFile(runFile);
+
+        String meroxFilePath = "C:\\Programmingfolder\\CID_HCD_Comparison\\TGR_08304_MeroXHCDOnly_Export_forAnalysis_withRetentionTime_CSV.csv";
+        File meroxFile = new File(meroxFilePath);
+
+        //CSVReader.xlSpectraChecker(meroxFile, mzXMLRun, "CID", "cliXlink", aminoAcidsList, 10);
 
 
 

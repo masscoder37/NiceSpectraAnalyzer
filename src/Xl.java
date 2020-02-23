@@ -91,8 +91,8 @@ public class Xl {
         }
 
         this.retentionTime = retentionTimeIn;
-        this.alphaXLFragments = new ArrayList<XlFragmentIon>();
-        this.betaXLFragments = new ArrayList<XlFragmentIon>();
+        this.alphaXLFragments = new ArrayList<>();
+        this.betaXLFragments = new ArrayList<>();
         fragIonCreator();
 
     }
@@ -283,12 +283,12 @@ public class Xl {
         sb.append((this.getPeptideBeta().getSequence())).append(",");
 
         //to figure out mod. amino acid, go to position in sequence.
-        String alphaAA = Character.toString(this.getPeptideAlpha().getSequence().charAt(this.getXlPosAlpha()-1));
+        String alphaAA = Character.toString(this.getPeptideAlpha().getSequence().charAt(this.xlPosAlpha-1));
         sb.append(alphaAA).append(",");
-        String betaAA = Character.toString(this.getPeptideBeta().getSequence().charAt(this.getXlPosBeta()-1));
-        sb.append(alphaAA).append(",");
-        sb.append(""+this.xlPosAlpha).append(",");
-        sb.append(""+this.xlPosBeta).append(",");
+        String betaAA = Character.toString(this.getPeptideBeta().getSequence().charAt(this.xlPosBeta-1));
+        sb.append(betaAA).append(",");
+        sb.append(this.xlPosAlpha).append(",");
+        sb.append(this.xlPosBeta).append(",");
 
         //set HCD and CID scan Numbers
         sb.append(""+this.hcdScanNumber).append(",");
@@ -380,15 +380,15 @@ public class Xl {
                 }
             }
         }
-        sb.append(""+numberOfSignaturePeaks).append(",");
+        sb.append(numberOfSignaturePeaks).append(",");
         //figure out total TIC intensity in respective MS2 CID scan
-        ArrayList<Peak> cidPeakList = new ArrayList<>();
-        cidPeakList = cidScanIn.getPeakList();
+        ArrayList<Peak> cidPeakList = cidScanIn.getPeakList();
         double cidTIC = 0;
         for (Peak cidPeak : cidPeakList){
             cidTIC += cidPeak.getIntensity();
         }
         double ratio = absIntSignaturePeaks / cidTIC *100;
+        sb.append(scientific.format(absIntSignaturePeaks)).append(",");
         sb.append(twoDec.format(ratio)).append(",");
 
         //figure out charge states detected for alpha and beta and dominant charge states
@@ -484,7 +484,7 @@ public class Xl {
                 betaLongAbsInt += betaMatch.getMatchedPeak().getIntensity();
         }
 
-        String alphaSideDetected = "NA";
+        String alphaSideDetected = "false";
         if (alphaShortAbsInt != 0)
             alphaSideDetected = "short";
         if (alphaLongAbsInt != 0)
@@ -492,7 +492,7 @@ public class Xl {
         if (alphaShortAbsInt != 0 && alphaLongAbsInt !=0)
             alphaSideDetected = "both";
 
-        String betaSideDetected = "NA";
+        String betaSideDetected = "false";
         if (betaShortAbsInt != 0)
             betaSideDetected = "short";
         if (betaLongAbsInt != 0)
@@ -501,16 +501,18 @@ public class Xl {
             betaSideDetected = "both";
 
 
-        String alphaDominantSide = "NA";
-        String betaDominantSide = "NA";
+        String alphaDominantSide = "";
+        String betaDominantSide = "";
         if (alphaShortAbsInt > alphaLongAbsInt)
             alphaDominantSide = "short";
-        else
+        else if (alphaShortAbsInt < alphaLongAbsInt)
             alphaDominantSide = "long";
+
         if (betaShortAbsInt > betaLongAbsInt)
             betaDominantSide = "short";
-        else
+        else if (betaShortAbsInt < betaLongAbsInt)
             betaDominantSide = "long";
+
         sb.append(alphaSideDetected).append(",");
         sb.append(betaSideDetected).append(",");
         sb.append(alphaDominantSide).append(",");
@@ -550,27 +552,259 @@ public class Xl {
             betaSOAbsIntensities += betaSOMatch.getMatchedPeak().getIntensity();
         }
 
-        String modSep = "";
-
+        String alphaModSep = "";
         if (alphaAlkAbsIntensities != 0){
-            
+            alphaModsDetected = alphaModsDetected + "alk";
+            alphaModSep = ";";
         }
-        
+        if (alphaThialAbsIntensities != 0){
+            alphaModsDetected = alphaModsDetected + alphaModSep + "thial";
+            alphaModSep = ";";
+        }
+        if (alphaSOAbsIntensities != 0){
+            alphaModsDetected = alphaModsDetected + alphaModSep + "SO";
+        }
+        if (alphaAlkAbsIntensities != 0 && alphaThialAbsIntensities != 0 && alphaSOAbsIntensities != 0)
+            alphaModsDetected = "all";
+
+        String betaModSep = "";
+        if (betaAlkAbsIntensities != 0){
+            betaModsDetected = betaModsDetected + "alk";
+            betaModSep = ";";
+        }
+        if (betaThialAbsIntensities != 0){
+            betaModsDetected = betaModsDetected + betaModSep + "thial";
+            betaModSep = ";";
+        }
+        if (betaSOAbsIntensities != 0){
+            betaModsDetected = betaModsDetected + betaModSep + "SO";
+        }
+        if (betaAlkAbsIntensities != 0 && betaThialAbsIntensities != 0 && betaSOAbsIntensities != 0)
+            betaModsDetected = "all";
+
+        //determine dominant peak
+        double currentAlphaModHighestInt = 0;
+        double currentBetaModHighestInt = 0;
 
 
+        if (alphaAlkAbsIntensities > currentAlphaModHighestInt){
+            currentAlphaModHighestInt = alphaAlkAbsIntensities;
+            alphaDominantMod = "alk";
+        }
 
+        if (alphaThialAbsIntensities > currentAlphaModHighestInt){
+            currentAlphaModHighestInt = alphaThialAbsIntensities;
+            alphaDominantMod = "thial";
+        }
 
+        if (alphaSOAbsIntensities > currentAlphaModHighestInt){
+            currentAlphaModHighestInt = alphaSOAbsIntensities;
+            alphaDominantMod = "SO";
+        }
 
+        if (betaAlkAbsIntensities > currentBetaModHighestInt){
+            currentBetaModHighestInt = betaAlkAbsIntensities;
+            betaDominantMod = "alk";
+        }
 
+        if (betaThialAbsIntensities > currentBetaModHighestInt){
+            currentBetaModHighestInt = betaThialAbsIntensities;
+            betaDominantMod = "thial";
+        }
 
+        if (betaSOAbsIntensities > currentBetaModHighestInt){
+            currentBetaModHighestInt = betaSOAbsIntensities;
+            betaDominantMod = "SO";
+        }
 
+        //handle if all intensities of fragments are 0
+        if (alphaAlkAbsIntensities == 0 && alphaThialAbsIntensities == 0 && alphaSOAbsIntensities == 0){
+            alphaModsDetected = "false";
+            alphaDominantMod = "false";
+        }
+        if (betaAlkAbsIntensities == 0 && betaThialAbsIntensities == 0 && betaSOAbsIntensities == 0){
+            betaModsDetected = "false";
+            betaDominantMod = "false";
+        }
+        sb.append(alphaModsDetected).append(",");
+        sb.append(betaModsDetected).append(",");
+        sb.append(alphaDominantMod).append(",");
+        sb.append(betaDominantMod).append(",");
 
+        //now, information about the detected fragments individually
+        boolean aAlkShort = false;
+        boolean aThialShort = false;
+        boolean aSOShort = false;
+        boolean aAlkLong = false;
+        boolean aThialLong = false;
+        boolean aSOLong = false;
 
+        boolean bAlkShort = false;
+        boolean bThialShort = false;
+        boolean bSOShort = false;
+        boolean bAlkLong = false;
+        boolean bThialLong = false;
+        boolean bSOLong = false;
 
+        double aAlkShortRelInt = 0;
+        double aThialShortRelInt = 0;
+        double aSOShortRelInt = 0;
+        double aAlkLongRelInt = 0;
+        double aThialLongRelInt = 0;
+        double aSOLongRelInt = 0;
 
+        double bAlkShortRelInt = 0;
+        double bThialShortRelInt = 0;
+        double bSOShortRelInt = 0;
+        double bAlkLongRelInt = 0;
+        double bThialLongRelInt = 0;
+        double bSOLongRelInt = 0;
 
+        double aAlkShortAbsInt = 0;
+        double aThialShortAbsInt = 0;
+        double aSOShortAbsInt = 0;
+        double aAlkLongAbsInt = 0;
+        double aThialLongAbsInt = 0;
+        double aSOLongAbsInt = 0;
 
+        double bAlkShortAbsInt = 0;
+        double bThialShortAbsInt = 0;
+        double bSOShortAbsInt = 0;
+        double bAlkLongAbsInt = 0;
+        double bThialLongAbsInt = 0;
+        double bSOLongAbsInt = 0;
 
+        //loop through alpha and beta matches individually
+        for (SpecificXLIonMatch aMatch : alphaMatches){
+            if (aMatch.getModSize().equals("short")){
+                if (aMatch.getModType().equals("alk")){
+                    aAlkShort = true;
+                    aAlkShortAbsInt += aMatch.getMatchedPeak().getIntensity();
+                    aAlkShortRelInt += aMatch.getMatchedPeak().getRelIntensity();
+                    continue;
+                }
+                if (aMatch.getModType().equals("thial")){
+                    aThialShort = true;
+                    aThialShortAbsInt += aMatch.getMatchedPeak().getIntensity();
+                    aThialShortRelInt += aMatch.getMatchedPeak().getRelIntensity();
+                    continue;
+                }
+                if (aMatch.getModType().equals("SO")){
+                    aSOShort = true;
+                    aSOShortAbsInt += aMatch.getMatchedPeak().getIntensity();
+                    aSOShortRelInt += aMatch.getMatchedPeak().getRelIntensity();
+                    continue;
+                }
+            }
+            if (aMatch.getModSize().equals("long")){
+                if (aMatch.getModType().equals("alk")){
+                    aAlkLong = true;
+                    aAlkLongAbsInt += aMatch.getMatchedPeak().getIntensity();
+                    aAlkLongRelInt += aMatch.getMatchedPeak().getRelIntensity();
+                    continue;
+                }
+                if (aMatch.getModType().equals("thial")){
+                    aThialLong = true;
+                    aThialLongAbsInt += aMatch.getMatchedPeak().getIntensity();
+                    aThialLongRelInt += aMatch.getMatchedPeak().getRelIntensity();
+                    continue;
+                }
+                if (aMatch.getModType().equals("SO")){
+                    aSOLong = true;
+                    aSOLongAbsInt += aMatch.getMatchedPeak().getIntensity();
+                    aSOLongRelInt += aMatch.getMatchedPeak().getRelIntensity();
+                }
+            }
+        }
+
+        for (SpecificXLIonMatch bMatch : betaMatches){
+            if (bMatch.getModSize().equals("short")){
+                if (bMatch.getModType().equals("alk")){
+                    bAlkShort = true;
+                    bAlkShortAbsInt += bMatch.getMatchedPeak().getIntensity();
+                    bAlkShortRelInt += bMatch.getMatchedPeak().getRelIntensity();
+                    continue;
+                }
+                if (bMatch.getModType().equals("thial")){
+                    bThialShort = true;
+                    bThialShortAbsInt += bMatch.getMatchedPeak().getIntensity();
+                    bThialShortRelInt += bMatch.getMatchedPeak().getRelIntensity();
+                    continue;
+                }
+                if (bMatch.getModType().equals("SO")){
+                    bSOShort = true;
+                    bSOShortAbsInt += bMatch.getMatchedPeak().getIntensity();
+                    bSOShortRelInt += bMatch.getMatchedPeak().getRelIntensity();
+                    continue;
+                }
+            }
+            if (bMatch.getModSize().equals("long")){
+                if (bMatch.getModType().equals("alk")){
+                    bAlkLong = true;
+                    bAlkLongAbsInt += bMatch.getMatchedPeak().getIntensity();
+                    bAlkLongRelInt += bMatch.getMatchedPeak().getRelIntensity();
+                    continue;
+                }
+                if (bMatch.getModType().equals("thial")){
+                    bThialLong = true;
+                    bThialLongAbsInt += bMatch.getMatchedPeak().getIntensity();
+                    bThialLongRelInt += bMatch.getMatchedPeak().getRelIntensity();
+                    continue;
+                }
+                if (bMatch.getModType().equals("SO")){
+                    bSOLong = true;
+                    bSOLongAbsInt += bMatch.getMatchedPeak().getIntensity();
+                    bSOLongRelInt += bMatch.getMatchedPeak().getRelIntensity();
+                }
+            }
+        }
+
+        sb.append(aAlkShort).append(",");
+        sb.append(aThialShort).append(",");
+        sb.append(aSOShort).append(",");
+        sb.append(aAlkLong).append(",");
+        sb.append(aThialLong).append(",");
+        sb.append(aSOLong).append(",");
+
+        sb.append(bAlkShort).append(",");
+        sb.append(bThialShort).append(",");
+        sb.append(bSOShort).append(",");
+        sb.append(bAlkLong).append(",");
+        sb.append(bThialLong).append(",");
+        sb.append(bSOLong).append(",");
+
+        sb.append(twoDec.format(aAlkShortRelInt)).append(",");
+        sb.append(twoDec.format(aThialShortRelInt)).append(",");
+        sb.append(twoDec.format(aSOShortRelInt)).append(",");
+        sb.append(twoDec.format(aAlkLongRelInt)).append(",");
+        sb.append(twoDec.format(aThialLongRelInt)).append(",");
+        sb.append(twoDec.format(aSOLongRelInt)).append(",");
+
+        sb.append(twoDec.format(bAlkShortRelInt)).append(",");
+        sb.append(twoDec.format(bThialShortRelInt)).append(",");
+        sb.append(twoDec.format(bSOShortRelInt)).append(",");
+        sb.append(twoDec.format(bAlkLongRelInt)).append(",");
+        sb.append(twoDec.format(bThialLongRelInt)).append(",");
+        sb.append(twoDec.format(bSOLongRelInt)).append(",");
+
+        sb.append(scientific.format(aAlkShortAbsInt)).append(",");
+        sb.append(scientific.format(aThialShortAbsInt)).append(",");
+        sb.append(scientific.format(aSOShortAbsInt)).append(",");
+        sb.append(scientific.format(aAlkLongAbsInt)).append(",");
+        sb.append(scientific.format(aThialLongAbsInt)).append(",");
+        sb.append(scientific.format(aSOLongAbsInt)).append(",");
+
+        sb.append(scientific.format(bAlkShortAbsInt)).append(",");
+        sb.append(scientific.format(bThialShortAbsInt)).append(",");
+        sb.append(scientific.format(bSOShortAbsInt)).append(",");
+        sb.append(scientific.format(bAlkLongAbsInt)).append(",");
+        sb.append(scientific.format(bThialLongAbsInt)).append(",");
+        sb.append(scientific.format(bSOLongAbsInt)).append(",");
+
+        //include next line command
+        sb.append("\n");
+        //sb should be completely ready now
+        output = sb.toString();
         return output;
     }
 

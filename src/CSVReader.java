@@ -477,7 +477,7 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
     File outputCSV = new File(newFilePath);
     PrintWriter csvWriter = new PrintWriter(outputCSV);
     StringBuilder sb = new StringBuilder();
-    String[] newHeader = new String[59];
+    String[] newHeader = new String[65];
     //general XL information
     newHeader[0] = "Peptide alpha";
     newHeader[1] = "Peptide beta";
@@ -489,62 +489,69 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
     newHeader[7] = "CID Scan Number";
     newHeader[7] = "Precursor m/z";
     newHeader[8] = "Precursor Charge";
-    newHeader[9] = "Precursor mass dev [ppm]";
-    newHeader[10] = "Precursor monoisotopic offset";
-    newHeader[11] = "Precursor rel. intensity [%]";
-    newHeader[12] = "Precursor abs. intensity [au]";
+    newHeader[9] = "Isolated m/z";
+    newHeader[10] = "Precursor mass dev [ppm]";
+    newHeader[11] = "Precursor monoisotopic offset";
+    newHeader[12] = "Precursor rel. intensity [%]";
+    newHeader[13] = "Precursor abs. intensity [au]";
     //information about Signature peaks and the dominant residues
-    newHeader[13] = "Signature peaks detected"; //0-6
-    newHeader[14] = "Signature peaks summed rel int. [%]";
-    newHeader[15] = "Alpha charge states detected";
-    newHeader[16] = "Beta charge states detected";
-    newHeader[17] = "Alpha dominant charge state";
-    newHeader[18] = "Beta dominant charge state";
-    newHeader[19] = "Alpha side detected"; //short, long, both
-    newHeader[20] = "Beta side detected";
-    newHeader[21] = "Alpha dominant side detected";
-    newHeader[22] = "Beta dominant side detected";
+    newHeader[14] = "Signature peaks detected"; //0-6
+    newHeader[15] = "Signature peaks summed abs int. [%]";
+    newHeader[16] = "Signature peaks compared to MS2-TIC [%]";
+    newHeader[17] = "Alpha charge states detected";
+    newHeader[18] = "Beta charge states detected";
+    newHeader[19] = "Alpha dominant charge state";
+    newHeader[20] = "Beta dominant charge state";
+    newHeader[21] = "Alpha sides detected"; //short, long, both
+    newHeader[22] = "Beta sides detected";
+    newHeader[23] = "Alpha dominant side detected";
+    newHeader[24] = "Beta dominant side detected";
+
+    newHeader[25] = "Alpha mods detected"; //short, long, both
+    newHeader[26] = "Beta mods detected";
+    newHeader[27] = "Alpha dominant mod detected";
+    newHeader[28] = "Beta dominant mods detected";
 
     //information about the detected fragments
-    newHeader[23] = "Alpha alkene short detected"; //true||false
-    newHeader[24] = "Alpha thial short detected";
-    newHeader[25] = "Alpha SO short detected";
-    newHeader[26] = "Alpha alkene long detected";
-    newHeader[27] = "Alpha thial long detected";
-    newHeader[28] = "Alpha SO long detected";
-    newHeader[29] = "Beta alkene short detected"; //true||false
-    newHeader[30] = "Beta thial short detected";
-    newHeader[31] = "Beta SO short detected";
-    newHeader[32] = "Beta alkene long detected";
-    newHeader[33] = "Beta thial long detected";
-    newHeader[34] = "Beta SO long detected";
+    newHeader[29] = "Alpha alkene short detected"; //true||false
+    newHeader[30] = "Alpha thial short detected";
+    newHeader[31] = "Alpha SO short detected";
+    newHeader[32] = "Alpha alkene long detected";
+    newHeader[33] = "Alpha thial long detected";
+    newHeader[34] = "Alpha SO long detected";
+    newHeader[35] = "Beta alkene short detected"; //true||false
+    newHeader[36] = "Beta thial short detected";
+    newHeader[37] = "Beta SO short detected";
+    newHeader[38] = "Beta alkene long detected";
+    newHeader[39] = "Beta thial long detected";
+    newHeader[40] = "Beta SO long detected";
 
 
-    newHeader[35] = "Alpha alkene short rel. int. [%]";
-    newHeader[36] = "Alpha thial short rel. int. [%]";
-    newHeader[37] = "Alpha SO short rel. int. [%]";
-    newHeader[38] = "Alpha alkene long rel. int. [%]";
-    newHeader[39] = "Alpha thial long rel. int. [%]";
-    newHeader[40] = "Alpha SO long rel. int. [%]";
-    newHeader[41] = "Beta alkene short rel. int. [%]";
-    newHeader[42] = "Beta thial short rel. int. [%]";
-    newHeader[43] = "Beta SO short rel. int. [%]";
-    newHeader[44] = "Beta alkene long rel. int. [%]";
-    newHeader[45] = "Beta thial long rel. int. [%]";
-    newHeader[46] = "Beta SO long rel. int. [%]";
+    newHeader[41] = "Alpha alkene short rel. int. [%]";
+    newHeader[42] = "Alpha thial short rel. int. [%]";
+    newHeader[43] = "Alpha SO short rel. int. [%]";
+    newHeader[44] = "Alpha alkene long rel. int. [%]";
+    newHeader[45] = "Alpha thial long rel. int. [%]";
+    newHeader[46] = "Alpha SO long rel. int. [%]";
+    newHeader[47] = "Beta alkene short rel. int. [%]";
+    newHeader[48] = "Beta thial short rel. int. [%]";
+    newHeader[49] = "Beta SO short rel. int. [%]";
+    newHeader[50] = "Beta alkene long rel. int. [%]";
+    newHeader[51] = "Beta thial long rel. int. [%]";
+    newHeader[52] = "Beta SO long rel. int. [%]";
 
-    newHeader[47] = "Alpha alkene short abs. int. [au]";
-    newHeader[48] = "Alpha thial short abs. int. [au]";
-    newHeader[49] = "Alpha SO short abs. int. [au]";
-    newHeader[50] = "Alpha alkene long abs. int. [au]";
-    newHeader[51] = "Alpha thial long abs. int. [au]";
-    newHeader[52] = "Alpha SO long abs. int. [au]";
-    newHeader[53] = "Beta alkene short abs. int. [au]";
-    newHeader[54] = "Beta thial short abs. int. [au]";
-    newHeader[55] = "Beta SO short abs. int. [au]";
-    newHeader[56] = "Beta alkene long abs. int. [au]";
-    newHeader[57] = "Beta thial long abs. int. [au]";
-    newHeader[58] = "Beta SO long abs. int. [au]";
+    newHeader[53] = "Alpha alkene short abs. int. [au]";
+    newHeader[54] = "Alpha thial short abs. int. [au]";
+    newHeader[55] = "Alpha SO short abs. int. [au]";
+    newHeader[56] = "Alpha alkene long abs. int. [au]";
+    newHeader[57] = "Alpha thial long abs. int. [au]";
+    newHeader[58] = "Alpha SO long abs. int. [au]";
+    newHeader[59] = "Beta alkene short abs. int. [au]";
+    newHeader[60] = "Beta thial short abs. int. [au]";
+    newHeader[61] = "Beta SO short abs. int. [au]";
+    newHeader[62] = "Beta alkene long abs. int. [au]";
+    newHeader[63] = "Beta thial long abs. int. [au]";
+    newHeader[64] = "Beta SO long abs. int. [au]";
 
     //this loop generates the header
     String sep = "";
@@ -575,25 +582,32 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
         int cidScanNumber = 0;
         int numberOfScans = runIn.getSpectraCount();
         int spectraOffset = 10;
+        //set different spectra offsets if HCD scan is close to beginning or end of file
         if (hcdScanNumber-spectraOffset <= 0)
             spectraOffset = hcdScanNumber -1;
 
         if (hcdScanNumber+spectraOffset > numberOfScans)
             spectraOffset = numberOfScans-hcdScanNumber;
+        //search for CID scan
         Scan hcdScan = runIn.getScanByStringNum(Integer.toString(hcdScanNumber));
         double hcdPrecursorMZ = (double) hcdScan.getPrecursorMz().get(0).getValue();
-        for (int a = hcdScanNumber-spectraOffset; a < hcdScanNumber +spectraOffset; a++){
+        for (int a = hcdScanNumber - spectraOffset; a < hcdScanNumber + spectraOffset; a++){
             Scan potentialCIDScan = runIn.getScanByStringNum(Integer.toString(a));
+            //extract ms level from mzXML
             int msLevel = Math.toIntExact(potentialCIDScan.getMsLevel());
+            //only search MS2 scans
             if (msLevel == 2){
+                //look at all cid scans
                 String activationMethod = potentialCIDScan.getPrecursorMz().get(0).getActivationMethod();
                 if (activationMethod.contains("CID")){
+                    //check first for matched precursor mz
                     double cidScanPrec = (double) potentialCIDScan.getPrecursorMz().get(0).getValue();
                     if (DeviationCalc.ppmMatch(hcdPrecursorMZ, cidScanPrec, ppmDevIn)){
                         String cidRTString = potentialCIDScan.getRetentionTime().toString();
                         cidRTString = cidRTString.replace("PT", "");
                         cidRTString = cidRTString.replace("S","");
                         double cidRT = Double.parseDouble(cidRTString);
+                        //and then for matched retention time window
                         if (cidRT < hcdRetentionTime+2 ||cidRT > hcdRetentionTime-2 ) {
                             cidPresent = true;
                             cidScanNumber = a;
