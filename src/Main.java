@@ -122,27 +122,37 @@ public class Main {
             System.out.println(pep);
         }*/
 
-       //String path = "C:\\Programmingfolder";
-       //String sequence = "MKWVTFISLLLLFSSAYSRGVFRRDTHKSEIAHRFKDLGEEHFKGLVLIAFSQYLQQCPFDEHVKLVNELTEFAKTCVADESHAGCEKSLHTLFGDELCKVASLRETYGDMADCCEKQEPERNECFLSHKDDSPDLPKLKPDPNTLCDEFKADEKKFWGKYLYEIARRHPYFYAPELLYYANKYNGVFQECCQAEDKGACLLPKIETMREKVLASSARQRLRCASIQKFGERALKAWSVARLSQKFPKAEFVEVTKLVTDLTKVHKECCHGDLLECADDRADLAKYICDNQDTISSKLKECCDKPLLEKSHCIAEVEKDAIPENLPPLTADFAEDKDVCKNYQEAKDAFLGSFLYEYSRRHPEYAVSVLLRLAKEYEATLEECCAKDDPHACYSTVFDKLKHLVDEPQNLIKQNCDQFEKLGEYGFQNALIVRYTRKVPQVSTPTLVEVSRSLGKVGTRCCTKPESERMPCTEDYLSLILNRLCVLHEKTPVSEKVTKCCTESLVNRRPCFSALTPDETYVPKAFDEKLFTFHADICTLPDTEKQIKKQTALVELLKHKPKATEEQLKTVMENFVAFVDKCCAADDKEACFAVEGPKLVVSTQTALA";
+       /*String path = "C:\\Programmingfolder\\Distances_BSA\\";
+       String sequence = "DTHKSEIAHRFKDLGEEHFKGLVLIAFSQYLQQCPFDEHVKLVNELTEFAKTCVADESHAGCEKSLHTLFGDELCKVASLRETYGDMADCCEKQEPERNECFLSHKDDSPDLPKLKPDPNTLCDEFKADEKKFWGKYLYEIARRHPYFYAPELLYYANKYNGVFQECCQAEDKGACLLPKIETMREKVLASSARQRLRCASIQKFGERALKAWSVARLSQKFPKAEFVEVTKLVTDLTKVHKECCHGDLLECADDRADLAKYICDNQDTISSKLKECCDKPLLEKSHCIAEVEKDAIPENLPPLTADFAEDKDVCKNYQEAKDAFLGSFLYEYSRRHPEYAVSVLLRLAKEYEATLEECCAKDDPHACYSTVFDKLKHLVDEPQNLIKQNCDQFEKLGEYGFQNALIVRYTRKVPQVSTPTLVEVSRSLGKVGTRCCTKPESERMPCTEDYLSLILNRLCVLHEKTPVSEKVTKCCTESLVNRRPCFSALTPDETYVPKAFDEKLFTFHADICTLPDTEKQIKKQTALVELLKHKPKATEEQLKTVMENFVAFVDKCCAADDKEACFAVEGPKLVVSTQTALA";
 
-       //CSVCreator.aminoAcidCounter(path, sequence, 'K');
+       ArrayList<AminoAcid> aaToCheck = new ArrayList<>();
+       aaToCheck.add(AminoAcid.createSpecificAA("k"));
+        aaToCheck.add(AminoAcid.createSpecificAA("Ser"));
+        aaToCheck.add(AminoAcid.createSpecificAA("tyr"));
+        aaToCheck.add(AminoAcid.createSpecificAA("tHR"));
+
+       CSVCreator.xWalkInputFileGenerator(sequence,aaToCheck, path, AminoAcid.createSpecificAA("K"));*/
+
+
+        
+
 
         String runFilePath = "C:\\Programmingfolder\\CID_HCD_Comparison\\TGR_08304.mzXML";
-        File runFile = new File(runFilePath);
+        //File runFile = new File(runFilePath);
         //MzXMLFile mzXMLRun = new MzXMLFile(runFile);
 
         String meroxFilePath = "C:\\Programmingfolder\\CID_HCD_Comparison\\TGR_08304_MeroXHCDOnly_Export_forAnalysis_withRetentionTime_CSV.csv";
-        File meroxFile = new File(meroxFilePath);
+        //File meroxFile = new File(meroxFilePath);
 
         //CSVReader.xlSpectraChecker(meroxFile, mzXMLRun, "CID", "cliXlink", aminoAcidsList, 10);
 
-        Peptide unmod = new Peptide("PMC", aminoAcidsList);
+        /*Peptide unmod = new Peptide("PMC", aminoAcidsList);
         ArrayList<Modification> modList1 = new ArrayList<>();
         modList1.add(Modification.carbamidomethylation());
         Peptide mod1 = unmod.peptideModifier(modList1);
         ArrayList<Modification> modList2 = new ArrayList<>();
         modList2.add(Modification.oxidation(2));
-        Peptide mod2 = mod1.peptideModifier(modList2);
+        Peptide mod2 = mod1.peptideModifier(modList2);*/
 
         System.out.println("breakpoint");
 

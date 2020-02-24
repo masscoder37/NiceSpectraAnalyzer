@@ -228,25 +228,52 @@ public class CSVCreator {
         csvWriter.close();
         System.out.println(".csv-File created!");
     }
-    public static void aminoAcidCounter(String filepathIn, String sequence, char toCheck) throws FileNotFoundException {
-        if (!filepathIn.endsWith("\\")) {
-            filepathIn = filepathIn + "\\";
-        }
-        String fileName = filepathIn + "AACount_" + toCheck + ".csv";
-        File outputCSV = new File(fileName);
-        PrintWriter csvWriter = new PrintWriter(outputCSV);
-        StringBuilder sb = new StringBuilder();
+    public static ArrayList<String> xWalkAminoAcidCounter(String sequence, AminoAcid aaToCheck) {
+        ArrayList<String> output = new ArrayList<>();
         int occurences = 0;
+        char charToCheck = aaToCheck.get1Let();
+        String threeLetter = aaToCheck.get3Let().toUpperCase();
         for (int i = 0; i < sequence.length(); i++) {
-            if (sequence.charAt(i) == toCheck) {
-                sb.append(i + 1).append("\n");
+            if (sequence.charAt(i) == charToCheck) {
+                output.add(threeLetter + "-" + (i + 1)+"-A-CA");
                 occurences++;
             }
         }
-        csvWriter.write(sb.toString());
-        csvWriter.flush();
-        csvWriter.close();
-        System.out.println("Counting complete! Occurences: " + occurences);
+        System.out.println("Counting complete! " +aaToCheck.getName()+ " occurences: " + occurences);
+        return output;
+    }
+
+    public static void xWalkInputFileGenerator(String sequence, ArrayList<AminoAcid> aaToCheck, String folderPath, AminoAcid necessaryAA) throws FileNotFoundException {
+        ArrayList<String> combinedList = new ArrayList<>();
+
+        for (AminoAcid currentAA : aaToCheck){
+            combinedList.addAll(xWalkAminoAcidCounter(sequence, currentAA));
+        }
+        //combined List contains all the occurrences of the AAs
+        ArrayList<String> allCombinationsList = new ArrayList<>();
+        for (int i = 0; i < combinedList.size(); i++){
+            String current = combinedList.get(i);
+            for (int j = i+1; j< combinedList.size(); j++){
+                allCombinationsList.add(current + "\t" + combinedList.get(j));
+            }
+        }
+        String threeLetterNecessary = necessaryAA.get3Let().toUpperCase();
+        int iterator = 1;
+
+        String filePath = folderPath + "forXWalkAnalysis.txt";
+        File txtFile = new File(filePath);
+        PrintWriter tsvWriter = new PrintWriter(txtFile);
+
+        for (String current : allCombinationsList){
+            if (current.contains(threeLetterNecessary)){
+                String currentLine = iterator + "\t\t" + current + "\n";
+                tsvWriter.write(currentLine);
+                tsvWriter.flush();
+                iterator++;
+            }
+        }
+        System.out.println("List generation complete with "+iterator+" lines.");
+        tsvWriter.close();
     }
 
 }
