@@ -59,6 +59,9 @@ public class Xl {
         //combine sum formulas from the peptides and the sum formula of the crosslinker
         this.xlSumFormula = SumFormula.sumFormulaJoiner(peptideAlpha.getSumFormula(),
                 SumFormula.sumFormulaJoiner(peptideBeta.getSumFormula(), SumFormula.getCliXlinkFormula()));
+
+        SumFormula joinedPeptidesFormula = SumFormula.sumFormulaJoiner(peptideAlpha.getSumFormula(), peptideBeta.getSumFormula());
+        this.xlSumFormula = SumFormula.sumFormulaJoiner(joinedPeptidesFormula, SumFormula.getCliXlinkFormula());
         //add protons according to charge state? necessary?
         //TODO: check if protons have to be added for all the classes to work
         for (int i = 1; i < chargeStateIn+1; i++)
@@ -112,7 +115,7 @@ public class Xl {
                 modList.add(Modification.carbamidomethylation());
             //to change sequence string, copy string to string builder and do the required changes
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < sequenceIn.length()-1; i++){
+            for (int i = 0; i < sequenceIn.length(); i++){
                 char c = sequenceIn.charAt(i);
                 switch (c){
                     case 'B':
@@ -158,6 +161,7 @@ public class Xl {
             currentModList.add(mod);
             //first, adjustPeptide and sumFormula of peptide
             Peptide modPeptide = this.peptideAlpha;
+            //TODO: for peptideModifier to work, peptide can not already be modified!!!
             modPeptide= modPeptide.peptideModifier(currentModList);
             //loop through all the different charge states
             for (int z = 1; z < this.theoreticalXLIon.getCharge(); z++){
