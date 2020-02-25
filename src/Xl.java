@@ -248,26 +248,18 @@ public class Xl {
         //also keep in mind the charge state of the fragment ion and the peak
         //for now, also allow undetermined charge states (=0)
         for(XlFragmentIon alphaFragment : this.alphaXLFragments){
-            boolean matchFound = false;
-            while (!matchFound){
                 for(Peak toCheck : spectrumIn.getPeakList()){
                     if(DeviationCalc.massAndChargeMatch(alphaFragment.getMToZ(), alphaFragment.getCharge(), toCheck, ppmDevAllowed)){
                         matchList.add(new SpecificXLIonMatch(toCheck, alphaFragment));
-                        matchFound = true;
                         break;
-                    }
                 }
             }
         }
         for(XlFragmentIon betaFragment : this.betaXLFragments){
-            boolean matchFound = false;
-            while (!matchFound){
                 for(Peak toCheck : spectrumIn.getPeakList()){
                     if(DeviationCalc.massAndChargeMatch(betaFragment.getMToZ(), betaFragment.getCharge(), toCheck, ppmDevAllowed)){
                         matchList.add(new SpecificXLIonMatch(toCheck, betaFragment));
-                        matchFound = true;
                         break;
-                    }
                 }
             }
         }

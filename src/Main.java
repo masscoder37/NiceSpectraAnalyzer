@@ -138,27 +138,21 @@ public class Main {
 
 
         String runFilePath = "C:\\Programmingfolder\\CID_HCD_Comparison\\TGR_08304.mzXML";
-        //File runFile = new File(runFilePath);
-        //MzXMLFile mzXMLRun = new MzXMLFile(runFile);
+        File runFile = new File(runFilePath);
+        MzXMLFile mzXMLRun = new MzXMLFile(runFile);
 
         String meroxFilePath = "C:\\Programmingfolder\\CID_HCD_Comparison\\TGR_08304_MeroXHCDOnly_Export_forAnalysis_withRetentionTime_CSV.csv";
-        //File meroxFile = new File(meroxFilePath);
+        File meroxFile = new File(meroxFilePath);
 
-        //CSVReader.xlSpectraChecker(meroxFile, mzXMLRun, "CID", "cliXlink", aminoAcidsList, 10);
+        CSVReader.xlSpectraChecker(meroxFile, mzXMLRun, "CID", "cliXlink", aminoAcidsList, 10);
 
-        /*Peptide unmod = new Peptide("PMC", aminoAcidsList);
+        /*Peptide unmod = new Peptide("PCMC", aminoAcidsList);
         ArrayList<Modification> modList1 = new ArrayList<>();
         modList1.add(Modification.carbamidomethylation());
         Peptide mod1 = unmod.peptideModifier(modList1);
         ArrayList<Modification> modList2 = new ArrayList<>();
-        modList2.add(Modification.oxidation(2));
+        modList2.add(Modification.oxidation(3));
         Peptide mod2 = mod1.peptideModifier(modList2);*/
-
-        System.out.println("breakpoint");
-
-
-
-
 
 
         }

@@ -1,3 +1,5 @@
+
+
 import java.util.ArrayList;
 
 /**
@@ -185,6 +187,26 @@ public class Modification {
         cleavedlsST.isLabel = true;
         cleavedlsST.isCleaved = true;
         return cleavedlsST;
+    }
+
+
+    //if this function gets a modified peptide, then return the list of modifications present on the peptide
+    public static ArrayList<Modification> modifiedPeptideModListCreator (Peptide modPeptideIn){
+        ArrayList<Modification> modList = new ArrayList<>();
+        //unmodified peptide can return empty list
+        //modifying a peptide with an empty list is no problem and doesn't change modification status
+        if (!modPeptideIn.getModificationStatus())
+            return modList;
+        ArrayList<AminoAcid> peptideAAList = modPeptideIn.getAminoAcidsList();
+        //the aminoAcids list contains the modification status and the modification
+        for (int i = 0; i < peptideAAList.size(); i++){
+            AminoAcid current = peptideAAList.get(i);
+            if (current.getModificationStatus()){
+                //i+1 because AA counting starts at 1, peptide Modifier method deals with the rest
+                modList.add(new Modification(current.getModification().getModificationName(), current.getModification().getModificationFormula().getSumFormula(), (i+1)));
+            }
+        }
+        return modList;
     }
 
 }

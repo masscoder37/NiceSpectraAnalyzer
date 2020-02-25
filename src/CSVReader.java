@@ -577,6 +577,9 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
         String linkagePep1 = splitValues[captionPositions.get("best linkage position peptide 1")];
         String linkagePep2 = splitValues[captionPositions.get("best linkage position peptide 2")];
 
+        //TODO:Debugging
+        System.out.println("Values of MeroX read in");
+
         //use hcd scan number and look if CID scan is present and for the number
         boolean cidPresent = false;
         int cidScanNumber = 0;
@@ -617,11 +620,15 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
                 }
             }
         }
+        //TODO: debugging
+        System.out.println("found CID scan");
         //escapes the loop if CID scan isn't present
         if (!cidPresent)
             continue;
         //cidScanNumber now contains the information about the cidScan
         Scan cidMatchScan = runIn.getScanByStringNum(Integer.toString(cidScanNumber));
+        //TODO: debugging
+        System.out.println("CID scan read in");
         //prepare values for XL generation
         int xlChargeState = Math.toIntExact(cidMatchScan.getPrecursorMz().get(0).getPrecursorCharge());
         double cidIsoMassToCharge = (double) cidMatchScan.getPrecursorMz().get(0).getValue();
@@ -635,18 +642,26 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
         //invoke XL constructor
         Xl currentXl = new Xl(peptide1, peptide2, xlIn, xlChargeState, hcdScanNumber, cidScanNumber, fragMethodIn, cidIsoMassToCharge, xlPos1,
                 xlPos2, aaListIn, cidRT);
+        //TODO: debugging
+        System.out.println("XL generated");
         //XL is now present, prepare CID spectrum to search against
         //TODO: implement scan to mySpectrum conversion?
         MySpectrum currentCIDSpectrum = MzXMLReadIn.mzXMLToMySpectrum(runIn,Integer.toString(cidScanNumber));
         currentCIDSpectrum.chargeStateAssigner();
+        //TODO: debugging
+        System.out.println("CID Myspectrum created, charge state assigned");
         //use the Xl class to check the spectrum for the specific peaks
         currentXl.xlIonMatcher(currentCIDSpectrum, ppmDevIn);
+        //TODO: debugging
+        System.out.println("xl ion matcher ran");
         //TODO:get all the information into the string to parse to CSV
         //Stringproducer needs 3 spectra: precursor, HCD, CID
         int fullScanNumber = hcdScan.getPrecursorMz().get(0).getPrecursorScanNum().intValue();
         MySpectrum fullMySpectrum = MzXMLReadIn.mzXMLToMySpectrum(runIn, Integer.toString(fullScanNumber));
         MySpectrum hcdMySpectrum = MzXMLReadIn.mzXMLToMySpectrum(runIn, Integer.toString(hcdScanNumber));
         String output = currentXl.xlMatchesStringProducer(fullMySpectrum, hcdMySpectrum, currentCIDSpectrum);
+        //TODO: debugging
+        System.out.println("output string created");
         //new line is already attached from function
         csvWriter.write(output);
         csvWriter.flush();

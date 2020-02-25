@@ -179,8 +179,11 @@ public class Peptide {
 
 
     //this method uses an ArrayList of Modifications to attach modifications to existing peptides
-    //TODO: can't this be static?
-    public Peptide peptideModifier(ArrayList<Modification> modListIn) {
+    //TODO: this is the old version of the peptide modifier function
+    //TODO: it works, however it does modify the aminoAcid list of the unmodified peptide
+    //TODO: try to fix with another version of the function and see if that works with all current functions
+    //TODO:second version seems to work properly
+    /*public Peptide peptideModifier(ArrayList<Modification> modListIn) {
         ArrayList<AminoAcid> modAAList = this.getAminoAcidsList();
         boolean modStatus = false;
         for (Modification mod : modListIn) {
@@ -212,6 +215,61 @@ public class Peptide {
             }
         }
         Peptide modPeptide = new Peptide(this.getSequence(), modAAList, modStatus);
+        return modPeptide;
+    }*/
+    public Peptide peptideModifier(ArrayList<Modification> modListIn) {
+        //TODO: check if the peptide to be modified is already modified. If so, add the modifications to the modlist
+        //if modification is already present on the peptide, it needs to be handled differently
+        boolean modStatus = false;
+        //if this is true, extract the modification list and create a new, unmodified peptide.
+        //this peptide will be modified in the following
+        Peptide unmodifiedPeptide;
+        ArrayList<Modification> oldPresentMods = new ArrayList<>();
+        //this won't modify the original aminoAcidsList
+        ArrayList<AminoAcid> aaList = new ArrayList<>();
+        if (this.getModificationStatus()){
+            oldPresentMods.addAll(Modification.modifiedPeptideModListCreator(this));
+            //generate new, unmodified peptide with same sequence
+            //this peptide has no modification, so use normal constructor
+            unmodifiedPeptide = new Peptide(this.unmodifiedSequence, AminoAcid.getAminoAcidList());
+            //add all the modifications to the modList
+            modListIn.addAll(oldPresentMods);
+            modStatus = true;
+        }
+        //if the peptide is unmodified, nothing changes
+        else{
+            unmodifiedPeptide = this;
+        }
+        aaList.addAll(unmodifiedPeptide.aminoAcidsList);
+        for (Modification mod : modListIn) {
+            boolean fixedModPosition = mod.getPositionType();
+            if (fixedModPosition) {
+                if (mod.getPositionNumber() > aaList.size()) {
+                    break;
+                }
+                AminoAcid currentAcid = aaList.get(mod.getPositionNumber());
+                SumFormula newFormula = SumFormula.sumFormulaJoiner(mod.getModificationFormula(), currentAcid.getSumFormula());
+                AminoAcid modAcid = new AminoAcid(currentAcid.getName() + mod.getModificationName(), currentAcid.get3Let(), ""+currentAcid.get1Let(), newFormula.getSumFormula());
+                aaList.set(mod.getPositionNumber(), modAcid);
+                aaList.get(mod.getPositionNumber()).setHasModification(true);
+                aaList.get(mod.getPositionNumber()).setModification(mod);
+                modStatus = true;
+            }
+            if (!fixedModPosition) {
+                for (int i = 0; i < aaList.size(); i++) {
+                    if (aaList.get(i).get1Let() == mod.getAminoAcidName()) {
+                        AminoAcid currentAcid = aaList.get(i);
+                        SumFormula newFormula = SumFormula.sumFormulaJoiner(mod.getModificationFormula(), currentAcid.getSumFormula());
+                        AminoAcid modAcid = new AminoAcid(currentAcid.getName() + mod.getModificationName(), currentAcid.get3Let(), ""+currentAcid.get1Let(), newFormula.getSumFormula());
+                        aaList.set(i, modAcid);
+                        aaList.get(i).setHasModification(true);
+                        aaList.get(i).setModification(mod);
+                        modStatus = true;
+                    }
+                }
+            }
+        }
+        Peptide modPeptide = new Peptide(unmodifiedPeptide.getUnmodifiedSequence(), aaList, modStatus);
         return modPeptide;
     }
 
