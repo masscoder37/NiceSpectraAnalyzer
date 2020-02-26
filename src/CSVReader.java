@@ -446,7 +446,7 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
 
     //get header positions
     String header = scanner.nextLine();
-    String headerCaptions[] = header.split(";");
+    String headerCaptions[] = header.split(",");
     HashMap<String, Integer> captionPositions = new HashMap<>();
     int index = 0;
     for (String captions : headerCaptions){
@@ -458,7 +458,7 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
                 captionPositions.put("Peptide 2", index);
                 break;
             case "Scan number":
-                captionPositions.put("Scan Number", index);
+                captionPositions.put("Scan number", index);
                 break;
             case "Retention time in sec":
                 captionPositions.put("Retention time in sec", index);
@@ -497,7 +497,7 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
     newHeader[i] = "Precursor abs. intensity [au]";i++;
     //information about Signature peaks and the dominant residues
     newHeader[i] = "Signature peaks detected";i++; //0-6
-    newHeader[i] = "Signature peaks summed abs int. [%]";i++;
+    newHeader[i] = "Signature peaks summed abs int. [au]";i++;
     newHeader[i] = "Signature peaks compared to MS2-TIC [%]";i++;
     newHeader[i] = "Alpha charge states detected";i++;
     newHeader[i] = "Beta charge states detected";i++;
@@ -570,8 +570,8 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
     while(scanner.hasNext()){
         //read in all the values
         String values = scanner.nextLine();
-        String[] splitValues = values.split(";");
-        int hcdScanNumber = Integer.parseInt(splitValues[captionPositions.get("Scan Number")]);
+        String[] splitValues = values.split(",");
+        int hcdScanNumber = Integer.parseInt(splitValues[captionPositions.get("Scan number")]);
         String peptide1 = splitValues[captionPositions.get("Peptide 1")];
         String peptide2 = splitValues[captionPositions.get("Peptide 2")];
         double hcdRetentionTime = Double.parseDouble(splitValues[captionPositions.get("Retention time in sec")]);

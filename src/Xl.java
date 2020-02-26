@@ -508,8 +508,8 @@ public class Xl {
             betaSideDetected = "both";
 
 
-        String alphaDominantSide = "";
-        String betaDominantSide = "";
+        String alphaDominantSide = "false";
+        String betaDominantSide = "false";
         if (alphaShortAbsInt > alphaLongAbsInt)
             alphaDominantSide = "short";
         else if (alphaShortAbsInt < alphaLongAbsInt)

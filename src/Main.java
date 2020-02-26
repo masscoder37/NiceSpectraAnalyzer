@@ -137,17 +137,18 @@ public class Main {
         
 
 
-        String runFilePath = "C:\\Programmingfolder\\CID_HCD_Comparison\\TGR_08304_complete.mzXML";
+        String runFilePath = "C:\\Programmingfolder\\CID_HCD_Comparison\\TGR_08646.mzXML";
         File runFile = new File(runFilePath);
         MzXMLFile mzXMLRun = new MzXMLFile(runFile);
 
-        String meroxFilePath = "C:\\Programmingfolder\\CID_HCD_Comparison\\TGR_08304_MeroXHCDOnly_Export_forAnalysis_withRetentionTime_CSV.csv";
+        String meroxFilePath = "C:\\Programmingfolder\\CID_HCD_Comparison\\TGR_08646_CID20_10ms_forAnalysis_CSV.csv";
         File meroxFile = new File(meroxFilePath);
 
         CSVReader.xlSpectraChecker(meroxFile, mzXMLRun, "CID", "cliXlink", aminoAcidsList, 10);
 
         //Xl testXL = new Xl("VHKEBBHGDLLEBADDR", "ALKAWSVAR", "cliXlink", 5, 19232, 19233, "CID",
-          //      677.3115, 3, 3, aminoAcidsList, 3478.934757);
+        //        677.3115, 3, 3, aminoAcidsList, 3478.934757);
+
 
 
 
