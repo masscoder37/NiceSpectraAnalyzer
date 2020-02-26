@@ -477,7 +477,7 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
     File outputCSV = new File(newFilePath);
     PrintWriter csvWriter = new PrintWriter(outputCSV);
     StringBuilder sb = new StringBuilder();
-    String[] newHeader = new String[66];
+    String[] newHeader = new String[84];
     //general XL information
     int i = 0;
     newHeader[i] = "Peptide alpha"; i++;
@@ -496,9 +496,15 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
     newHeader[i] = "Precursor rel. intensity [%]";i++;
     newHeader[i] = "Precursor abs. intensity [au]";i++;
     //information about Signature peaks and the dominant residues
-    newHeader[i] = "Signature peaks detected";i++; //0-6
-    newHeader[i] = "Signature peaks summed abs int. [au]";i++;
-    newHeader[i] = "Signature peaks compared to MS2-TIC [%]";i++;
+    newHeader[i] = "Signature peaks detected Alpha";i++; //0-6
+    newHeader[i] = "Summed signature peaks Alpha abs int. [au]";i++;
+    newHeader[i] = "Summed signature peaks Alpha compared to MS2-TIC [%]";i++;
+    newHeader[i] = "Signature peaks detected Beta";i++;
+    newHeader[i] = "Summed signature peaks Beta abs int. [au]";i++;
+    newHeader[i] = "Summed signature peaks Beta compared to MS2-TIC [%]";i++;
+    newHeader[i] = "Signature peaks detected total";i++;
+    newHeader[i] = "Summed signature peaks total abs int. [au]";i++;
+    newHeader[i] = "Summed signature peaks total compared to MS2-TIC [%]";i++;
     newHeader[i] = "Alpha charge states detected";i++;
     newHeader[i] = "Beta charge states detected";i++;
     newHeader[i] = "Alpha dominant charge state";i++;
@@ -528,31 +534,44 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
     newHeader[i] = "Beta SO long detected";i++;
 
 
-    newHeader[i] = "Alpha alkene short rel. int. [%]";i++;
-    newHeader[i] = "Alpha thial short rel. int. [%]";i++;
-    newHeader[i] = "Alpha SO short rel. int. [%]";i++;
-    newHeader[i] = "Alpha alkene long rel. int. [%]";i++;
-    newHeader[i] = "Alpha thial long rel. int. [%]";i++;
-    newHeader[i] = "Alpha SO long rel. int. [%]";i++;
-    newHeader[i] = "Beta alkene short rel. int. [%]";i++;
-    newHeader[i] = "Beta thial short rel. int. [%]";i++;
-    newHeader[i] = "Beta SO short rel. int. [%]";i++;
-    newHeader[i] = "Beta alkene long rel. int. [%]";i++;
-    newHeader[i] = "Beta thial long rel. int. [%]";i++;
-    newHeader[i] = "Beta SO long rel. int. [%]";i++;
+    newHeader[i] = "Summed alpha alkene short rel. int. to MS2 TIC [%]";i++;
+    newHeader[i] = "Summed alpha thial short rel. int. to MS2 TIC [%]";i++;
+    newHeader[i] = "Summed alpha SO short rel. int. to MS2 TIC [%]";i++;
+    newHeader[i] = "Summed alpha alkene long rel. int. to MS2 TIC [%]";i++;
+    newHeader[i] = "Summed alpha thial long rel. int. to MS2 TIC [%]";i++;
+    newHeader[i] = "Summed alpha SO long rel. int. to MS2 TIC [%]";i++;
+    newHeader[i] = "Summed beta alkene short rel. int. to MS2 TIC [%]";i++;
+    newHeader[i] = "Summed beta thial short rel. int. to MS2 TIC [%]";i++;
+    newHeader[i] = "Summed beta SO short rel. int. to MS2 TIC [%]";i++;
+    newHeader[i] = "Summed beta alkene long rel. int. to MS2 TIC [%]";i++;
+    newHeader[i] = "Summed beta thial long rel. int. to MS2 TIC [%]";i++;
+    newHeader[i] = "Summed beta SO long rel. int. to MS2 TIC [%]";i++;
 
-    newHeader[i] = "Alpha alkene short abs. int. [au]";i++;
-    newHeader[i] = "Alpha thial short abs. int. [au]";i++;
-    newHeader[i] = "Alpha SO short abs. int. [au]";i++;
-    newHeader[i] = "Alpha alkene long abs. int. [au]";i++;
-    newHeader[i] = "Alpha thial long abs. int. [au]";i++;
-    newHeader[i] = "Alpha SO long abs. int. [au]";i++;
-    newHeader[i] = "Beta alkene short abs. int. [au]";i++;
-    newHeader[i] = "Beta thial short abs. int. [au]";i++;
-    newHeader[i] = "Beta SO short abs. int. [au]";i++;
-    newHeader[i] = "Beta alkene long abs. int. [au]";i++;
-    newHeader[i] = "Beta thial long abs. int. [au]";i++;
-    newHeader[i] = "Beta SO long abs. int. [au]";
+    newHeader[i] = "Summed alpha alkene short abs. int. [au]";i++;
+    newHeader[i] = "Summed alpha thial short abs. int. [au]";i++;
+    newHeader[i] = "Summed alpha SO short abs. int. [au]";i++;
+    newHeader[i] = "Summed alpha alkene long abs. int. [au]";i++;
+    newHeader[i] = "Summed alpha thial long abs. int. [au]";i++;
+    newHeader[i] = "Summed alpha SO long abs. int. [au]";i++;
+    newHeader[i] = "Summed beta alkene short abs. int. [au]";i++;
+    newHeader[i] = "Summed beta thial short abs. int. [au]";i++;
+    newHeader[i] = "Summed beta SO short abs. int. [au]";i++;
+    newHeader[i] = "Summed beta alkene long abs. int. [au]";i++;
+    newHeader[i] = "Summed beta thial long abs. int. [au]";i++;
+    newHeader[i] = "Summed beta SO long abs. int. [au]"; i++;
+    newHeader[i] = "Most intense signature peak"; i++;
+    newHeader[i] = "Most intense signature peak rel. int. [%]"; i++;
+    newHeader[i] = "Most intense signature peak abs. int. [au]"; i++;
+    newHeader[i] = "2nd most intense signature peak"; i++;
+    newHeader[i] = "2nd most intense signature peak rel. int. [%]"; i++;
+    newHeader[i] = "2nd most intense signature peak abs. int. [au]"; i++;
+    newHeader[i] = "3rd most intense signature peak"; i++;
+    newHeader[i] = "3rd most intense signature peak rel. int. [%]"; i++;
+    newHeader[i] = "3rd most intense signature peak abs. int. [au]"; i++;
+    newHeader[i] = "4th most intense signature peak"; i++;
+    newHeader[i] = "4th most intense signature peak rel. int. [%]"; i++;
+    newHeader[i] = "4th most intense signature peak abs. int. [au]";
+
 
     //this loop generates the header
     String sep = "";

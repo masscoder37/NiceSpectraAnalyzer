@@ -22,7 +22,7 @@ public class MySpectrum {
         //make sure that peakList is ordered
         //implemented QuickSort Algorithm
         //TODO: I assume that peaksIn is always already ordered, leading to a case where quicksort is not efficient?
-        peaksIn = MassQuickSort.peakListQuickSort(peaksIn);
+        peaksIn = QuickSort.peakListQuickSort(peaksIn);
         this.peakList = peakPacker(peaksIn);
         this.numberOfPeaks = this.peakList.size();
     }
