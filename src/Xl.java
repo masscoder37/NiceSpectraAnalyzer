@@ -11,6 +11,7 @@ public class Xl {
     private String xlUsed;
     private SumFormula xlSumFormula;
     private Ion theoreticalXLIon;
+    //unfortunately, isolated mass to charge is shifted to the assumed monoisotopic peak by the MS
     private double isolatedMassToCharge;
     private int hcdScanNumber;
     private int cidScanNumber;
@@ -295,22 +296,30 @@ public class Xl {
         //information about the theoretical xl precursor
         sb.append(fourDec.format(this.theoreticalXLIon.getMToZ())).append(",");;
         sb.append(""+this.theoreticalXLIon.getCharge()).append(",");
+        //this is not the real isolated m/z, but rather the assumed monoisotopic mass by the ms
         sb.append(fourDec.format(this.isolatedMassToCharge)).append(",");
-        double detectedPPMDev = DeviationCalc.ppmDeviationCalc(this.theoreticalXLIon.getMToZ(), this.isolatedMassToCharge);
-        sb.append(twoDec.format(detectedPPMDev)).append(",");
-        sb.append(""+this.monoisotopicPeakOffset).append(",");
-        //check full scan spectrum for the precursor information
+        //TODO: isolated mass to charge is not the monoisotopic mass, determine that from the scan as is done below anyway
         ArrayList<Peak> fullScanPeakList = fullScanIn.getPeakList();
         double peakRelInt = 0;
         double peakAbsInt = 0;
-
+        Peak matchedPrecPeak = null;
         for (Peak peak : fullScanPeakList){
-                if (DeviationCalc.ppmMatch(this.isolatedMassToCharge, peak.getMass(), 6)){
-                    peakRelInt = peak.getRelIntensity();
-                    peakAbsInt = peak.getIntensity();
-                    break;
-                }
+            if (DeviationCalc.ppmMatch(this.theoreticalXLIon.getMToZ(), peak.getMass(), 10)){
+                peakRelInt = peak.getRelIntensity();
+                peakAbsInt = peak.getIntensity();
+                matchedPrecPeak = peak;
+                break;
             }
+        }
+
+        if (matchedPrecPeak == null){
+            matchedPrecPeak = new Peak(this.theoreticalXLIon.getExactMass(), 0, 0, 0);
+        }
+        double detectedPPMDev = DeviationCalc.ppmDeviationCalc(this.theoreticalXLIon.getMToZ(), matchedPrecPeak.getMass());
+        sb.append(twoDec.format(detectedPPMDev)).append(",");
+        sb.append(""+this.monoisotopicPeakOffset).append(",");
+        //check full scan spectrum for the precursor information
+
         sb.append(twoDec.format(peakRelInt)).append(",");
         sb.append(scientific.format(peakAbsInt)).append(",");
         //information about the specific signature peaks
