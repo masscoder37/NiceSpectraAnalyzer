@@ -39,7 +39,7 @@ public class Main {
 
 
     public static void main(String[] args) throws MzXMLParsingException, JMzReaderException, FileNotFoundException {
-        DecimalFormat fiveDec = new DecimalFormat("0.00000");
+        DecimalFormat fourDec = new DecimalFormat("0.0000");
 
         //The provided amino acids list is read.
         //TODO: Please change your file path accordingly so that it points to the provided amino acids list
@@ -137,7 +137,7 @@ public class Main {
         
 
 
-        String runFilePath = "C:\\Programmingfolder\\CID_HCD_Comparison\\TGR_08304.mzXML";
+        String runFilePath = "C:\\Programmingfolder\\CID_HCD_Comparison\\TGR_08304_complete.mzXML";
         File runFile = new File(runFilePath);
         MzXMLFile mzXMLRun = new MzXMLFile(runFile);
 
@@ -145,6 +145,13 @@ public class Main {
         File meroxFile = new File(meroxFilePath);
 
         CSVReader.xlSpectraChecker(meroxFile, mzXMLRun, "CID", "cliXlink", aminoAcidsList, 10);
+
+        //Xl testXL = new Xl("VHKEBBHGDLLEBADDR", "ALKAWSVAR", "cliXlink", 5, 19232, 19233, "CID",
+          //      677.3115, 3, 3, aminoAcidsList, 3478.934757);
+
+
+
+
 
         /*Peptide unmod = new Peptide("PCMC", aminoAcidsList);
         ArrayList<Modification> modList1 = new ArrayList<>();

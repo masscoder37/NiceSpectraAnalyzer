@@ -477,81 +477,82 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
     File outputCSV = new File(newFilePath);
     PrintWriter csvWriter = new PrintWriter(outputCSV);
     StringBuilder sb = new StringBuilder();
-    String[] newHeader = new String[65];
+    String[] newHeader = new String[66];
     //general XL information
-    newHeader[0] = "Peptide alpha";
-    newHeader[1] = "Peptide beta";
-    newHeader[2] = "Alpha amino acid";
-    newHeader[3] = "Beta amino acid";
-    newHeader[4] = "Alpha position";
-    newHeader[5] = "Beta position";
-    newHeader[6] = "HCD Scan Number";
-    newHeader[7] = "CID Scan Number";
-    newHeader[7] = "Precursor m/z";
-    newHeader[8] = "Precursor Charge";
-    newHeader[9] = "Isolated m/z";
-    newHeader[10] = "Precursor mass dev [ppm]";
-    newHeader[11] = "Precursor monoisotopic offset";
-    newHeader[12] = "Precursor rel. intensity [%]";
-    newHeader[13] = "Precursor abs. intensity [au]";
+    int i = 0;
+    newHeader[i] = "Peptide alpha"; i++;
+    newHeader[i] = "Peptide beta";i++;
+    newHeader[i] = "Alpha amino acid";i++;
+    newHeader[i] = "Beta amino acid";i++;
+    newHeader[i] = "Alpha position";i++;
+    newHeader[i] = "Beta position";i++;
+    newHeader[i] = "HCD Scan Number";i++;
+    newHeader[i] = "CID Scan Number";i++;
+    newHeader[i] = "Precursor m/z";i++;
+    newHeader[i] = "Precursor Charge";i++;
+    newHeader[i] = "Isolated m/z";i++;
+    newHeader[i] = "Precursor mass dev [ppm]";i++;
+    newHeader[i] = "Precursor monoisotopic offset";i++;
+    newHeader[i] = "Precursor rel. intensity [%]";i++;
+    newHeader[i] = "Precursor abs. intensity [au]";i++;
     //information about Signature peaks and the dominant residues
-    newHeader[14] = "Signature peaks detected"; //0-6
-    newHeader[15] = "Signature peaks summed abs int. [%]";
-    newHeader[16] = "Signature peaks compared to MS2-TIC [%]";
-    newHeader[17] = "Alpha charge states detected";
-    newHeader[18] = "Beta charge states detected";
-    newHeader[19] = "Alpha dominant charge state";
-    newHeader[20] = "Beta dominant charge state";
-    newHeader[21] = "Alpha sides detected"; //short, long, both
-    newHeader[22] = "Beta sides detected";
-    newHeader[23] = "Alpha dominant side detected";
-    newHeader[24] = "Beta dominant side detected";
+    newHeader[i] = "Signature peaks detected";i++; //0-6
+    newHeader[i] = "Signature peaks summed abs int. [%]";i++;
+    newHeader[i] = "Signature peaks compared to MS2-TIC [%]";i++;
+    newHeader[i] = "Alpha charge states detected";i++;
+    newHeader[i] = "Beta charge states detected";i++;
+    newHeader[i] = "Alpha dominant charge state";i++;
+    newHeader[i] = "Beta dominant charge state";i++;
+    newHeader[i] = "Alpha sides detected";i++; //short, long, both
+    newHeader[i] = "Beta sides detected";i++;
+    newHeader[i] = "Alpha dominant side detected";i++;
+    newHeader[i] = "Beta dominant side detected";i++;
 
-    newHeader[25] = "Alpha mods detected"; //short, long, both
-    newHeader[26] = "Beta mods detected";
-    newHeader[27] = "Alpha dominant mod detected";
-    newHeader[28] = "Beta dominant mods detected";
+    newHeader[i] = "Alpha mods detected";i++; //short, long, both
+    newHeader[i] = "Beta mods detected";i++;
+    newHeader[i] = "Alpha dominant mod detected";i++;
+    newHeader[i] = "Beta dominant mods detected";i++;
 
     //information about the detected fragments
-    newHeader[29] = "Alpha alkene short detected"; //true||false
-    newHeader[30] = "Alpha thial short detected";
-    newHeader[31] = "Alpha SO short detected";
-    newHeader[32] = "Alpha alkene long detected";
-    newHeader[33] = "Alpha thial long detected";
-    newHeader[34] = "Alpha SO long detected";
-    newHeader[35] = "Beta alkene short detected"; //true||false
-    newHeader[36] = "Beta thial short detected";
-    newHeader[37] = "Beta SO short detected";
-    newHeader[38] = "Beta alkene long detected";
-    newHeader[39] = "Beta thial long detected";
-    newHeader[40] = "Beta SO long detected";
+    newHeader[i] = "Alpha alkene short detected";i++; //true||false
+    newHeader[i] = "Alpha thial short detected";i++;
+    newHeader[i] = "Alpha SO short detected";i++;
+    newHeader[i] = "Alpha alkene long detected";i++;
+    newHeader[i] = "Alpha thial long detected";i++;
+    newHeader[i] = "Alpha SO long detected";i++;
+    newHeader[i] = "Beta alkene short detected";i++; //true||false
+    newHeader[i] = "Beta thial short detected";i++;
+    newHeader[i] = "Beta SO short detected";i++;
+    newHeader[i] = "Beta alkene long detected";i++;
+    newHeader[i] = "Beta thial long detected";i++;
+    newHeader[i] = "Beta SO long detected";i++;
 
 
-    newHeader[41] = "Alpha alkene short rel. int. [%]";
-    newHeader[42] = "Alpha thial short rel. int. [%]";
-    newHeader[43] = "Alpha SO short rel. int. [%]";
-    newHeader[44] = "Alpha alkene long rel. int. [%]";
-    newHeader[45] = "Alpha thial long rel. int. [%]";
-    newHeader[46] = "Alpha SO long rel. int. [%]";
-    newHeader[47] = "Beta alkene short rel. int. [%]";
-    newHeader[48] = "Beta thial short rel. int. [%]";
-    newHeader[49] = "Beta SO short rel. int. [%]";
-    newHeader[50] = "Beta alkene long rel. int. [%]";
-    newHeader[51] = "Beta thial long rel. int. [%]";
-    newHeader[52] = "Beta SO long rel. int. [%]";
+    newHeader[i] = "Alpha alkene short rel. int. [%]";i++;
+    newHeader[i] = "Alpha thial short rel. int. [%]";i++;
+    newHeader[i] = "Alpha SO short rel. int. [%]";i++;
+    newHeader[i] = "Alpha alkene long rel. int. [%]";i++;
+    newHeader[i] = "Alpha thial long rel. int. [%]";i++;
+    newHeader[i] = "Alpha SO long rel. int. [%]";i++;
+    newHeader[i] = "Beta alkene short rel. int. [%]";i++;
+    newHeader[i] = "Beta thial short rel. int. [%]";i++;
+    newHeader[i] = "Beta SO short rel. int. [%]";i++;
+    newHeader[i] = "Beta alkene long rel. int. [%]";i++;
+    newHeader[i] = "Beta thial long rel. int. [%]";i++;
+    newHeader[i] = "Beta SO long rel. int. [%]";i++;
 
-    newHeader[53] = "Alpha alkene short abs. int. [au]";
-    newHeader[54] = "Alpha thial short abs. int. [au]";
-    newHeader[55] = "Alpha SO short abs. int. [au]";
-    newHeader[56] = "Alpha alkene long abs. int. [au]";
-    newHeader[57] = "Alpha thial long abs. int. [au]";
-    newHeader[58] = "Alpha SO long abs. int. [au]";
-    newHeader[59] = "Beta alkene short abs. int. [au]";
-    newHeader[60] = "Beta thial short abs. int. [au]";
-    newHeader[61] = "Beta SO short abs. int. [au]";
-    newHeader[62] = "Beta alkene long abs. int. [au]";
-    newHeader[63] = "Beta thial long abs. int. [au]";
-    newHeader[64] = "Beta SO long abs. int. [au]";
+    newHeader[i] = "Alpha alkene short abs. int. [au]";i++;
+    newHeader[i] = "Alpha thial short abs. int. [au]";i++;
+    newHeader[i] = "Alpha SO short abs. int. [au]";i++;
+    newHeader[i] = "Alpha alkene long abs. int. [au]";i++;
+    newHeader[i] = "Alpha thial long abs. int. [au]";i++;
+    newHeader[i] = "Alpha SO long abs. int. [au]";i++;
+    newHeader[i] = "Beta alkene short abs. int. [au]";i++;
+    newHeader[i] = "Beta thial short abs. int. [au]";i++;
+    newHeader[i] = "Beta SO short abs. int. [au]";i++;
+    newHeader[i] = "Beta alkene long abs. int. [au]";i++;
+    newHeader[i] = "Beta thial long abs. int. [au]";i++;
+    newHeader[i] = "Beta SO long abs. int. [au]";
 
     //this loop generates the header
     String sep = "";
@@ -576,9 +577,6 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
         double hcdRetentionTime = Double.parseDouble(splitValues[captionPositions.get("Retention time in sec")]);
         String linkagePep1 = splitValues[captionPositions.get("best linkage position peptide 1")];
         String linkagePep2 = splitValues[captionPositions.get("best linkage position peptide 2")];
-
-        //TODO:Debugging
-        System.out.println("Values of MeroX read in");
 
         //use hcd scan number and look if CID scan is present and for the number
         boolean cidPresent = false;
@@ -620,17 +618,15 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
                 }
             }
         }
-        //TODO: debugging
-        System.out.println("found CID scan");
+
         //escapes the loop if CID scan isn't present
         if (!cidPresent)
             continue;
         //cidScanNumber now contains the information about the cidScan
         Scan cidMatchScan = runIn.getScanByStringNum(Integer.toString(cidScanNumber));
-        //TODO: debugging
-        System.out.println("CID scan read in");
         //prepare values for XL generation
         int xlChargeState = Math.toIntExact(cidMatchScan.getPrecursorMz().get(0).getPrecursorCharge());
+        //this only gives back the monoisotopic peak determined by the MS and not the real isolated peak! however, no way to get this info from the mzXML file?
         double cidIsoMassToCharge = (double) cidMatchScan.getPrecursorMz().get(0).getValue();
         String cidRTString = cidMatchScan.getRetentionTime().toString();
         cidRTString = cidRTString.replace("PT", "");
@@ -642,32 +638,29 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
         //invoke XL constructor
         Xl currentXl = new Xl(peptide1, peptide2, xlIn, xlChargeState, hcdScanNumber, cidScanNumber, fragMethodIn, cidIsoMassToCharge, xlPos1,
                 xlPos2, aaListIn, cidRT);
-        //TODO: debugging
-        System.out.println("XL generated");
+
         //XL is now present, prepare CID spectrum to search against
         //TODO: implement scan to mySpectrum conversion?
         MySpectrum currentCIDSpectrum = MzXMLReadIn.mzXMLToMySpectrum(runIn,Integer.toString(cidScanNumber));
         currentCIDSpectrum.chargeStateAssigner();
-        //TODO: debugging
-        System.out.println("CID Myspectrum created, charge state assigned");
+
         //use the Xl class to check the spectrum for the specific peaks
         currentXl.xlIonMatcher(currentCIDSpectrum, ppmDevIn);
-        //TODO: debugging
-        System.out.println("xl ion matcher ran");
+
         //TODO:get all the information into the string to parse to CSV
         //Stringproducer needs 3 spectra: precursor, HCD, CID
         int fullScanNumber = hcdScan.getPrecursorMz().get(0).getPrecursorScanNum().intValue();
         MySpectrum fullMySpectrum = MzXMLReadIn.mzXMLToMySpectrum(runIn, Integer.toString(fullScanNumber));
         MySpectrum hcdMySpectrum = MzXMLReadIn.mzXMLToMySpectrum(runIn, Integer.toString(hcdScanNumber));
         String output = currentXl.xlMatchesStringProducer(fullMySpectrum, hcdMySpectrum, currentCIDSpectrum);
-        //TODO: debugging
-        System.out.println("output string created");
+
         //new line is already attached from function
         csvWriter.write(output);
         csvWriter.flush();
         System.out.println("Analyzed crosslink from spectrum: "+hcdScanNumber);
     }
-    scanner.close();
+
+    csvWriter.flush();
     csvWriter.close();
     System.out.println("Analysis complete!");
 }

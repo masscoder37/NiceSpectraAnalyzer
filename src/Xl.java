@@ -161,14 +161,16 @@ public class Xl {
             currentModList.add(mod);
             //first, adjustPeptide and sumFormula of peptide
             Peptide modPeptide = this.peptideAlpha;
-            //TODO: for peptideModifier to work, peptide can not already be modified!!!
+            //for peptideModifier to work, peptide can not already be modified!!!
+            //fixed in the peptideModifier function, peptide can now be already modified
             modPeptide= modPeptide.peptideModifier(currentModList);
             //loop through all the different charge states
+            //TODO: Protons are not added to the sum formula
             for (int z = 1; z < this.theoreticalXLIon.getCharge(); z++){
                 SumFormula modPeptideFormula = modPeptide.getSumFormula();
                 //to this formula, the protons have to be added
                 //add the proton formula as often as it is charged
-                for (int i = 1; i > z+1; i++){
+                for (int i = 1; i < z+1; i++){
                     modPeptideFormula = SumFormula.sumFormulaJoiner(modPeptideFormula, SumFormula.getProtonFormula());
                 }
                 //now, create a xlfragmention and add it to the list of alpha-fragment ions
@@ -188,7 +190,7 @@ public class Xl {
                 SumFormula modPeptideFormula = modPeptide.getSumFormula();
                 //to this formula, the protons have to be added
                 //add the proton formula as often as it is charged
-                for (int i = 1; i > z+1; i++){
+                for (int i = 1; i < z+1; i++){
                     modPeptideFormula = SumFormula.sumFormulaJoiner(modPeptideFormula, SumFormula.getProtonFormula());
                 }
                 //now, create a xlfragmention and add it to the list of alpha-fragment ions
@@ -208,7 +210,7 @@ public class Xl {
                 SumFormula modPeptideFormula = modPeptide.getSumFormula();
                 //to this formula, the protons have to be added
                 //add the proton formula as often as it is charged
-                for (int i = 1; i > z+1; i++){
+                for (int i = 1; i < z+1; i++){
                     modPeptideFormula = SumFormula.sumFormulaJoiner(modPeptideFormula, SumFormula.getProtonFormula());
                 }
                 //now, create a xlfragmention and add it to the list of alpha-fragment ions
@@ -228,7 +230,7 @@ public class Xl {
                 SumFormula modPeptideFormula = modPeptide.getSumFormula();
                 //to this formula, the protons have to be added
                 //add the proton formula as often as it is charged
-                for (int i = 1; i > z+1; i++){
+                for (int i = 1; i < z+1; i++){
                     modPeptideFormula = SumFormula.sumFormulaJoiner(modPeptideFormula, SumFormula.getProtonFormula());
                 }
                 //now, create a xlfragmention and add it to the list of alpha-fragment ions
@@ -279,9 +281,9 @@ public class Xl {
         sb.append((this.getPeptideBeta().getSequence())).append(",");
 
         //to figure out mod. amino acid, go to position in sequence.
-        String alphaAA = Character.toString(this.getPeptideAlpha().getSequence().charAt(this.xlPosAlpha-1));
+        String alphaAA = Character.toString(this.getPeptideAlpha().getUnmodifiedSequence().charAt(this.xlPosAlpha-1));
         sb.append(alphaAA).append(",");
-        String betaAA = Character.toString(this.getPeptideBeta().getSequence().charAt(this.xlPosBeta-1));
+        String betaAA = Character.toString(this.getPeptideBeta().getUnmodifiedSequence().charAt(this.xlPosBeta-1));
         sb.append(betaAA).append(",");
         sb.append(this.xlPosAlpha).append(",");
         sb.append(this.xlPosBeta).append(",");
