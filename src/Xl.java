@@ -267,6 +267,7 @@ public class Xl {
             }
         }
         this.xlIonMatches = matchList;
+        QuickSort.xlIonMatchesQuickSort(this.xlIonMatches);
     }
     //comma is the used separator for the .csv file
     public String xlMatchesStringProducer(MySpectrum fullScanIn, MySpectrum hcdScanIn, MySpectrum cidScanIn){
@@ -888,32 +889,59 @@ public class Xl {
         sb.append(scientific.format(bSOLongAbsInt)).append(",");
 
         //information about 4 most intense signature peaks
-        SpecificXLIonMatch[] mostIntenseMatches= new SpecificXLIonMatch[4];
-        ArrayList<SpecificXLIonMatch> allMatches = new ArrayList<>(this.xlIonMatches);
-        for (int i = 0; i < 4; i++){
-            if (allMatches.size() == 0)
-                break;
-            double currentInt = 0;
-            double currentMaxInt = 0;
-            SpecificXLIonMatch match = null;
-            int maxPos = 0;
-            for (int m = 0; m < allMatches.size(); m++){
-                currentInt = allMatches.get(m).getMatchedPeak().getIntensity();
-                if (currentInt > currentMaxInt){
-                    currentMaxInt = currentInt;
-                    match = new SpecificXLIonMatch(allMatches.get(m).getMatchedPeak(), allMatches.get(m).getMatchedFragIon());
-                    maxPos = m;
-                }
-            }
-
-
-
-
+        //list of specific XL ion matches is already ordered, so take first 4 entries
+        int currentMaxPeak = 0;
+        if (this.xlIonMatches.get(currentMaxPeak) != null){
+            sb.append(this.xlIonMatches.get(currentMaxPeak).getMatchedFragIon().getPepType()).append(" ").append(this.xlIonMatches.get(currentMaxPeak).getMatchedFragIon().getCharge()).append("+").append(",");
+            sb.append(this.xlIonMatches.get(currentMaxPeak).getMatchedFragIon().getCliXlinkMod()).append(" ").append(this.xlIonMatches.get(currentMaxPeak).getMatchedFragIon().getCliXlinkSize()).append(",");
+            sb.append(twoDec.format(this.xlIonMatches.get(currentMaxPeak).getMatchedPeak().getRelIntensity())).append(",");
+            sb.append(fourDec.format(this.xlIonMatches.get(currentMaxPeak).getMatchedPeak().getIntensity())).append(",");
         }
-
-
-
-
+        else{
+            sb.append("NA").append(",");
+            sb.append("NA").append(",");
+            sb.append(0).append(",");
+            sb.append(0).append(",");
+        }
+        currentMaxPeak++;
+        if (this.xlIonMatches.get(currentMaxPeak) != null){
+            sb.append(this.xlIonMatches.get(currentMaxPeak).getMatchedFragIon().getPepType()).append(" ").append(this.xlIonMatches.get(currentMaxPeak).getMatchedFragIon().getCharge()).append("+").append(",");
+            sb.append(this.xlIonMatches.get(currentMaxPeak).getMatchedFragIon().getCliXlinkMod()).append(" ").append(this.xlIonMatches.get(currentMaxPeak).getMatchedFragIon().getCliXlinkSize()).append(",");
+            sb.append(twoDec.format(this.xlIonMatches.get(currentMaxPeak).getMatchedPeak().getRelIntensity())).append(",");
+            sb.append(fourDec.format(this.xlIonMatches.get(currentMaxPeak).getMatchedPeak().getIntensity())).append(",");
+        }
+        else{
+            sb.append("NA").append(",");
+            sb.append("NA").append(",");
+            sb.append(0).append(",");
+            sb.append(0).append(",");
+        }
+        currentMaxPeak++;
+        if (this.xlIonMatches.get(currentMaxPeak) != null){
+            sb.append(this.xlIonMatches.get(currentMaxPeak).getMatchedFragIon().getPepType()).append(" ").append(this.xlIonMatches.get(currentMaxPeak).getMatchedFragIon().getCharge()).append("+").append(",");
+            sb.append(this.xlIonMatches.get(currentMaxPeak).getMatchedFragIon().getCliXlinkMod()).append(" ").append(this.xlIonMatches.get(currentMaxPeak).getMatchedFragIon().getCliXlinkSize()).append(",");
+            sb.append(twoDec.format(this.xlIonMatches.get(currentMaxPeak).getMatchedPeak().getRelIntensity())).append(",");
+            sb.append(fourDec.format(this.xlIonMatches.get(currentMaxPeak).getMatchedPeak().getIntensity())).append(",");
+        }
+        else{
+            sb.append("NA").append(",");
+            sb.append("NA").append(",");
+            sb.append(0).append(",");
+            sb.append(0).append(",");
+        }
+        currentMaxPeak++;
+        if (this.xlIonMatches.get(currentMaxPeak) != null){
+            sb.append(this.xlIonMatches.get(currentMaxPeak).getMatchedFragIon().getPepType()).append(" ").append(this.xlIonMatches.get(currentMaxPeak).getMatchedFragIon().getCharge()).append("+").append(",");
+            sb.append(this.xlIonMatches.get(currentMaxPeak).getMatchedFragIon().getCliXlinkMod()).append(" ").append(this.xlIonMatches.get(currentMaxPeak).getMatchedFragIon().getCliXlinkSize()).append(",");
+            sb.append(twoDec.format(this.xlIonMatches.get(currentMaxPeak).getMatchedPeak().getRelIntensity())).append(",");
+            sb.append(fourDec.format(this.xlIonMatches.get(currentMaxPeak).getMatchedPeak().getIntensity())).append(",");
+        }
+        else{
+            sb.append("NA").append(",");
+            sb.append("NA").append(",");
+            sb.append(0).append(",");
+            sb.append(0).append(",");
+        }
         //include next line command
         sb.append("\n");
         //sb should be completely ready now

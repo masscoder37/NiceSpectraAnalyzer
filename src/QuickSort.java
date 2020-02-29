@@ -12,10 +12,9 @@ public class QuickSort {
         return peakListIn;
     }
 
-    public static  ArrayList<SpecificXLIonMatch> xlIonMatchesQuickSort (ArrayList<SpecificXLIonMatch> matchListIn){
+    public static  void xlIonMatchesQuickSort (ArrayList<SpecificXLIonMatch> matchListIn){
         qsortSpecificXLIonMatch (matchListIn, 0, matchListIn.size()-1);
         Collections.reverse(matchListIn);
-        return matchListIn;
     }
 
     private static void qSort(ArrayList<Peak> peakListIn, int left, int right){

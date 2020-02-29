@@ -472,12 +472,14 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
         }
         index++;
     }
+    if (captionPositions.size() != 6)
+        throw new IllegalArgumentException("Something went wrong with reading in the caption positions of the MeroX results file!");
     //prepare new File and write header
     String newFilePath = resultFileIn.getAbsolutePath().replace(".csv", "")+"_XLIonsAnalysis.csv";
     File outputCSV = new File(newFilePath);
     PrintWriter csvWriter = new PrintWriter(outputCSV);
     StringBuilder sb = new StringBuilder();
-    String[] newHeader = new String[84];
+    String[] newHeader = new String[100];
     //general XL information
     int i = 0;
     newHeader[i] = "Peptide alpha"; i++;
@@ -559,16 +561,20 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
     newHeader[i] = "Summed beta alkene long abs. int. [au]";i++;
     newHeader[i] = "Summed beta thial long abs. int. [au]";i++;
     newHeader[i] = "Summed beta SO long abs. int. [au]"; i++;
-    newHeader[i] = "Most intense signature peak"; i++;
+    newHeader[i] = "Most intense signature peak (peptide and charge)"; i++;
+    newHeader[i] = "Most intense signature peak (mod and size)"; i++;
     newHeader[i] = "Most intense signature peak rel. int. [%]"; i++;
     newHeader[i] = "Most intense signature peak abs. int. [au]"; i++;
-    newHeader[i] = "2nd most intense signature peak"; i++;
+    newHeader[i] = "2nd most intense signature peak (peptide and charge)"; i++;
+    newHeader[i] = "2nd most intense signature peak (mod and size)"; i++;
     newHeader[i] = "2nd most intense signature peak rel. int. [%]"; i++;
     newHeader[i] = "2nd most intense signature peak abs. int. [au]"; i++;
-    newHeader[i] = "3rd most intense signature peak"; i++;
+    newHeader[i] = "3rd most intense signature peak (peptide and charge)"; i++;
+    newHeader[i] = "3rd most intense signature peak (mod and size)"; i++;
     newHeader[i] = "3rd most intense signature peak rel. int. [%]"; i++;
     newHeader[i] = "3rd most intense signature peak abs. int. [au]"; i++;
-    newHeader[i] = "4th most intense signature peak"; i++;
+    newHeader[i] = "4th most intense signature peak (peptide and charge)"; i++;
+    newHeader[i] = "4th most intense signature peak (mod and size)"; i++;
     newHeader[i] = "4th most intense signature peak rel. int. [%]"; i++;
     newHeader[i] = "4th most intense signature peak abs. int. [au]";
 
@@ -596,6 +602,8 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
         double hcdRetentionTime = Double.parseDouble(splitValues[captionPositions.get("Retention time in sec")]);
         String linkagePep1 = splitValues[captionPositions.get("best linkage position peptide 1")];
         String linkagePep2 = splitValues[captionPositions.get("best linkage position peptide 2")];
+
+
 
         //use hcd scan number and look if CID scan is present and for the number
         boolean cidPresent = false;
