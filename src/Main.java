@@ -137,14 +137,15 @@ public class Main {
         
 
 
-        String runFilePath = "C:\\Programmingfolder\\CID_HCD_Comparison\\newAnalysis\\TGR_08646.mzXML";
+        String runFilePath = "C:\\MeroX MS Data\\Experiments\\XL1\\raw\\HCD_CID\\TGR_08672.mzXML";
         File runFile = new File(runFilePath);
-        MzXMLFile mzXMLRun = new MzXMLFile(runFile);
+        //MzXMLFile mzXMLRun = new MzXMLFile(runFile);
 
         String meroxFilePath = "C:\\Programmingfolder\\CID_HCD_Comparison\\newAnalysis\\TGR_08646_CID20_10ms_forAnalysis_CSV.csv";
-        File meroxFile = new File(meroxFilePath);
+        //File meroxFile = new File(meroxFilePath);
 
-        CSVReader.xlSpectraChecker(meroxFile, mzXMLRun, "CID", "cliXlink", aminoAcidsList, 10);
+        //CSVReader.xlSpectraChecker(meroxFile, mzXMLRun, "CID", "cliXlink", aminoAcidsList, 10);
+
 
 
 
