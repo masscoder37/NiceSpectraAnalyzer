@@ -147,14 +147,6 @@ public class Main {
         //CSVReader.xlSpectraChecker(meroxFile, mzXMLRun, "CID", "cliXlink", aminoAcidsList, 10);
 
 
-
-
-
-
-
-
-
-
         /*Peptide unmod = new Peptide("PCMC", aminoAcidsList);
         ArrayList<Modification> modList1 = new ArrayList<>();
         modList1.add(Modification.carbamidomethylation());
