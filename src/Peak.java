@@ -87,6 +87,8 @@ public class Peak {
     public int getScanNumber(){
         return this.scanNumberAffil;
     }
+    public boolean isChargeStateKnown(){return this.chargeStateKnown;}
+
 
 
     public void peakPrinter (){

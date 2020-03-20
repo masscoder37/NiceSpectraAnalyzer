@@ -11,10 +11,13 @@ public class MySpectrum {
     private int numberOfPeaks;
     private int scanNumber;
     private String scanHeader;
+    private boolean chargeStatesAssigned;
+    private double spectrumTIC;
     //various Decimal Formats for Printer
     private DecimalFormat fourDec = new DecimalFormat("0.0000");
     private DecimalFormat twoDec = new DecimalFormat("0.00");
     private DecimalFormat scientific = new DecimalFormat("0.00E0");
+
 
     public MySpectrum(ArrayList<Peak> peaksIn, int scanNumberIn, String scanHeaderIn) {
         this.scanNumber = scanNumberIn;
@@ -25,6 +28,11 @@ public class MySpectrum {
         peaksIn = QuickSort.peakListQuickSort(peaksIn);
         this.peakList = peakPacker(peaksIn);
         this.numberOfPeaks = this.peakList.size();
+        this.chargeStatesAssigned = false;
+        this.spectrumTIC = 0;
+        for (Peak peak : this.peakList){
+            spectrumTIC += peak.getIntensity();
+        }
     }
 
 
@@ -73,11 +81,13 @@ public class MySpectrum {
     }
 
     public void chargeStateAssigner() {
-        ArrayList<Peak> peaksIn = new ArrayList<>();
+        ArrayList<Peak> peaksIn = this.getPeakList();
         //all peaks from MySpectrum are already ordered. Using Quicksort again would be the worst possible case
-        peaksIn = this.getPeakList();
         int numberOfPeaks = peaksIn.size();
         //this variable sets the ppm tolerance and can be tweaked!
+        //with this tolerance, a peak with 2000Da mass can be detected with a deviation of about 7 ppm
+        //e.g. if M(0) is -7ppm and M(1) is +7ppm (max deviation), resulting mass error is 0.028 Da
+        //however, for peak with 500 mass
         double daTol = 0.03;
         //for every peak, look at 10 neighbours
         ArrayList<Neighbour> neighbours = new ArrayList<>();
@@ -201,6 +211,7 @@ public class MySpectrum {
             topOccurences.clear();
             Arrays.fill(possibleChargeStates, null);
         }
+        this.chargeStatesAssigned = true;
     }
 
 
@@ -269,6 +280,9 @@ public class MySpectrum {
         chargeStateDistri[5] = chargeHigher;
         return chargeStateDistri;
     }
+
+    public boolean areChargeStatesAssigned(){return this.chargeStatesAssigned;}
+    public double getSpectrumTIC(){return this.spectrumTIC;}
 
     public void spectrumPrinter() {
         System.out.println("");
