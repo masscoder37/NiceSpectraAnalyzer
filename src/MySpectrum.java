@@ -8,6 +8,7 @@ import java.util.Arrays;
 // uses an ArrayList of Peaks to create a spectrum
 public class MySpectrum {
     private ArrayList<Peak> peakList;
+    private ArrayList<Feature> featureList;
     private int numberOfPeaks;
     private int scanNumber;
     private String scanHeader;
@@ -87,8 +88,9 @@ public class MySpectrum {
         //this variable sets the ppm tolerance and can be tweaked!
         //with this tolerance, a peak with 2000Da mass can be detected with a deviation of about 7 ppm
         //e.g. if M(0) is -7ppm and M(1) is +7ppm (max deviation), resulting mass error is 0.028 Da
-        //however, for peak with 500 mass
-        double daTol = 0.03;
+        //however, for peak with 500 mass 0.03 is equivalent to 30 ppm --> change to ppm dependence
+        //double daTol = 0.03;
+        double ppmTol = 21; //this is 2.1 * 10 ppm, which takes into account the worst case scenario, -10 ppm for M(0) and +10 ppm for M(1), and gives some leeway
         //for every peak, look at 10 neighbours
         ArrayList<Neighbour> neighbours = new ArrayList<>();
         //loop through all the peaks in the peaklist
@@ -108,7 +110,7 @@ public class MySpectrum {
                 }
             }
 
-            //TODO try to search for the charge state explaining most of neighbouring peaks
+            //try to search for the charge state explaining most of neighbouring peaks
             //check the whole list of mass differences for multiples of isotope mass
             //also, multiples of delta mass has to be accounted for --> leading to whole isotope pattern
 
@@ -122,7 +124,8 @@ public class MySpectrum {
                     //supposed Diff is the expected absolute mass difference
                     double supposedDiff = n * AtomicMasses.getNEUTRON() / z;
                     for (Neighbour neighbour : neighbours) {
-                        if (DeviationCalc.isotopeMatch(supposedDiff, neighbour.getMassDiff(), daTol)) {
+                        //if (DeviationCalc.isotopeMatch(supposedDiff, neighbour.getMassDiff(), DaTol)) ... switched from Da to PPM based cal
+                        if (DeviationCalc.isotopeMatchPPM(supposedDiff, neighbour.getMassDiff(), ppmTol)) {
                             possibleChargeStates[z].increaseOccurence();
                             possibleChargeStates[z].addIntensity(neighbour.getNeighbourPeak().getIntensity());
                             //only if n = 1, there is one peak which is a representative of the charge state
@@ -134,7 +137,7 @@ public class MySpectrum {
                 }
             }
             //now, all charge state occurences are set and can be analyzed
-            //TODO: analyze the charge state occurences, weigh according to highest max int. and occurence
+            //analyze the charge state occurences, weigh according to highest max int. and occurence
             //first, find the charge states which occur the most times
             ArrayList<ChargeStateOccurence> topOccurences = new ArrayList<>();
             int topOccurenceNumber = 0;
@@ -215,10 +218,21 @@ public class MySpectrum {
     }
 
 
+    //TODO: assign the Features accordingly
+    //TODO: set Feature list, link the peaks to the corresponding feature
+    public void assignFeatures(){
+
+
+
+    }
+
+
     //getter
     public ArrayList<Peak> getPeakList() {
         return this.peakList;
     }
+
+    public ArrayList<Feature> getFeatureList(){return this.featureList;}
 
     public int getScanNumber() {
         return this.scanNumber;

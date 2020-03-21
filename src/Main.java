@@ -138,7 +138,7 @@ public class Main {
 
 
         String runFilePath = "C:\\MeroX MS Data\\Experiments\\XL1\\raw\\HCD_CID\\TGR_08672.mzXML";
-        File runFile = new File(runFilePath);
+        //File runFile = new File(runFilePath);
         //MzXMLFile mzXMLRun = new MzXMLFile(runFile);
 
         String meroxFilePath = "C:\\Programmingfolder\\CID_HCD_Comparison\\newAnalysis\\TGR_08646_CID20_10ms_forAnalysis_CSV.csv";
@@ -154,6 +154,8 @@ public class Main {
         ArrayList<Modification> modList2 = new ArrayList<>();
         modList2.add(Modification.oxidation(3));
         Peptide mod2 = mod1.peptideModifier(modList2);*/
+
+        Visualization.massSpectrumTest("Hier könnte ihr Spektrum stehen!");
 
 
         }

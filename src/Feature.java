@@ -32,7 +32,7 @@ public class Feature {
 
 
 
-    //TODO: function which is fed a spectrum and determines all the features in the spectrum, returns list of features in that spectrum
+    //TODO: feature Assigner is implemented, but the Feature object is yet to be implemented in MySpectrum
 
     public static ArrayList<Feature> featureAssigner(MySpectrum spectrumIn, double deviationIn){
         ArrayList<Feature> out = new ArrayList<>();

@@ -27,6 +27,13 @@ public class DeviationCalc {
         return (massDiff<=daAllowed);
     }
 
+    public static boolean isotopeMatchPPM (double massInReal, double massInMeasured, double maxPPMDev){
+        //first, calculate Da difference from max PPMDev
+        double allowedDa = massInReal / (Math.pow(10,6)) * maxPPMDev;
+        double massDiff = Math.abs(massInReal-massInMeasured);
+        return (massDiff <= allowedDa);
+    }
+
     //make a new function which takes into account the charge states of the peak
     public static boolean massAndChargeMatch (double massInTheoretical, int chargeStateTheoretical, Peak peakIn, double ppmDevAllowed){
         boolean isMatch = false;

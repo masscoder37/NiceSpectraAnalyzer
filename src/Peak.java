@@ -5,6 +5,8 @@ import java.util.ArrayList;
  * Created by micha on 6/14/2017.
  */
 
+
+//TODO: implement association with specific feature in spectrum
 public class Peak {
     private double mass;
     private int charge;
