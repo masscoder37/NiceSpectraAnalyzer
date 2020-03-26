@@ -1,6 +1,8 @@
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  * Created by Michael Stadlmeier on 6/20/2017.
@@ -13,6 +15,7 @@ public class MySpectrum {
     private int scanNumber;
     private String scanHeader;
     private boolean chargeStatesAssigned;
+    private boolean featuresAssigned;
     private double spectrumTIC;
     //various Decimal Formats for Printer
     private DecimalFormat fourDec = new DecimalFormat("0.0000");
@@ -34,6 +37,7 @@ public class MySpectrum {
         for (Peak peak : this.peakList){
             spectrumTIC += peak.getIntensity();
         }
+        this.featuresAssigned = false;
     }
 
 
@@ -81,7 +85,7 @@ public class MySpectrum {
         return peaksToPack;
     }
 
-    public void chargeStateAssigner() {
+    public void assignChargeStates(double ppmDevIn) {
         ArrayList<Peak> peaksIn = this.getPeakList();
         //all peaks from MySpectrum are already ordered. Using Quicksort again would be the worst possible case
         int numberOfPeaks = peaksIn.size();
@@ -90,7 +94,7 @@ public class MySpectrum {
         //e.g. if M(0) is -7ppm and M(1) is +7ppm (max deviation), resulting mass error is 0.028 Da
         //however, for peak with 500 mass 0.03 is equivalent to 30 ppm --> change to ppm dependence
         //double daTol = 0.03;
-        double ppmTol = 21; //this is 2.1 * 10 ppm, which takes into account the worst case scenario, -10 ppm for M(0) and +10 ppm for M(1), and gives some leeway
+        double ppmTol = ppmDevIn *2.1; //this is 2.1 * 10 ppm, which takes into account the worst case scenario, -10 ppm for M(0) and +10 ppm for M(1), and gives some leeway
         //for every peak, look at 10 neighbours
         ArrayList<Neighbour> neighbours = new ArrayList<>();
         //loop through all the peaks in the peaklist
@@ -122,10 +126,10 @@ public class MySpectrum {
                 //include another for loop to check different multiples of the isotope envelope
                 for (int n = 1; n < 5; n++) {
                     //supposed Diff is the expected absolute mass difference
-                    double supposedDiff = n * AtomicMasses.getNEUTRON() / z;
+                    double supposedM1 = current.getMass() + n * AtomicMasses.getNEUTRON() / z;
                     for (Neighbour neighbour : neighbours) {
-                        //if (DeviationCalc.isotopeMatch(supposedDiff, neighbour.getMassDiff(), DaTol)) ... switched from Da to PPM based cal
-                        if (DeviationCalc.isotopeMatchPPM(supposedDiff, neighbour.getMassDiff(), ppmTol)) {
+                        //if (DeviationCalc.isotopeMatch(supposedM1, neighbour.getMassDiff(), DaTol)) ... switched from Da to PPM based cal
+                        if (DeviationCalc.isotopeMatchPPM(supposedM1, neighbour.getNeighbourPeak().getMass(), ppmTol)) {
                             possibleChargeStates[z].increaseOccurence();
                             possibleChargeStates[z].addIntensity(neighbour.getNeighbourPeak().getIntensity());
                             //only if n = 1, there is one peak which is a representative of the charge state
@@ -220,10 +224,28 @@ public class MySpectrum {
 
     //TODO: assign the Features accordingly
     //TODO: set Feature list, link the peaks to the corresponding feature
-    public void assignFeatures(){
-
-
-
+    public void assignFeatures(double ppmDev){
+        //first, check if charge states were assigned
+        if (!this.chargeStatesAssigned)
+            this.assignChargeStates(ppmDev);
+        //set the feature list
+        this.featureList = new ArrayList<>();
+        this.featureList.addAll(Feature.featureAssigner(this,ppmDev));
+        //modify the peaks to know about their belonging to a feature and point to the feature
+        //to avoid having to iterate over the peaklist again and again, convert into LinkedHashMap
+        HashMap<Double, Peak> fastAccessMap = new HashMap<>();
+        for (Peak peak : this.peakList){
+            fastAccessMap.put(peak.getMass(), peak);
+        }
+        //now loop through the Featurelist and modify the respective peaks
+        for (Feature feature : this.featureList){
+            ArrayList<Peak> featurePeaks = new ArrayList<>();
+            featurePeaks.addAll(feature.getPeakList());
+            for(Peak featurePeak : featurePeaks){
+                fastAccessMap.get(featurePeak.getMass()).setFeature(feature);
+            }
+        }
+        this.featuresAssigned = true;
     }
 
 

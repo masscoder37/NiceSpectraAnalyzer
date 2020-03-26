@@ -15,7 +15,8 @@ public class Peak {
     private boolean isBasePeak;
     private int scanNumberAffil;
     private boolean chargeStateKnown;
-    DecimalFormat twoDec = new DecimalFormat("0.00");
+    private boolean isPartOfFeature;
+    private Feature associatedFeature;
 
 
     //initial constructor for peaks
@@ -32,6 +33,8 @@ public class Peak {
         this.scanNumberAffil = scanNumberIn;
         this.relInt = 0;
         this.isBasePeak = false;
+        this.isPartOfFeature = false;
+        this.associatedFeature = null;
     }
 
     //second constructor if charge is unknown, has to be set later
@@ -43,7 +46,8 @@ public class Peak {
         this.relInt = 0;
         this.chargeStateKnown= false;
         this.isBasePeak = false;
-
+        this.isPartOfFeature = false;
+        this.associatedFeature = null;
     }
 
 
@@ -64,7 +68,11 @@ public class Peak {
         else {
             this.chargeStateKnown = false;
         }
+    }
 
+    public void setFeature(Feature featureIn){
+        this.associatedFeature = featureIn;
+        this.isPartOfFeature = true;
     }
 
 
@@ -90,10 +98,32 @@ public class Peak {
         return this.scanNumberAffil;
     }
     public boolean isChargeStateKnown(){return this.chargeStateKnown;}
-
+    public Feature getFeature(){return this.associatedFeature;}
+    public boolean isPartOfFeature(){return this.isPartOfFeature;}
+    public double getFeatureIntensity(){
+        double intOut;
+        if (this.isPartOfFeature){
+            intOut = this.associatedFeature.getSummedAbsIntensity();
+        }
+        else{
+            intOut = this.intensity;
+        }
+        return intOut;
+    }
+    public double getFeatureRelIntPerTIC(){
+        double intOut;
+        if (this.isPartOfFeature){
+            intOut = this.associatedFeature.getSummedRelIntensityPerTIC();
+        }
+        else{
+            intOut = this.relInt;
+        }
+        return intOut;
+    }
 
 
     public void peakPrinter (){
+        DecimalFormat twoDec = new DecimalFormat("0.00");
         System.out.println("Mass: "+this.mass);
         System.out.println("Charge: "+this.charge);
         System.out.println("Intensity: "+this.intensity);

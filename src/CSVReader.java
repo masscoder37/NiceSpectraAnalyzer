@@ -669,7 +669,7 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
         //XL is now present, prepare CID spectrum to search against
         //TODO: implement scan to mySpectrum conversion?
         MySpectrum currentCIDSpectrum = MzXMLReadIn.mzXMLToMySpectrum(runIn,Integer.toString(cidScanNumber));
-        currentCIDSpectrum.chargeStateAssigner();
+        currentCIDSpectrum.assignChargeStates(ppmDevIn);
 
         //use the Xl class to check the spectrum for the specific peaks
         currentXl.xlIonMatcher(currentCIDSpectrum, ppmDevIn);

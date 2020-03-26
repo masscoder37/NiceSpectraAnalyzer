@@ -27,12 +27,11 @@ public class MzXMLReadIn {
         //scan Header shows precursor M/z and charge of precursor
         String scanHeader = "";
         try {
-            scanHeader += fourDec.format(currentSpectrum.getPrecursorMZ()) + ";" + currentSpectrum.getPrecursorCharge();
+            scanHeader += "MS2 of m/z "+ fourDec.format(currentSpectrum.getPrecursorMZ()) + " (z = " + currentSpectrum.getPrecursorCharge()+"+)";
         }
         catch (IllegalArgumentException e){
-            scanHeader = "NA;NA";
+            scanHeader = "MS1";
         }
-        scanHeader+= "+";
         //scan Number is set
         int scanNumber = Integer.parseInt(scanNumberIn);
         //get the peakList for creation of the Peak Objects

@@ -1,25 +1,11 @@
 import uk.ac.ebi.pride.tools.jmzreader.JMzReaderException;
-import uk.ac.ebi.pride.tools.jmzreader.model.IndexElement;
-import uk.ac.ebi.pride.tools.jmzreader.model.Param;
-import uk.ac.ebi.pride.tools.jmzreader.model.Spectrum;
-import uk.ac.ebi.pride.tools.jmzreader.model.impl.CvParam;
-import uk.ac.ebi.pride.tools.jmzreader.model.impl.ParamGroup;
-import uk.ac.ebi.pride.tools.jmzreader.model.impl.UserParam;
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLFile;
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLParsingException;
-import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLSpectrum;
-import uk.ac.ebi.pride.tools.mzxml_parser.mzxml.model.PrecursorMz;
-import uk.ac.ebi.pride.tools.mzxml_parser.mzxml.model.Scan;
-import uk.ac.ebi.pride.tools.mzxml_parser.mzxml.model.ScanOrigin;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.PrintWriter;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Michael Stadlmeier on 6/13/2017.
@@ -137,9 +123,11 @@ public class Main {
         
 
 
-        String runFilePath = "C:\\MeroX MS Data\\Experiments\\XL1\\raw\\HCD_CID\\TGR_08672.mzXML";
-        //File runFile = new File(runFilePath);
-        //MzXMLFile mzXMLRun = new MzXMLFile(runFile);
+        String runFilePath = "C:\\Programmingfolder\\CID_HCD_Comparison\\TGR_08656.mzXML";
+        File runFile = new File(runFilePath);
+        MzXMLFile mzXMLRun = new MzXMLFile(runFile);
+        //spectrum 16184
+
 
         String meroxFilePath = "C:\\Programmingfolder\\CID_HCD_Comparison\\newAnalysis\\TGR_08646_CID20_10ms_forAnalysis_CSV.csv";
         //File meroxFile = new File(meroxFilePath);
@@ -155,7 +143,8 @@ public class Main {
         modList2.add(Modification.oxidation(3));
         Peptide mod2 = mod1.peptideModifier(modList2);*/
 
-        Visualization.massSpectrumTest("Hier könnte ihr Spektrum stehen!");
+        Visualization.spectrumPlotter(mzXMLRun,10);
+
 
 
         }
