@@ -123,7 +123,7 @@ public class Main {
         
 
 
-        String runFilePath = "C:\\Programmingfolder\\CID_HCD_Comparison\\TGR_08656.mzXML";
+        String runFilePath = "C:\\Programmingfolder\\CID_HCD_Comparison\\TGR_08656_complete.mzXML";
         File runFile = new File(runFilePath);
         MzXMLFile mzXMLRun = new MzXMLFile(runFile);
         //spectrum 16184

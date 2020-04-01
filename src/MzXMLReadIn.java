@@ -1,7 +1,9 @@
 import uk.ac.ebi.pride.tools.jmzreader.JMzReaderException;
 import uk.ac.ebi.pride.tools.jmzreader.model.Spectrum;
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLFile;
+import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLParsingException;
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLSpectrum;
+import uk.ac.ebi.pride.tools.mzxml_parser.mzxml.model.Scan;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -20,7 +22,7 @@ public class MzXMLReadIn {
     //use of this class: get a mzXML spectrum with the specified Index
     //get the peak List as a map
     //parse the peak list into an new MySpectrum were additional parameters are assigned (rel Int, charge State)
-    public static MySpectrum mzXMLToMySpectrum(MzXMLFile completeMzXML, String scanNumberIn) throws JMzReaderException {
+    public static MySpectrum mzXMLToMySpectrum(MzXMLFile completeMzXML, String scanNumberIn) throws JMzReaderException, MzXMLParsingException {
         //MySpectrum requires PeakList, scan number as int and scan header
         //Peak requires: mass, intensity, scan number affiliation; charge is optional
         Spectrum currentSpectrum = completeMzXML.getSpectrumById(scanNumberIn);
@@ -41,7 +43,18 @@ public class MzXMLReadIn {
             Double intensity = mzXMLPeakList.get(mass);
             peakList.add(new Peak(mass, intensity, scanNumber));
         }
-        MySpectrum spectrumOut = new MySpectrum(peakList, scanNumber, scanHeader);
+
+        //information about fragmentation method is good to know by the MySpectrum itself
+        //unfortunately, only accessible with Scan instead of Spectrum
+        Scan currentScan = completeMzXML.getScanByNum((long) Integer.parseInt(scanNumberIn));
+        String fragmentationMethod;
+        if (currentScan.getMsLevel() == 1){
+            fragmentationMethod = "NA";
+        }
+        else
+        fragmentationMethod = currentScan.getPrecursorMz().get(0).getActivationMethod();
+
+        MySpectrum spectrumOut = new MySpectrum(peakList, scanNumber, scanHeader, fragmentationMethod);
 
         return spectrumOut;
     }
@@ -65,7 +78,9 @@ public class MzXMLReadIn {
             Double intensity = mzXMLPeakList.get(mass);
             peakList.add(new Peak(mass, intensity, scanNumber));
         }
-        MySpectrum spectrumOut = new MySpectrum(peakList, scanNumber, scanHeader);
+        //TODO: this is not prperly implemented
+        String fragMethod = "NA";
+        MySpectrum spectrumOut = new MySpectrum(peakList, scanNumber, scanHeader, fragMethod);
 
         return spectrumOut;
     }

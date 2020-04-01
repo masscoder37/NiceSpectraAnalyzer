@@ -2,7 +2,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 /**
  * Created by Michael Stadlmeier on 6/20/2017.
@@ -17,13 +16,84 @@ public class MySpectrum {
     private boolean chargeStatesAssigned;
     private boolean featuresAssigned;
     private double spectrumTIC;
+    private String fragmentationMethod;
     //various Decimal Formats for Printer
     private DecimalFormat fourDec = new DecimalFormat("0.0000");
     private DecimalFormat twoDec = new DecimalFormat("0.00");
     private DecimalFormat scientific = new DecimalFormat("0.00E0");
 
+    //helper class to deal with the determined charge and associated peaklist
+    private static class WinningChargeState{
+        private int chargeState;
+        private ArrayList<Peak> peakList; //this peaklist also includes the original peak
 
-    public MySpectrum(ArrayList<Peak> peaksIn, int scanNumberIn, String scanHeaderIn) {
+        private WinningChargeState(int chargeStateIn, ArrayList<Peak> peakListIn){
+            this.chargeState = chargeStateIn;
+            this.peakList = peakListIn;
+        }
+
+
+        public static WinningChargeState determineChargeState(ArrayList<ArrayList<Peak>> candidatesIn) {
+            ArrayList<Peak> winningPeaks = new ArrayList<>();
+            int winningZ = 0;
+            //loop through all the lists...there will be 8
+            if (candidatesIn.size() != 8)
+                throw new IllegalArgumentException("Something went wrong with charge state determination!");
+
+            //find the highest list size
+            //list size is always at least 1 for the current peak
+            //check afterwards if maxSize is still 1
+            int maxSize = 1;
+
+            for (ArrayList<Peak> list : candidatesIn) {
+                if (list.size() > maxSize)
+                    maxSize = list.size();
+            }
+
+            //if all charge state lists are 1, there were no features detected
+            if (maxSize == 1) {
+                //charge state detected is zero, list doesn't matter
+                return new WinningChargeState(0, candidatesIn.get(0));
+            }
+            //determine which charge states have the highest abundance
+            ArrayList<ArrayList<Peak>> biggestSizes = new ArrayList<>();
+            //add index for keeping track of the charge state, this time with REAL charge states
+            ArrayList<Integer> zTracking = new ArrayList<>();
+            for (int m = 0; m < candidatesIn.size(); m++) {
+                if (candidatesIn.get(m).size() == maxSize) {
+                    biggestSizes.add(candidatesIn.get(m));
+                    //REAL charge state is added there!
+                    zTracking.add(m + 1);
+                }
+            }
+            if (biggestSizes.size() == 1) {
+                return new WinningChargeState(zTracking.get(0), biggestSizes.get(0));
+            } else {
+                //now compare the summed intensities and take the charge state with the highest one
+                double maxInt = 0;
+                int index = 0;
+                //this loop goes through all the lists
+                for (int o = 0; o < biggestSizes.size(); o++) {
+                    double currentInt = 0;
+                    for (Peak peak : biggestSizes.get(o)) {
+                        currentInt += peak.getIntensity();
+                    }
+                    if (currentInt > maxInt) {
+                        maxInt = currentInt;
+                        index = o;
+                    }
+                }
+                return new WinningChargeState(zTracking.get(index), biggestSizes.get(index));
+            }
+        }
+
+        public int getChargeState(){return this.chargeState;}
+        public ArrayList<Peak> getPeakList(){return this.peakList;}
+
+    }
+
+
+    public MySpectrum(ArrayList<Peak> peaksIn, int scanNumberIn, String scanHeaderIn, String fragmentationMethodIn) {
         this.scanNumber = scanNumberIn;
         this.scanHeader = scanHeaderIn;
         //make sure that peakList is ordered
@@ -38,6 +108,10 @@ public class MySpectrum {
             spectrumTIC += peak.getIntensity();
         }
         this.featuresAssigned = false;
+        if (fragmentationMethodIn.equals("CID")||fragmentationMethodIn.equals("HCD"))
+        this.fragmentationMethod = fragmentationMethodIn;
+        else
+            this.fragmentationMethod = "NA";
     }
 
 
@@ -248,6 +322,123 @@ public class MySpectrum {
         this.featuresAssigned = true;
     }
 
+    //this is an iteration of the assignChargeStates and the Feature.featureAssigner functions
+    //since you can't have a feature without a charge state and vice versa, it makes sense to combine them
+    //so, concurrently detect charge states and features
+    public void assignZAndFeatures(double ppmDevIn){
+        this.featureList = new ArrayList<>();
+        //double ppmDev to cover the worst case scenario
+        double ppmDev = 2*ppmDevIn;
+
+        //set up HashMap to quickly access the peaks to set values without looping through the complete arraylist
+        //peak mass is unique and key
+        HashMap<Double, Peak> fastAccessMap = new HashMap<>();
+        for (Peak peak : this.peakList){
+            fastAccessMap.put(peak.getMass(), peak);
+        }
+
+        //variable to count number of features
+        int numberOfFeatures = 1;
+
+
+        //set up "exclusion list" which handles peaks to be ignored as soon as they are assigned to be part of a feature
+        ArrayList<Double> excludedPeaks = new ArrayList<>();
+        //start looping through the peaks
+        for (int i = 0; i < this.peakList.size(); i++){
+            Peak current = this.peakList.get(i);
+            //handle if peak was already assigned
+            if (excludedPeaks.contains(current.getMass()))
+                continue;
+            //follow the same logic as FeatureAssigner: a feature always stars with the first peak (duh), so just set the following 15 peaks as neighbours
+            ArrayList<Peak> followingPeaks = new ArrayList<>();
+            //here, again a check for peaks which were already assigned is needed
+
+
+            for (int m = 1; m < 16; m++){
+                try {
+                    //skip if peak was already assigned to feature
+                    if(excludedPeaks.contains(this.peakList.get(m+i).getMass()))
+                        continue;
+
+                    followingPeaks.add(this.peakList.get(m+i));
+                }
+                //skip if not enough neighbours present
+                catch (IndexOutOfBoundsException e){
+                    continue;
+                }
+            }
+            //followingPeaks contains all the peaks now
+            //loop through
+            //here, 2 loops are present: outer loop handles different charge states, inner loop the followingPeaks
+            //note: have a helper class which takes care of the ArrayLists for each individual charge state
+
+            ArrayList<ArrayList<Peak>> matchesPerZ = new ArrayList<>();
+
+            for (int z = 1; z < 9; z++) {
+                //add all matching peaks to the arrow list
+                ArrayList<Peak> initialMatches = new ArrayList<>();
+                //add current peak also to the initial matches that the feature list which can be passed to Feature is complete
+                initialMatches.add(current);
+
+                //for multiples of the difference, include another variable n
+                int n = 1;
+                double isotopeDifference = AtomicMasses.getNEUTRON() / z * n;
+                for (Peak peak : followingPeaks) {
+                    double realMass = current.getMass() + isotopeDifference;
+                    if (DeviationCalc.isotopeMatchPPM(realMass, peak.getMass(), ppmDev)) {
+                        initialMatches.add(peak);
+                        //doing this will avoid hitting a peak several times
+                        n++;
+                        //isotopeDifference changes after match, because n changed
+                        isotopeDifference = AtomicMasses.getNEUTRON() / z * n;
+                    }
+                }
+                //for one charge state, all matches are now complete
+                matchesPerZ.add(initialMatches);
+            }
+            //matchesPerZ now has multiple lists of matches, one for each charge state
+            //some of the lists might be only size 1
+            //have a function check which charge state can explain the highest signal
+            WinningChargeState winningZ = WinningChargeState.determineChargeState(matchesPerZ);
+            //winningZ should now contains the winning charge state and the corresponding list of peaks
+            //if charge state is 0, only the current peak is in the ArrayList
+            if (winningZ.getChargeState() == 0){
+                //add properties via the fast Access hashmap
+                fastAccessMap.get(current.getMass()).setCharge(0);
+                //if the current peak is not part of a feature, it can be ignored for the rest of the analysis
+                excludedPeaks.add(current.getMass());
+            }
+            //else, for each peak, charge states have to be assigned and a feature must be created
+            else {
+                Feature feature = new Feature(winningZ.getPeakList(), winningZ.getChargeState(), this.spectrumTIC, numberOfFeatures);
+                numberOfFeatures++;
+                this.featureList.add(feature);
+                //now, set all the peaks in the arrayList of peak with the fastAccessMap
+                //also, add masses to the excluded list
+                //current is also part of the peaklist
+                for (Peak peak : winningZ.getPeakList()){
+                    Peak toSet = fastAccessMap.get(peak.getMass());
+                    toSet.setCharge(winningZ.getChargeState());
+                    toSet.setFeature(feature);
+                    //add all the masses to the exclusion list
+                    excludedPeaks.add(peak.getMass());
+                }
+            }
+        }
+        //set flags
+        this.chargeStatesAssigned = true;
+        this.featuresAssigned = true;
+    }
+
+
+
+
+
+
+
+
+
+
 
     //getter
     public ArrayList<Peak> getPeakList() {
@@ -319,6 +510,7 @@ public class MySpectrum {
 
     public boolean areChargeStatesAssigned(){return this.chargeStatesAssigned;}
     public double getSpectrumTIC(){return this.spectrumTIC;}
+    public String getFragmentationMethod(){return this.fragmentationMethod;}
 
     public void spectrumPrinter() {
         System.out.println("");

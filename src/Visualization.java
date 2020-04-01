@@ -2,6 +2,7 @@
 
 import uk.ac.ebi.pride.tools.jmzreader.JMzReaderException;
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLFile;
+import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLParsingException;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -25,6 +26,7 @@ public class Visualization {
     static int maxMass;
     static int fullRoundedMinMass;
     static int fullRoundedMaxMass;
+    static boolean showLabels = false;
 
 
 
@@ -143,7 +145,7 @@ private static class PlotSize{
     }
 
 //method in which mass spectra are produced
-    public static void spectrumPlotter(MzXMLFile runIn, double ppmDevIn) throws JMzReaderException {
+    public static void spectrumPlotter(MzXMLFile runIn, double ppmDevIn) throws JMzReaderException, MzXMLParsingException {
         //setup the Spectrum to look at
         //long is so annoying, fuck performance -.-
         java.util.List<Long> scanNumberListLong = runIn.getScanNumbers();
@@ -155,8 +157,9 @@ private static class PlotSize{
         currentSpectrum = scanNumberList.get(0);
         //first spectrum is the first one in the file
         toPlot = MzXMLReadIn.mzXMLToMySpectrum(runIn, ""+currentSpectrum);
-        toPlot.assignChargeStates(ppmDevIn);
-        toPlot.assignFeatures(ppmDevIn);
+        //toPlot.assignChargeStates(ppmDevIn);
+        //toPlot.assignFeatures(ppmDevIn);
+        toPlot.assignZAndFeatures(10);
 
         //general JFrame setup
         String title = "Spectrum Plotter";
@@ -316,11 +319,12 @@ private static class PlotSize{
                     try {
                         toPlot = MzXMLReadIn.mzXMLToMySpectrum(runIn, Integer.toString(currentSpectrum));
 
-                    } catch (JMzReaderException ex) {
+                    } catch (JMzReaderException | MzXMLParsingException ex) {
                         instructions.setText("Spectrum Read In went wrong! Spectrum: "+currentSpectrum);
                     }
-                    toPlot.assignChargeStates(ppmDevIn);
-                    toPlot.assignFeatures(ppmDevIn);
+                    //toPlot.assignChargeStates(ppmDevIn);
+                    //toPlot.assignFeatures(ppmDevIn);
+                    toPlot.assignZAndFeatures(ppmDevIn);
                     //change parameters in massRange
                     minMass = minMass();
                     maxMass = maxMass();
@@ -329,7 +333,11 @@ private static class PlotSize{
                     fullRoundedMaxMass = roundedMaxMass(maxMass);
                     massRange.setNewMasses(fullRoundedMinMass, fullRoundedMaxMass);
                     scanToPlot.setText("Scan-#");
-                    instructions.setText("Spectrum plotted! Current spectrum: "+currentSpectrum+"     "+toPlot.getScanHeader()+"      TIC:"+scientific.format(toPlot.getSpectrumTIC()));
+                    String fragMethod = "     ";
+                    fragMethod += toPlot.getFragmentationMethod();
+                    if (fragMethod.equals("     NA"))
+                        fragMethod = "";
+                    instructions.setText("Spectrum plotted! Current spectrum: "+currentSpectrum+"     "+toPlot.getScanHeader()+ fragMethod +"      TIC:"+scientific.format(toPlot.getSpectrumTIC()));
                     zoomFactor = 1;
                     comp.clearLines();
                     //toPlot and massRange was changed
@@ -346,16 +354,30 @@ private static class PlotSize{
 
             @Override
             public void keyPressed(KeyEvent e) {
+                //next spectrum
                 if(e.getKeyCode()==39){
                     currentSpectrum += 1;
                     scanToPlot.setText(Integer.toString(currentSpectrum));
                     plotButton.doClick();
                 }
 
+                //previousSpectrum
                 if(e.getKeyCode()==37){
                     currentSpectrum -= 1;
                     scanToPlot.setText(Integer.toString(currentSpectrum));
                     plotButton.doClick();
+                }
+
+                //toggle labels
+                if(e.getKeyCode()==76){
+                    if(showLabels)
+                        showLabels = false;
+                    else
+                        showLabels = true;
+                    //actually replot
+                    comp.clearLines();
+                    graphProducer(comp, toPlot, massRange, plotSize);
+                    comp.requestFocusInWindow();
                 }
 
             }
@@ -408,7 +430,25 @@ private static class PlotSize{
         comp.addAxis(plotSize.getxX1(),plotSize.getxY(),plotSize.getxX2(),plotSize.getxY(), 3, "x-Axis", "x");
 
         //draw mass peaks
-        for (Peak peak : toPlot.getPeakList()){
+        //implement that you can see the mass difference to previous/next peak
+        //for (Peak peak : toPlot.getPeakList()){
+        for (int i = 0; i < toPlot.getPeakList().size(); i++){
+            Peak peak = toPlot.getPeakList().get(i);
+            Peak prevPeak;
+            try {
+             prevPeak = toPlot.getPeakList().get(i-1);
+            }
+            catch (IndexOutOfBoundsException ex2){
+                prevPeak = peak;
+            }
+            Peak nextPeak;
+            try {
+                nextPeak = toPlot.getPeakList().get(i+1);
+            }
+            catch (IndexOutOfBoundsException ex3){
+                nextPeak = peak;
+            }
+
             double mass = peak.getMass();
             //skip if out of mass range
             if (mass < massRange.getMinMass() || mass > massRange.getMaxMass())
@@ -417,11 +457,16 @@ private static class PlotSize{
             double relInt = peak.getRelIntensity();
             double xCord = (plotSize.getyX()+(plotSize.getxAxisLength()/massRange.getMassRange())*(mass-massRange.getMinMass()));
             double yCordMax = plotSize.yY1-(plotSize.yAxisLength/100)*relInt*zoomFactor;
+            String diffPrev = "<--  " + fourDec.format(peak.getMass()-prevPeak.getMass());
+            String diffNext = fourDec.format(nextPeak.getMass() - peak.getMass()) + "  -->";
             String label = "";
-            if (relInt >=0){
-                label +=  fourDec.format(mass)+" m/z;"+twoDec.format(relInt)+"%;"+peak.getCharge()+"+";
-                if (peak.isPartOfFeature()){
-                    label+= ";F#:" + peak.getFeature().getFeatureNumber();
+            //only plot if labels are toggled
+            if(showLabels) {
+                if (relInt >= 0) {
+                    label += fourDec.format(mass) + " m/z;" + twoDec.format(relInt) + "%;" + peak.getCharge() + "+;" + diffPrev + ";" + diffNext;
+                    if (peak.isPartOfFeature()) {
+                        label += ";F#:" + peak.getFeature().getFeatureNumber();
+                    }
                 }
             }
             comp.addPeak(xCord, plotSize.xY, xCord, yCordMax, label, Color.black);

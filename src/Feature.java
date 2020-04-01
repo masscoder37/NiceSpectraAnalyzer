@@ -30,6 +30,24 @@ public class Feature {
             this.featureNumber = featureNumberIn;
         }
     }
+    //overloaded constructor for new MySpectrum.assignZAndFeatures
+    public Feature(ArrayList<Peak> featurePeaksIn, int chargeIn, double spectrumTICIn, int featureNumberIn) {
+        this.peakList = new ArrayList<>();
+        this.peakList.addAll(featurePeaksIn);
+        this.numberOfPeaks = peakList.size();
+        //this should never be the case, but error handling
+        if (peakList.size() != 0) {
+            //in MySpectrum, all peaks are certain to have the same scan number, so just pick the first element
+            this.scanNumber = peakList.get(0).getScanNumber();
+            //charge state should be set from the FeatureDetector function, so also is the same for all the peaks
+            this.chargeState = chargeIn;
+            for (Peak peak : peakList) {
+                this.summedAbsIntensity += peak.getIntensity();
+            }
+            this.summedRelIntensityPerTIC = this.summedAbsIntensity / spectrumTICIn * 100;
+            this.featureNumber = featureNumberIn;
+        }
+    }
 
 
     //TODO: feature Assigner is implemented, but the Feature object is yet to be implemented in MySpectrum

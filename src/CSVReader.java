@@ -76,7 +76,8 @@ public class CSVReader {
             }
         }
         scanner.close();
-        MySpectrum spectrumOut = new MySpectrum(peaks, spectrumScanNumber, scanHeader);
+        String fragMethod = "NA";
+        MySpectrum spectrumOut = new MySpectrum(peaks, spectrumScanNumber, scanHeader, fragMethod);
         return spectrumOut;
     }
 
@@ -368,7 +369,13 @@ public static void wholeRunRepFinder(MzXMLFile runIn, File statisticsAnalysis, d
         newValues[2] = values[captionPositions.get("Scan Number")];
         newValues[3] = values[captionPositions.get("Leading Proteins")];
         //generate MySpectrum and start search for Reporter Ions
-        MySpectrum currentSpectrum = MzXMLReadIn.mzXMLToMySpectrum(runIn, newValues[2]);
+        MySpectrum currentSpectrum = null;
+        try {
+            currentSpectrum = MzXMLReadIn.mzXMLToMySpectrum(runIn, newValues[2]);
+        }
+        catch (MzXMLParsingException ex){
+            System.out.println("Error with handling spectrum! Spectrum#: "+newValues[2]);
+        }
         ArrayList<ReporterMatch> repMatches = new ArrayList<>();
         repMatches = PeakCompare.reporterFinder(currentSpectrum, labelName, ppmDev);
         //if no reporter ions are found, set values to 0

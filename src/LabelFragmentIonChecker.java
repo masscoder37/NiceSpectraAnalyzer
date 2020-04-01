@@ -1,5 +1,6 @@
 import uk.ac.ebi.pride.tools.jmzreader.JMzReaderException;
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLFile;
+import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLParsingException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,7 +18,7 @@ public class LabelFragmentIonChecker {
                                                                        String SequenceIn,
                                                                        ArrayList<Modification> modsIn,
                                                                        String spectrumID, MzXMLFile completeFileIn,
-                                                                       double accuracy, String leadProtsIn) throws JMzReaderException {
+                                                                       double accuracy, String leadProtsIn) throws JMzReaderException, MzXMLParsingException {
         ArrayList<IonMatch> successfulMatches = new ArrayList<>();
         //generate spectrum to look at:
         MySpectrum spectrumToCheck = MzXMLReadIn.mzXMLToMySpectrum(completeFileIn, spectrumID);
@@ -263,7 +264,7 @@ public class LabelFragmentIonChecker {
                                                                        String SequenceIn,
                                                                        ArrayList<Modification> modsIn,
                                                                        String spectrumID, MzXMLFile completeFileIn,
-                                                                       double accuracy, String leadProtsIn) throws JMzReaderException {
+                                                                       double accuracy, String leadProtsIn) throws JMzReaderException, MzXMLParsingException {
         ArrayList<IonMatch> successfulMatches = new ArrayList<>();
         //generate spectrum to look at:
         MySpectrum spectrumToCheck = MzXMLReadIn.mzXMLToMySpectrum(completeFileIn, spectrumID);
@@ -375,7 +376,7 @@ public class LabelFragmentIonChecker {
                                                                         String SequenceIn,
                                                                         ArrayList<Modification> modsIn,
                                                                         String spectrumID, MzXMLFile completeFileIn,
-                                                                        double accuracy, String leadProtsIn) throws JMzReaderException {
+                                                                        double accuracy, String leadProtsIn) throws JMzReaderException, MzXMLParsingException {
         ArrayList<IonMatch> successfulMatches = new ArrayList<>();
         //generate spectrum to look at:
         MySpectrum spectrumToCheck = MzXMLReadIn.mzXMLToMySpectrum(completeFileIn, spectrumID);
