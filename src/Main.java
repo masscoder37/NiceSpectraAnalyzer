@@ -1,6 +1,7 @@
 import uk.ac.ebi.pride.tools.jmzreader.JMzReaderException;
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLFile;
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLParsingException;
+import uk.ac.ebi.pride.tools.mzxml_parser.mzxml.model.Scan;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -123,10 +124,14 @@ public class Main {
         
 
 
-        String runFilePath = "C:\\Programmingfolder\\CID_HCD_Comparison\\TGR_08656_complete.mzXML";
+        String runFilePath = "C:\\Programmingfolder\\Thao_Hai\\TGR_08785.mzXML";
         File runFile = new File(runFilePath);
         MzXMLFile mzXMLRun = new MzXMLFile(runFile);
         //spectrum 16184
+        Scan testScan = mzXMLRun.getScanByNum(12394L);
+        testScan.getFilterLine();
+
+
 
 
         String meroxFilePath = "C:\\Programmingfolder\\CID_HCD_Comparison\\newAnalysis\\TGR_08646_CID20_10ms_forAnalysis_CSV.csv";
@@ -143,7 +148,11 @@ public class Main {
         modList2.add(Modification.oxidation(3));
         Peptide mod2 = mod1.peptideModifier(modList2);*/
 
-        Visualization.spectrumPlotter(mzXMLRun,10);
+       Visualization.spectrumPlotter(mzXMLRun,10);
+
+        String toExtractFilePath = "C:\\Programmingfolder\\Thao_Hai\\defaultInput.csv";
+
+       //ExtractMassIntensities.massExctrator(runFilePath, toExtractFilePath);
 
 
 
