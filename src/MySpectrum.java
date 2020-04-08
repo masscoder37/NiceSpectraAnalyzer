@@ -9,6 +9,7 @@ import java.util.HashMap;
 // uses an ArrayList of Peaks to create a spectrum
 public class MySpectrum {
     private ArrayList<Peak> peakList;
+    private ArrayList<Peak> noiseList;
     private ArrayList<Feature> featureList;
     private int numberOfPeaks;
     private int scanNumber;
@@ -110,6 +111,31 @@ public class MySpectrum {
         this.featuresAssigned = false;
         if (fragmentationMethodIn.equals("CID")||fragmentationMethodIn.equals("HCD"))
         this.fragmentationMethod = fragmentationMethodIn;
+        else
+            this.fragmentationMethod = "NA";
+    }
+
+    //overloaded constructor for spectra with noise  band
+    public MySpectrum(ArrayList<Peak> peaksIn, ArrayList<Peak> noiseBandIn, int scanNumberIn, String scanHeaderIn, String fragmentationMethodIn) {
+        this.scanNumber = scanNumberIn;
+        this.scanHeader = scanHeaderIn;
+        //make sure that peakList is ordered
+        //implemented QuickSort Algorithm
+        //TODO: I assume that peaksIn is always already ordered, leading to a case where quicksort is not efficient?
+        peaksIn = QuickSort.peakListQuickSort(peaksIn);
+        this.peakList = peakPacker(peaksIn);
+        noiseBandIn = QuickSort.peakListQuickSort(noiseBandIn);
+        this.noiseList = noiseBandIn;
+
+        this.numberOfPeaks = this.peakList.size();
+        this.chargeStatesAssigned = false;
+        this.spectrumTIC = 0;
+        for (Peak peak : this.peakList){
+            spectrumTIC += peak.getIntensity();
+        }
+        this.featuresAssigned = false;
+        if (fragmentationMethodIn.equals("CID")||fragmentationMethodIn.equals("HCD"))
+            this.fragmentationMethod = fragmentationMethodIn;
         else
             this.fragmentationMethod = "NA";
     }
@@ -429,6 +455,37 @@ public class MySpectrum {
         this.chargeStatesAssigned = true;
         this.featuresAssigned = true;
     }
+
+    //this class should return the best matching peak (or null) in the spectrum
+    public Peak getMatchingPeak(double massIn, double ppmDevIn) {
+
+        Peak out = null;
+        //set starting ppmDev, way higher than allowed ppm
+        double minPPMDev = 2 * ppmDevIn;
+
+
+        //loop through all peaks
+        for (Peak peak : peakList) {
+            //this skipping forward should be more efficient than checking for every peak in detail
+            if (peak.getMass() < massIn - 0.8)
+                continue;
+            //second check to quit loop prematurely
+            if (peak.getMass() > massIn + 0.8)
+                break;
+
+            //now only masses are checked in detail which are in the range
+            if (DeviationCalc.ppmMatch(massIn, peak.getMass(), ppmDevIn)) {
+                double currentPPMDev = DeviationCalc.ppmDeviationCalc(massIn, peak.getMass());
+                //check if better match than the one before
+                if (Math.abs(currentPPMDev) < Math.abs(minPPMDev)) {
+                    minPPMDev = currentPPMDev;
+                    out = peak;
+                }
+            }
+        }
+        return out;
+    }
+
 
 
 

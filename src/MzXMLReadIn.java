@@ -59,6 +59,45 @@ public class MzXMLReadIn {
         return spectrumOut;
     }
 
+    //note: the noise band is only available with MzXML files exported from triceratops
+    //TODO: combine the methods and check if the noise band is available
+    public static MySpectrum mzXMLToMySpectrumWNoise(MzXMLFile completeMzXML, String scanNumberIn) throws JMzReaderException, MzXMLParsingException {
+        //MySpectrum requires PeakList, scan number as int and scan header
+        //Peak requires: mass, intensity, scan number affiliation; charge is optional
+        Spectrum currentSpectrum = completeMzXML.getSpectrumById(scanNumberIn);
+        //scan Header shows precursor M/z and charge of precursor
+        String scanHeader = "";
+        try {
+            scanHeader += "MS"+currentSpectrum.getMsLevel()+" of m/z "+ fourDec.format(currentSpectrum.getPrecursorMZ()) + " (z = " + currentSpectrum.getPrecursorCharge()+"+)";
+        }
+        catch (IllegalArgumentException e){
+            scanHeader = "MS1";
+        }
+        //scan Number is set
+        int scanNumber = Integer.parseInt(scanNumberIn);
+        //get the peakList for creation of the Peak Objects
+        ArrayList<Peak> peakList = new ArrayList<>();
+        Map<Double, Double> mzXMLPeakList = currentSpectrum.getPeakList();
+        for (Double mass : mzXMLPeakList.keySet()){
+            Double intensity = mzXMLPeakList.get(mass);
+            peakList.add(new Peak(mass, intensity, scanNumber));
+        }
+
+        //information about fragmentation method is good to know by the MySpectrum itself
+        //unfortunately, only accessible with Scan instead of Spectrum
+        Scan currentScan = completeMzXML.getScanByNum((long) Integer.parseInt(scanNumberIn));
+        String fragmentationMethod;
+        if (currentScan.getMsLevel() == 1){
+            fragmentationMethod = "NA";
+        }
+        else
+            fragmentationMethod = currentScan.getPrecursorMz().get(0).getActivationMethod();
+
+        MySpectrum spectrumOut = new MySpectrum(peakList, scanNumber, scanHeader, fragmentationMethod);
+
+        return spectrumOut;
+    }
+
     public static MySpectrum spectrumConvert(MzXMLSpectrum spectrumIn){
         String scanHeader = "";
         try {

@@ -1,6 +1,8 @@
 import uk.ac.ebi.pride.tools.jmzreader.JMzReaderException;
+import uk.ac.ebi.pride.tools.jmzreader.model.Spectrum;
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLFile;
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLParsingException;
+import uk.ac.ebi.pride.tools.mzxml_parser.mzxml.model.Peaks;
 import uk.ac.ebi.pride.tools.mzxml_parser.mzxml.model.Scan;
 
 import java.io.File;
@@ -125,11 +127,13 @@ public class Main {
 
 
         String runFilePath = "C:\\Programmingfolder\\Thao_Hai\\TGR_08785.mzXML";
-        File runFile = new File(runFilePath);
-        MzXMLFile mzXMLRun = new MzXMLFile(runFile);
+       File runFile = new File(runFilePath);
+        //MzXMLFile mzXMLRun = new MzXMLFile(runFile);
+        //System.out.println("spectrum number: "+mzXMLRun.getSpectraCount());
         //spectrum 16184
-        Scan testScan = mzXMLRun.getScanByNum(12394L);
-        testScan.getFilterLine();
+       //Scan testScan = mzXMLRun.getScanByNum(12423L);
+      // List<Peaks> scanPeakList =   testScan.getPeaks();
+     //  Spectrum testSpectrum = mzXMLRun.getSpectrumById("12394");
 
 
 
@@ -148,11 +152,14 @@ public class Main {
         modList2.add(Modification.oxidation(3));
         Peptide mod2 = mod1.peptideModifier(modList2);*/
 
-       Visualization.spectrumPlotter(mzXMLRun,10);
-
+       //Visualization.spectrumPlotter(mzXMLRun,10);
         String toExtractFilePath = "C:\\Programmingfolder\\Thao_Hai\\defaultInput.csv";
+        String scanDescriptionFilePath = "C:\\Programmingfolder\\Thao_Hai\\scanNumbersUsed.csv";
 
-       //ExtractMassIntensities.massExctrator(runFilePath, toExtractFilePath);
+
+        //ExtractSpectrumData.getInjectionTimes(runFilePath);
+        ExtractSpectrumData.massExctrator(runFilePath, toExtractFilePath);
+        //System.out.println("Number of spectra: " +ExtractSpectrumData.getMsNScanCount(runFilePath, 686.9669, 2, "CID"));
 
 
 
