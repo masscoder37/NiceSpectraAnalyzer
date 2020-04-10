@@ -17,6 +17,10 @@ public class Peak {
     private boolean chargeStateKnown;
     private boolean isPartOfFeature;
     private Feature associatedFeature;
+    //add information about noise directly in the peak
+    private double noise;
+    private double signalToNoise;
+    private boolean noiseSet = false;
 
 
     //initial constructor for peaks
@@ -48,6 +52,27 @@ public class Peak {
         this.isBasePeak = false;
         this.isPartOfFeature = false;
         this.associatedFeature = null;
+        this.noise = 0;
+        this.signalToNoise = intensityIn;
+    }
+
+    //another overloaded constructor for incorporating noise information
+    public Peak(double massIn, double intensityIn, double noiseIn, int scanNumberIn){
+        this.mass = massIn;
+        this.intensity = intensityIn;
+        this.scanNumberAffil = scanNumberIn;
+        this.charge = 0;
+        this.relInt = 0;
+        this.chargeStateKnown= false;
+        this.isBasePeak = false;
+        this.isPartOfFeature = false;
+        this.associatedFeature = null;
+        this.noise = noiseIn;
+        if (noise != 0)
+        this.signalToNoise = intensityIn/noiseIn;
+        else
+            signalToNoise = intensityIn;
+        this.noiseSet = true;
     }
 
 
@@ -120,6 +145,17 @@ public class Peak {
         }
         return intOut;
     }
+
+    public boolean isNoiseSet(){return this.noiseSet;}
+
+    public double getNoise() {
+        if (!this.noiseSet)
+            return 0;
+        else
+            return this.noise;
+    }
+
+    public double getSignalToNoise(){return this.signalToNoise;}
 
 
     public void peakPrinter (){

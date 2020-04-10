@@ -13,6 +13,8 @@ import java.util.*;
  * Created by micha on 6/14/2017.
  */
 public class CSVReader {
+    private static DecimalFormat fourDec = new DecimalFormat("0.0000");
+
     public static ArrayList<AminoAcid> aminoAcidParse(File file) {
 
         Scanner scanner = null;
@@ -486,24 +488,28 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
     File outputCSV = new File(newFilePath);
     PrintWriter csvWriter = new PrintWriter(outputCSV);
     StringBuilder sb = new StringBuilder();
-    String[] newHeader = new String[100];
+    String[] newHeader = new String[120];
     //general XL information
     int i = 0;
-    newHeader[i] = "Peptide alpha"; i++;
-    newHeader[i] = "Peptide beta";i++;
-    newHeader[i] = "Alpha amino acid";i++;
-    newHeader[i] = "Beta amino acid";i++;
-    newHeader[i] = "Alpha position";i++;
-    newHeader[i] = "Beta position";i++;
-    newHeader[i] = "HCD Scan Number";i++;
-    newHeader[i] = "CID Scan Number";i++;
-    newHeader[i] = "Precursor m/z";i++;
-    newHeader[i] = "Precursor Charge";i++;
-    newHeader[i] = "Isolated m/z";i++;
-    newHeader[i] = "Precursor mass dev [ppm]";i++;
-    newHeader[i] = "Precursor monoisotopic offset";i++;
-    newHeader[i] = "Precursor rel. intensity [%]";i++;
-    newHeader[i] = "Precursor abs. intensity [au]";i++;
+    newHeader[i] = "Peptide alpha"; i++; //note: done
+    newHeader[i] = "Peptide beta";i++; //note: done
+    newHeader[i] = "Alpha amino acid";i++; //note: done
+    newHeader[i] = "Beta amino acid";i++; //note: done
+    newHeader[i] = "Alpha position";i++; //note: done
+    newHeader[i] = "Beta position";i++; //note: done
+    newHeader[i] = "HCD Scan Number";i++; //note: done
+    newHeader[i] = "CID Scan Number";i++; //note: done
+    newHeader[i] = "Calculated precursor m/z";i++; //note: done
+    newHeader[i] = "Precursor Charge";i++; //note: done
+    newHeader[i] = "Isolated m/z";i++; //note: done
+    newHeader[i] = "Triggering MS1 scan number";i++; //note: done
+    newHeader[i] = "Triggering precursor mass dev. [ppm]";i++; //note: done
+    newHeader[i] = "Triggering precursor monoisotopic offset";i++; //note: done
+    newHeader[i] = "Triggering precursor rel. intensity [%]";i++;//note: done
+    newHeader[i] = "Triggering precursor abs. intensity [au]";i++;//note: done
+    newHeader[i] = "Previous MS1 scan number";i++;//note: done
+    newHeader[i] = "Previous MS1 precursor rel. intensity [%]";i++; //note: done
+    newHeader[i] = "Previous MS1 precursor abs. intensity [au]";i++; //note: done
     //information about Signature peaks and the dominant residues
     newHeader[i] = "Signature peaks detected Alpha";i++; //0-6
     newHeader[i] = "Summed signature peaks Alpha abs int. [au]";i++;
@@ -585,6 +591,8 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
     newHeader[i] = "4th most intense signature peak rel. int. [%]"; i++;
     newHeader[i] = "4th most intense signature peak abs. int. [au]";
 
+    //TODO: add how many peak pairs have a distance of 32Da?
+
 
     //this loop generates the header
     String sep = "";
@@ -597,9 +605,35 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
     csvWriter.write(sb.toString());
     sb.setLength(0);
 
-    //TODO:generate new XL object and check if CID exists
+    //set up lists to figure out previous full scan
+    long startTime = System.currentTimeMillis();
+    //get the scan numbers to look at
+    List<Long> allScanNumbers = runIn.getScanNumbers();
+    ArrayList<Integer> ms1ScanNumbers = new ArrayList<>();
+    ArrayList<Integer> ms2ScanNumbers = new ArrayList<>();
+
+    for(long scanNumber : allScanNumbers){
+        Scan currentScan = runIn.getScanByNum(scanNumber);
+        int currentMSLevel = Math.toIntExact(currentScan.getMsLevel());
+        if (currentMSLevel == 1){
+            ms1ScanNumbers.add(Math.toIntExact(scanNumber));
+            continue;
+        }
+        if(currentMSLevel == 2){
+            ms2ScanNumbers.add(Math.toIntExact(scanNumber));
+        }
+    }
+    System.out.println("Scan Lists created: "+((System.currentTimeMillis()-startTime)/1000.0) + " seconds passed");
+    System.out.println("MS1-Scans: "+ms1ScanNumbers.size());
+    System.out.println("MS2-Scans: "+ms2ScanNumbers.size());
+
+    //for average analysis time information
+    ArrayList<Double> analysisTime = new ArrayList<>();
+
+
 
     while(scanner.hasNext()){
+        startTime = System.currentTimeMillis();
         //read in all the values
         String values = scanner.nextLine();
         String[] splitValues = values.split(",");
@@ -660,7 +694,7 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
         Scan cidMatchScan = runIn.getScanByStringNum(Integer.toString(cidScanNumber));
         //prepare values for XL generation
         int xlChargeState = Math.toIntExact(cidMatchScan.getPrecursorMz().get(0).getPrecursorCharge());
-        //this only gives back the monoisotopic peak determined by the MS and not the real isolated peak! however, no way to get this info from the mzXML file?
+        //note: now contains the correct isolated mass from triceratops mzxml
         double cidIsoMassToCharge = (double) cidMatchScan.getPrecursorMz().get(0).getValue();
         String cidRTString = cidMatchScan.getRetentionTime().toString();
         cidRTString = cidRTString.replace("PT", "");
@@ -674,29 +708,47 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
                 xlPos2, aaListIn, cidRT);
 
         //XL is now present, prepare CID spectrum to search against
-        //TODO: implement scan to mySpectrum conversion?
         MySpectrum currentCIDSpectrum = MzXMLReadIn.mzXMLToMySpectrum(runIn,Integer.toString(cidScanNumber));
-        currentCIDSpectrum.assignChargeStates(ppmDevIn);
+        //use new assignZandFeatures function
+        currentCIDSpectrum.assignZAndFeatures(ppmDevIn);
 
         //use the Xl class to check the spectrum for the specific peaks
         currentXl.xlIonMatcher(currentCIDSpectrum, ppmDevIn);
 
-        //TODO:get all the information into the string to parse to CSV
         //Stringproducer needs 3 spectra: precursor, HCD, CID
-        int fullScanNumber = hcdScan.getPrecursorMz().get(0).getPrecursorScanNum().intValue();
-        MySpectrum fullMySpectrum = MzXMLReadIn.mzXMLToMySpectrum(runIn, Integer.toString(fullScanNumber));
+        //i think HCD is not used currently, but make available anyway for future analysis
+        //note:afaik, this is the triggering full scan, not necessarily the previous one
+        //it would the interesting to get both, triggering MS1 and previous MS1 to get more correct picture of ion flux
+        int triggeringScanNumber = hcdScan.getPrecursorMz().get(0).getPrecursorScanNum().intValue();
+        MySpectrum triggeringMySpectrum = MzXMLReadIn.mzXMLToMySpectrum(runIn, Integer.toString(triggeringScanNumber));
+        //find previous MS1 spectrum
+        int closestMS1Scan = 1;
+        for (int ms1ScanNumber : ms1ScanNumbers){
+            if(ms1ScanNumber > cidScanNumber)
+                break;
+            closestMS1Scan = ms1ScanNumber;
+        }
+        MySpectrum closestMS1MySpectrum = MzXMLReadIn.mzXMLToMySpectrum(runIn, Integer.toString(closestMS1Scan));
         MySpectrum hcdMySpectrum = MzXMLReadIn.mzXMLToMySpectrum(runIn, Integer.toString(hcdScanNumber));
-        String output = currentXl.xlMatchesStringProducer(fullMySpectrum, hcdMySpectrum, currentCIDSpectrum);
+        //get String for writing data
+        String output = currentXl.xlMatchesStringProducer(triggeringMySpectrum, closestMS1MySpectrum, hcdMySpectrum, currentCIDSpectrum, ppmDevIn);
 
         //new line is already attached from function
         csvWriter.write(output);
         csvWriter.flush();
         System.out.println("Analyzed crosslink from spectrum: "+hcdScanNumber);
+        analysisTime.add((double)(System.currentTimeMillis()-startTime));
     }
 
     csvWriter.flush();
     csvWriter.close();
     System.out.println("Analysis complete!");
+    double totalTime = 0;
+    for (double time : analysisTime){
+        totalTime += time;
+    }
+    double averageTime = totalTime / analysisTime.size();
+    System.out.println("Average analysis time per XL: " + fourDec.format(averageTime) + " ms." );
 }
 
 

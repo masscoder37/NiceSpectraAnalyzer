@@ -12,6 +12,7 @@ public class Feature {
     private double summedRelIntensityPerTIC; //this value would only be important in comparison to spectra TIC? Not to base peak
     private int numberOfPeaks;
     private int featureNumber; //counts the Feature in the spectra
+    private int indexOfMostIntensePeak;
 
     public Feature(ArrayList<Peak> featurePeaksIn, double spectrumTICIn, int featureNumberIn) {
         this.peakList = new ArrayList<>();
@@ -23,8 +24,15 @@ public class Feature {
             this.scanNumber = peakList.get(0).getScanNumber();
             //charge state should be set from the FeatureDetector function, so also is the same for all the peaks
             this.chargeState = peakList.get(0).getCharge();
+            double maxInt = 0;
+            int index = 0;
             for (Peak peak : peakList) {
                 this.summedAbsIntensity += peak.getIntensity();
+                if(peak.getIntensity()>maxInt){
+                    this.indexOfMostIntensePeak = index;
+                    maxInt = peak.getIntensity();
+                }
+                index++;
             }
             this.summedRelIntensityPerTIC = this.summedAbsIntensity / spectrumTICIn * 100;
             this.featureNumber = featureNumberIn;
@@ -41,8 +49,15 @@ public class Feature {
             this.scanNumber = peakList.get(0).getScanNumber();
             //charge state should be set from the FeatureDetector function, so also is the same for all the peaks
             this.chargeState = chargeIn;
+            double maxInt = 0;
+            int index = 0;
             for (Peak peak : peakList) {
                 this.summedAbsIntensity += peak.getIntensity();
+                if(peak.getIntensity()>maxInt){
+                    this.indexOfMostIntensePeak = index;
+                    maxInt = peak.getIntensity();
+                }
+                index++;
             }
             this.summedRelIntensityPerTIC = this.summedAbsIntensity / spectrumTICIn * 100;
             this.featureNumber = featureNumberIn;
@@ -166,4 +181,19 @@ public class Feature {
     }
 
     public int getFeatureNumber(){return this.featureNumber;}
+
+    public Peak getM0Peak(){
+        //M0 is always the first peak of the Feature
+        return this.peakList.get(0);
+    }
+
+    public int getMostIntenseIsotopeNumber(){
+        //since monoisotopic peak is M0, just give out index, counting starts at 0 and not 1
+        return this.indexOfMostIntensePeak;
+    }
+
+    public Peak getMostIntensePeak(){
+        return this.peakList.get(this.indexOfMostIntensePeak);
+    }
+
 }

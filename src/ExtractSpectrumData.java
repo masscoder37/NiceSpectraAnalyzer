@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class ExtractSpectrumData {
@@ -385,6 +386,263 @@ public class ExtractSpectrumData {
         }
 
         return numberOfSpectra;
+    }
+
+    public static void extractStoNValues(String runPathIn, String inputFilePath) throws MzXMLParsingException, JMzReaderException {
+        //set up input file
+        File inputFile = new File(inputFilePath);
+        Scanner scanner = null;
+        try {
+            scanner = new Scanner(inputFile);
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found! File Location: " + inputFilePath);
+        }
+
+        //set up MzXML File
+        File mzXMLFile = new File(runPathIn);
+        MzXMLFile msRun = new MzXMLFile(mzXMLFile);
+
+        //set up output file
+        String outputFilePath = inputFilePath.replace(".csv","_extractedStoNValues.csv");
+        File outputFile = new File(outputFilePath);
+        PrintWriter pw = null;
+        try {
+            pw = new PrintWriter(outputFile);
+        }
+        catch (FileNotFoundException e){
+            System.out.println("File not found! File Location: " + outputFilePath);
+        }
+
+        StringBuilder sb = new StringBuilder();
+        //Header: Scan-#, Peak Mass, Signal to Noise
+        sb.append("Scan-#").append(",");
+        sb.append("Peak Mass [m/z]").append(",");
+        sb.append("S/N [a.u.]").append(",\n");
+        pw.write(sb.toString());
+        pw.flush();
+        sb.setLength(0);
+        //written, start main loop
+        //skip first line, that's the header
+        scanner.next();
+        int analyzedSpectra = 0;
+
+        while (scanner.hasNext()){
+            double signalToNoise;
+
+            //get values
+            String[] values = scanner.next().split(",");
+            //error handling if value is no integer
+            try {
+                int scanNumber = Integer.parseInt(values[0]);
+            }
+            catch (NumberFormatException e){
+                continue;
+            }
+            double peakMass = Double.parseDouble(values[1]);
+
+            //open corresponding spectrum
+            MySpectrum currentSpectrum = MzXMLReadIn.mzXMLToMySpectrum(msRun, values[0]);
+            //check if spectrum has noise band
+            if(!currentSpectrum.isNoisePresent()) {
+                throw new IllegalArgumentException("No noise band present in spectrum!: " + values[0]);
+            }
+
+            //get matching peak
+            Peak peak = currentSpectrum.getMatchingPeak(peakMass, 8);
+            if (peak == null)
+                signalToNoise = 0;
+            else {
+                signalToNoise = peak.getSignalToNoise();
+            }
+
+            //write info to file
+            sb.append(values[0]).append(",");
+            sb.append(values[1]).append(",");
+            sb.append(signalToNoise).append(",\n");
+
+            pw.write(sb.toString());
+            pw.flush();
+            sb.setLength(0);
+            System.out.println("Analyzed spectra: "+values[0]);
+            analyzedSpectra++;
+        }
+
+        pw.flush();
+        pw.close();
+        System.out.println("Analysis complete! Analyzed "+analyzedSpectra+" spectra.");
+    }
+
+
+    public static void extractStoNAllMS2Prec(String runPathIn) throws MzXMLParsingException, JMzReaderException {
+
+        //set up MzXML File
+        File mzXMLFile = new File(runPathIn);
+        MzXMLFile msRun = new MzXMLFile(mzXMLFile);
+
+        //set up output file
+        String outputFilePath = runPathIn.replace(".mzXML","_extractedMS2PrecursorSN.csv");
+        File outputFile = new File(outputFilePath);
+        PrintWriter pw = null;
+        try {
+            pw = new PrintWriter(outputFile);
+        }
+        catch (FileNotFoundException e){
+            System.out.println("File not found! File Location: " + outputFilePath);
+        }
+
+        //Header
+        StringBuilder sb = new StringBuilder();
+        sb.append("MS2 Scan-#").append(",");
+        sb.append("Precursor Mass isolated [m/z]").append(",");
+        sb.append("S/N isolated Precursor").append(",\n");
+        pw.write(sb.toString());
+        pw.flush();
+        sb.setLength(0);
+
+        long startTime = System.currentTimeMillis();
+        //get the scan numbers to look at
+        List<Long> allScanNumbers = msRun.getScanNumbers();
+        ArrayList<Integer> ms1ScanNumbers = new ArrayList<>();
+        ArrayList<Integer> ms2ScanNumbers = new ArrayList<>();
+
+        for(long scanNumber : allScanNumbers){
+            Scan currentScan = msRun.getScanByNum(scanNumber);
+            int currentMSLevel = Math.toIntExact(currentScan.getMsLevel());
+            if (currentMSLevel == 1){
+                ms1ScanNumbers.add(Math.toIntExact(scanNumber));
+                continue;
+            }
+            if(currentMSLevel == 2){
+                ms2ScanNumbers.add(Math.toIntExact(scanNumber));
+            }
+        }
+        System.out.println("Scan Lists created: "+((System.currentTimeMillis()-startTime)/1000) + " seconds passed");
+        System.out.println("MS1-Scans: "+ms1ScanNumbers.size());
+        System.out.println("MS2-Scans: "+ms2ScanNumbers.size());
+
+
+        //preparation done, start main loop
+        int analyzedSpectra = 0;
+
+        startTime = System.currentTimeMillis();
+        for(int currentMS2ScanNumber : ms2ScanNumbers){
+            //get Precursor information
+            Scan currentMS2Scan = msRun.getScanByNum((long) currentMS2ScanNumber);
+            //to actually extract the isolated peak, parse filter line
+            String filterLine = currentMS2Scan.getFilterLine();
+            //filter line format: "FTMS + c NSI d Full ms2 1831.9665@cid30.00 [225.0000-1674.0000]"
+            //isolated precursor info is in front of @
+            //indexOf returns -1 if char is not present
+            //with with 4 decimals, 8 or 9 chars are present, with 1xxx. or xxx., but space doesn't matter
+
+            double isolatedPrecursorMass = MySpectrum.extractPrecursorFromFilterLine(filterLine);
+
+            //isolatedPrecursorMass is the real peak which was isolated
+            //find previous MS1 spectrum
+            int closestMS1Scan = 1;
+            for (int ms1ScanNumber : ms1ScanNumbers){
+                if(ms1ScanNumber > currentMS2ScanNumber)
+                    break;
+                closestMS1Scan = ms1ScanNumber;
+            }
+            //load this scan
+            MySpectrum previousMS1Spectrum = MzXMLReadIn.mzXMLToMySpectrum(msRun, ""+closestMS1Scan);
+            Peak matchedIsoPrecursor = previousMS1Spectrum.getMatchingPeak(isolatedPrecursorMass,8);
+
+            double snIsolatedPeak;
+
+            if(matchedIsoPrecursor == null){
+                snIsolatedPeak = 0;
+            }
+            else {
+                snIsolatedPeak = matchedIsoPrecursor.getSignalToNoise();
+            }
+
+
+            //write info
+            sb.append(currentMS2ScanNumber).append(",");
+            sb.append(isolatedPrecursorMass).append(",");
+            sb.append(snIsolatedPeak).append(",\n");
+
+            pw.write(sb.toString());
+            pw.flush();
+            sb.setLength(0);
+            analyzedSpectra++;
+        }
+
+        pw.flush();
+        pw.close();
+        System.out.println("Loop complete: "+((System.currentTimeMillis()-startTime)/1000) +" seconds passed.");
+        System.out.println("Analysis complete! Analyzed "+analyzedSpectra+" spectra.");
+    }
+
+
+    public static void whichMassIsReported(String triceratopsRunIn, String msConvertRunIn) throws MzXMLParsingException, JMzReaderException {
+
+        //set up MzXML Files
+        File mzXMLFile = new File(triceratopsRunIn);
+        MzXMLFile triceratops = new MzXMLFile(mzXMLFile);
+
+        File mzXMLFile2 = new File(msConvertRunIn);
+        MzXMLFile msConvert = new MzXMLFile(mzXMLFile2);
+
+        //set up output file
+        String outputFilePath = triceratopsRunIn.replace(".mzXML","_reportedPrecursor.csv");
+        File outputFile = new File(outputFilePath);
+        PrintWriter pw = null;
+        try {
+            pw = new PrintWriter(outputFile);
+        }
+        catch (FileNotFoundException e){
+            System.out.println("File not found! File Location: " + outputFilePath);
+        }
+
+        //Header
+        StringBuilder sb = new StringBuilder();
+        sb.append("MS2 Scan-#").append(",");
+        sb.append("Precursor Mass isolated [m/z]").append(",");
+        sb.append("Precursor Mass reported triceratops [m/z]").append(",");
+        sb.append("Precursor Mass reported MSConvert [m/z]").append(",\n");
+        pw.write(sb.toString());
+        pw.flush();
+        sb.setLength(0);
+
+
+
+        //preparation done, start main loop
+        int analyzedSpectra = 0;
+
+        for(long scanNumber : triceratops.getScanNumbers()){
+            //get Precursor information
+            Scan currentMSScan = triceratops.getScanByNum(scanNumber);
+            if (currentMSScan.getMsLevel() != 2L)
+                continue;
+            //to actually extract the isolated peak, parse filter line
+            String filterLine = currentMSScan.getFilterLine();
+            double isolatedPrecursorMass = MySpectrum.extractPrecursorFromFilterLine(filterLine);
+
+            double triceratopsMass = currentMSScan.getPrecursorMz().get(0).getValue();
+
+            Scan msConvertScan = msConvert.getScanByNum(scanNumber);
+
+            double msConvertMass = msConvertScan.getPrecursorMz().get(0).getValue();
+
+
+            //write info
+            sb.append(scanNumber).append(",");
+            sb.append(fourDec.format(isolatedPrecursorMass)).append(",");
+            sb.append(fourDec.format(triceratopsMass)).append(",");
+            sb.append(fourDec.format(msConvertMass)).append(",\n");
+
+            pw.write(sb.toString());
+            pw.flush();
+            sb.setLength(0);
+            analyzedSpectra++;
+        }
+
+        pw.flush();
+        pw.close();
+        System.out.println("Analysis complete! Analyzed "+analyzedSpectra+" spectra.");
     }
 
 }

@@ -34,7 +34,8 @@ public class DeviationCalc {
         return (massDiff <= allowedDa);
     }
 
-    //make a new function which takes into account the charge states of the peak
+    //make a new function which takes into account the charge states of the peak0
+    //allows unassigned charge state
     public static boolean massAndChargeMatch (double massInTheoretical, int chargeStateTheoretical, Peak peakIn, double ppmDevAllowed){
         boolean isMatch = false;
         double ppmDev = ppmDeviationCalc(massInTheoretical, peakIn.getMass());

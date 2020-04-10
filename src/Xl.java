@@ -12,10 +12,16 @@ public class Xl {
     private SumFormula xlSumFormula;
     private Ion theoreticalXLIon;
     //unfortunately, isolated mass to charge is shifted to the assumed monoisotopic peak by the MS
+    //note: this might differ with the triceratops reported mass, might be the actually isolated one
+    //note: in addition, with the triceratops version, the filter line is available to give the isolated mass
+    //note: testing showed that triceratops actually gives the isolated mass, while MSConvert gives the monoisotopic one
+    //note: because triceratops is working and has more information, use that
+    //note: monoisotopic peak of XL can be assigned from feature detection in MS1
     private double isolatedMassToCharge;
     private int hcdScanNumber;
     private int cidScanNumber;
     private String fragmentationMethod;
+    //note:this is calculated from the MeroX mass of the XL
     private boolean monoisotopicSelected;
     private int monoisotopicPeakOffset;
     private double retentionTime; //the retention time of the XL in seconds
@@ -64,7 +70,6 @@ public class Xl {
         SumFormula joinedPeptidesFormula = SumFormula.sumFormulaJoiner(peptideAlpha.getSumFormula(), peptideBeta.getSumFormula());
         this.xlSumFormula = SumFormula.sumFormulaJoiner(joinedPeptidesFormula, SumFormula.getCliXlinkFormula());
         //add protons according to charge state? necessary?
-        //TODO: check if protons have to be added for all the classes to work
         for (int i = 1; i < chargeStateIn+1; i++)
         {
             this.xlSumFormula = SumFormula.sumFormulaJoiner(this.xlSumFormula, SumFormula.getProtonFormula());
@@ -245,11 +250,16 @@ public class Xl {
     //this function matches the theoretical fragments to the spectrum
     //specificXLIonMatch needs: matched peak, matched fragment Ion and ppm Dev
     public void xlIonMatcher (MySpectrum spectrumIn, double ppmDevAllowed){
+        //make sure that charge states and features were assigned previously
+        if (!spectrumIn.areZAndFeaturesAssigned())
+            spectrumIn.assignZAndFeatures(ppmDevAllowed);
+
         ArrayList<SpecificXLIonMatch> matchList = new ArrayList<>();
         //MySpectrum to check was already created by CSVReader class
         //loop through the lists of specific fragment ions and check if they match the spectrum
         //also keep in mind the charge state of the fragment ion and the peak
         //for now, also allow undetermined charge states (=0)
+        //could now also be done by MySpectrum.getMatchingPeak, but this handling is also fine
         for(XlFragmentIon alphaFragment : this.alphaXLFragments){
                 for(Peak toCheck : spectrumIn.getPeakList()){
                     if(DeviationCalc.massAndChargeMatch(alphaFragment.getMToZ(), alphaFragment.getCharge(), toCheck, ppmDevAllowed)){
@@ -267,10 +277,11 @@ public class Xl {
             }
         }
         this.xlIonMatches = matchList;
+        //note: changed this to sort after Feature intensity instead of peak intensity
         QuickSort.xlIonMatchesQuickSort(this.xlIonMatches);
     }
     //comma is the used separator for the .csv file
-    public String xlMatchesStringProducer(MySpectrum fullScanIn, MySpectrum hcdScanIn, MySpectrum cidScanIn){
+    public String xlMatchesStringProducer(MySpectrum triggeringFullScanIn, MySpectrum closestFullScanIn, MySpectrum hcdScanIn, MySpectrum cidScanIn, double ppmDevIn){
         DecimalFormat twoDec = new DecimalFormat("0.00");
         DecimalFormat fourDec = new DecimalFormat("0.0000");
         DecimalFormat scientific = new DecimalFormat("0.00E0");
@@ -296,32 +307,45 @@ public class Xl {
         //information about the theoretical xl precursor
         sb.append(fourDec.format(this.theoreticalXLIon.getMToZ())).append(",");;
         sb.append(""+this.theoreticalXLIon.getCharge()).append(",");
-        //this is not the real isolated m/z, but rather the assumed monoisotopic mass by the ms
+        //note: this is the real isolated mass to charge now with the triceratops mzxml
         sb.append(fourDec.format(this.isolatedMassToCharge)).append(",");
-        //TODO: isolated mass to charge is not the monoisotopic mass, determine that from the scan as is done below anyway
-        ArrayList<Peak> fullScanPeakList = fullScanIn.getPeakList();
-        double peakRelInt = 0;
-        double peakAbsInt = 0;
-        Peak matchedPrecPeak = null;
-        for (Peak peak : fullScanPeakList){
-            if (DeviationCalc.ppmMatch(this.theoreticalXLIon.getMToZ(), peak.getMass(), 10)){
-                peakRelInt = peak.getRelIntensity();
-                peakAbsInt = peak.getIntensity();
-                matchedPrecPeak = peak;
-                break;
-            }
+        sb.append(triggeringFullScanIn.getScanNumber()).append(",");
+        //find precursor peak from triggering spectrum
+        //note: for this, the real peak intensity matters...this is what is triggered upon after all
+        //the mass queried is the isolated mass to charge ratio
+        Peak triggeredPrecPeak = triggeringFullScanIn.getMatchingPeak(this.isolatedMassToCharge, ppmDevIn);
+
+        //what happens if triggering peak isn't detected...shouldn't happen, but error handling
+        if (triggeredPrecPeak == null){
+            triggeredPrecPeak = new Peak(this.theoreticalXLIon.getExactMass(), 0, 1, 1);
         }
 
-        if (matchedPrecPeak == null){
-            matchedPrecPeak = new Peak(this.theoreticalXLIon.getExactMass(), 0, 1, 0);
-        }
-        double detectedPPMDev = DeviationCalc.ppmDeviationCalc(this.theoreticalXLIon.getMToZ(), matchedPrecPeak.getMass());
+        double detectedPPMDev = DeviationCalc.ppmDeviationCalc(this.theoreticalXLIon.getMToZ(), triggeredPrecPeak.getMass());
         sb.append(twoDec.format(detectedPPMDev)).append(",");
         sb.append(""+this.monoisotopicPeakOffset).append(",");
         //check full scan spectrum for the precursor information
 
-        sb.append(twoDec.format(peakRelInt)).append(",");
-        sb.append(scientific.format(peakAbsInt)).append(",");
+        sb.append(twoDec.format(triggeredPrecPeak.getRelIntensity())).append(",");
+        sb.append(scientific.format(triggeredPrecPeak.getIntensity())).append(",");
+        //information about the precursor in the MS1 directly previous to triggering
+        //again, just the peak information is needed, not the feature intensity...
+        //TODO: take into account the isolation window width?
+        sb.append(closestFullScanIn.getScanNumber()).append(",");
+        Peak closestPrecPeak = closestFullScanIn.getMatchingPeak(this.isolatedMassToCharge, ppmDevIn);
+        //same error handling as with triggered precursor peak
+        if(closestPrecPeak == null){
+            closestPrecPeak = new Peak(this.theoreticalXLIon.getExactMass(), 0, 1, 1);
+        }
+
+        sb.append(twoDec.format(closestPrecPeak.getRelIntensity())).append(",");
+        sb.append(scientific.format(closestPrecPeak.getIntensity())).append(",");
+
+
+
+
+
+
+
         //information about the specific signature peaks
         //all the matches are contained in the xlIonMatches list
         //split them up into individual lists

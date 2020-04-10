@@ -1,4 +1,5 @@
 import uk.ac.ebi.pride.tools.jmzreader.JMzReaderException;
+import uk.ac.ebi.pride.tools.jmzreader.model.IndexElement;
 import uk.ac.ebi.pride.tools.jmzreader.model.Spectrum;
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLFile;
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLParsingException;
@@ -123,17 +124,10 @@ public class Main {
        CSVCreator.xWalkInputFileGenerator(sequence,aaToCheck, path, AminoAcid.createSpecificAA("K"));*/
 
 
-        
 
 
-        String runFilePath = "C:\\Programmingfolder\\Thao_Hai\\TGR_08785.mzXML";
-       File runFile = new File(runFilePath);
-        //MzXMLFile mzXMLRun = new MzXMLFile(runFile);
-        //System.out.println("spectrum number: "+mzXMLRun.getSpectraCount());
-        //spectrum 16184
-       //Scan testScan = mzXMLRun.getScanByNum(12423L);
-      // List<Peaks> scanPeakList =   testScan.getPeaks();
-     //  Spectrum testSpectrum = mzXMLRun.getSpectrumById("12394");
+
+
 
 
 
@@ -141,29 +135,45 @@ public class Main {
         String meroxFilePath = "C:\\Programmingfolder\\CID_HCD_Comparison\\newAnalysis\\TGR_08646_CID20_10ms_forAnalysis_CSV.csv";
         //File meroxFile = new File(meroxFilePath);
 
-        //CSVReader.xlSpectraChecker(meroxFile, mzXMLRun, "CID", "cliXlink", aminoAcidsList, 10);
 
-
-        /*Peptide unmod = new Peptide("PCMC", aminoAcidsList);
-        ArrayList<Modification> modList1 = new ArrayList<>();
-        modList1.add(Modification.carbamidomethylation());
-        Peptide mod1 = unmod.peptideModifier(modList1);
-        ArrayList<Modification> modList2 = new ArrayList<>();
-        modList2.add(Modification.oxidation(3));
-        Peptide mod2 = mod1.peptideModifier(modList2);*/
-
-       //Visualization.spectrumPlotter(mzXMLRun,10);
+        //Visualization.spectrumPlotter(mzXMLRun,10);
         String toExtractFilePath = "C:\\Programmingfolder\\Thao_Hai\\defaultInput.csv";
         String scanDescriptionFilePath = "C:\\Programmingfolder\\Thao_Hai\\scanNumbersUsed.csv";
 
-
+        String runFilePath = "C:\\Programmingfolder\\TMTPro_Alex\\TGR_08914_triceratops.mzXML";
+        File runFile = new File(runFilePath);
+        //MzXMLFile mzXMLRun = new MzXMLFile(runFile);
+        String inputFilePath = "C:\\Programmingfolder\\TMTPro_Alex\\TGR_08914_input_adjustedPeaksfromSpectrum.csv";
+        //ExtractSpectrumData.extractStoNValues(runFilePath, inputFilePath);
         //ExtractSpectrumData.getInjectionTimes(runFilePath);
-        ExtractSpectrumData.massExctrator(runFilePath, toExtractFilePath);
-        //System.out.println("Number of spectra: " +ExtractSpectrumData.getMsNScanCount(runFilePath, 686.9669, 2, "CID"));
+
+
+        //ExtractSpectrumData.extractStoNAllMS2Prec(runFilePath);
 
 
 
-        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    }
 
 
 

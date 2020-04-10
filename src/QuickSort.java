@@ -12,6 +12,7 @@ public class QuickSort {
         return peakListIn;
     }
 
+    //change to give feature intensity
     public static  void xlIonMatchesQuickSort (ArrayList<SpecificXLIonMatch> matchListIn){
         qsortSpecificXLIonMatch (matchListIn, 0, matchListIn.size()-1);
         Collections.reverse(matchListIn);
@@ -27,7 +28,7 @@ public class QuickSort {
     }
     private static void qsortSpecificXLIonMatch(ArrayList<SpecificXLIonMatch> matchListIn, int left, int right){
         if(right > left){
-            double pivot = matchListIn.get(right).getMatchedPeak().getIntensity();
+            double pivot = matchListIn.get(right).getMatchedPeak().getFeatureIntensity();
             int pivotIndex = partitionXLIonMatch(matchListIn, left, right, pivot);
             qsortSpecificXLIonMatch(matchListIn, left, pivotIndex-1);
             qsortSpecificXLIonMatch(matchListIn, pivotIndex+1,right);
@@ -59,10 +60,10 @@ public class QuickSort {
         int l = left;
         int r = right -1;
         while (l<=r){
-            while (matchListIn.get(l).getMatchedPeak().getIntensity()<pivot){
+            while (matchListIn.get(l).getMatchedPeak().getFeatureIntensity()<pivot){
                 l++;
             }
-            while (r >=0 && matchListIn.get(r).getMatchedPeak().getIntensity()>pivot){
+            while (r >=0 && matchListIn.get(r).getMatchedPeak().getFeatureIntensity()>pivot){
                 r--;
             }
             if (l<=r){
