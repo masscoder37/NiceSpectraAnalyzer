@@ -40,8 +40,14 @@ public class Feature {
     }
     //overloaded constructor for new MySpectrum.assignZAndFeatures
     public Feature(ArrayList<Peak> featurePeaksIn, int chargeIn, double spectrumTICIn, int featureNumberIn) {
+        //note: change this to see if peak information is conserved in myspectrum peak list
+        //note: should be the case, peak from peaklist of myspectrum and feature peak list point to same memory address
+        /*
         this.peakList = new ArrayList<>();
         this.peakList.addAll(featurePeaksIn);
+         */
+        this.peakList = featurePeaksIn;
+
         this.numberOfPeaks = peakList.size();
         //this should never be the case, but error handling
         if (peakList.size() != 0) {
@@ -61,6 +67,8 @@ public class Feature {
             }
             this.summedRelIntensityPerTIC = this.summedAbsIntensity / spectrumTICIn * 100;
             this.featureNumber = featureNumberIn;
+            //set Monoisotopic Peak property
+            this.peakList.get(0).setMonoisotopic();
         }
     }
 
@@ -70,7 +78,7 @@ public class Feature {
     public static ArrayList<Feature> featureAssigner(MySpectrum spectrumIn, double deviationIn) {
         ArrayList<Feature> out = new ArrayList<>();
         //featureAssigner only makes sense if charge states were assigned
-        if (!spectrumIn.areChargeStatesAssigned())
+        if (!spectrumIn.areZAndFeaturesAssigned())
             return out;
 
         //reference peaklist, therefore be able to change things there
@@ -194,6 +202,18 @@ public class Feature {
 
     public Peak getMostIntensePeak(){
         return this.peakList.get(this.indexOfMostIntensePeak);
+    }
+
+
+    public boolean isPeakPartOfFeature(Peak query){
+        boolean isPart = false;
+        for(Peak peak : this.peakList){
+            if(peak.getMass() == query.getMass()){
+                isPart = true;
+                break;
+            }
+        }
+        return isPart;
     }
 
 }

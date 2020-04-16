@@ -432,14 +432,13 @@ public static void wholeRunRepFinder(MzXMLFile runIn, File statisticsAnalysis, d
     //it analyzes the corresponding MS2-spectra (CID or HCD) of an identified crosslink
     //it gives the number of matched peaks, type (long or short), structure (alkene, thial, SO), rel intensities, rel. intensities towards highest signature peak,
     //overall proportion of signature peaks compared to spectrum, misaligned M0 precursor info
+
+    //TODO: adjust for use with DSSO
 public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String fragMethodIn, String xlIn, ArrayList<AminoAcid> aaListIn, double ppmDevIn) throws FileNotFoundException, MzXMLParsingException, JMzReaderException {
         //check if correct crosslinker and fragmentation type is used
-    if (!xlIn.equals("cliXlink"))
-        throw new IllegalArgumentException("Unknown cross-linker! Only 'cliXlink' is supported! Input: "+xlIn);
-    if(!fragMethodIn.equals("HCD")) {
-        if (!fragMethodIn.equals("CID"))
-            throw new IllegalArgumentException("Unknown frag method! Input: " + fragMethodIn);
-    }
+    if (!xlIn.equals("cliXlink")&&!xlIn.equals("DSSO"))
+        throw new IllegalArgumentException("Unknown cross-linker! Only 'cliXlink' and 'DSSO' are supported! Input: "+xlIn);
+
 
     //initialize scanner for MeroX data
     Scanner scanner = null;
@@ -488,110 +487,366 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
     File outputCSV = new File(newFilePath);
     PrintWriter csvWriter = new PrintWriter(outputCSV);
     StringBuilder sb = new StringBuilder();
-    String[] newHeader = new String[120];
+    String[] newHeader;
     //general XL information
     int i = 0;
-    newHeader[i] = "Peptide alpha"; i++; //note: done
-    newHeader[i] = "Peptide beta";i++; //note: done
-    newHeader[i] = "Alpha amino acid";i++; //note: done
-    newHeader[i] = "Beta amino acid";i++; //note: done
-    newHeader[i] = "Alpha position";i++; //note: done
-    newHeader[i] = "Beta position";i++; //note: done
-    newHeader[i] = "HCD Scan Number";i++; //note: done
-    newHeader[i] = "CID Scan Number";i++; //note: done
-    newHeader[i] = "Calculated precursor m/z";i++; //note: done
-    newHeader[i] = "Precursor Charge";i++; //note: done
-    newHeader[i] = "Isolated m/z";i++; //note: done
-    newHeader[i] = "Triggering MS1 scan number";i++; //note: done
-    newHeader[i] = "Triggering precursor mass dev. [ppm]";i++; //note: done
-    newHeader[i] = "Triggering precursor monoisotopic offset";i++; //note: done
-    newHeader[i] = "Triggering precursor rel. intensity [%]";i++;//note: done
-    newHeader[i] = "Triggering precursor abs. intensity [au]";i++;//note: done
-    newHeader[i] = "Previous MS1 scan number";i++;//note: done
-    newHeader[i] = "Previous MS1 precursor rel. intensity [%]";i++; //note: done
-    newHeader[i] = "Previous MS1 precursor abs. intensity [au]";i++; //note: done
-    //information about Signature peaks and the dominant residues
-    newHeader[i] = "Signature peaks detected Alpha";i++; //0-6
-    newHeader[i] = "Summed signature peaks Alpha abs int. [au]";i++;
-    newHeader[i] = "Summed signature peaks Alpha compared to MS2-TIC [%]";i++;
-    newHeader[i] = "Signature peaks detected Beta";i++;
-    newHeader[i] = "Summed signature peaks Beta abs int. [au]";i++;
-    newHeader[i] = "Summed signature peaks Beta compared to MS2-TIC [%]";i++;
-    newHeader[i] = "Signature peaks detected total";i++;
-    newHeader[i] = "Summed signature peaks total abs int. [au]";i++;
-    newHeader[i] = "Summed signature peaks total compared to MS2-TIC [%]";i++;
-    newHeader[i] = "Alpha charge states detected";i++;
-    newHeader[i] = "Beta charge states detected";i++;
-    newHeader[i] = "Alpha dominant charge state";i++;
-    newHeader[i] = "Beta dominant charge state";i++;
-    newHeader[i] = "Alpha sides detected";i++; //short, long, both
-    newHeader[i] = "Beta sides detected";i++;
-    newHeader[i] = "Alpha dominant side detected";i++;
-    newHeader[i] = "Beta dominant side detected";i++;
+    if(xlIn.equals("cliXlink")) {
+        newHeader = new String[93];
+        newHeader[i] = "Peptide alpha";
+        i++; //note: done
+        newHeader[i] = "Peptide beta";
+        i++; //note: done
+        newHeader[i] = "Alpha amino acid";
+        i++; //note: done
+        newHeader[i] = "Beta amino acid";
+        i++; //note: done
+        newHeader[i] = "Alpha position";
+        i++; //note: done
+        newHeader[i] = "Beta position";
+        i++; //note: done
+        newHeader[i] = "HCD Scan Number";
+        i++; //note: done
+        newHeader[i] = "CID Scan Number";
+        i++; //note: done
+        newHeader[i] = "Calculated precursor m/z";
+        i++; //note: done
+        newHeader[i] = "Precursor Charge";
+        i++; //note: done
+        newHeader[i] = "Isolated m/z";
+        i++; //note: done
+        newHeader[i] = "Triggering MS1 scan number";
+        i++; //note: done
+        newHeader[i] = "Triggering precursor mass dev. [ppm]";
+        i++; //note: done
+        newHeader[i] = "Triggering precursor monoisotopic offset";
+        i++; //note: done
+        newHeader[i] = "Triggering precursor rel. intensity [%]";
+        i++;//note: done
+        newHeader[i] = "Triggering precursor abs. intensity [au]";
+        i++;//note: done
+        newHeader[i] = "Previous MS1 scan number";
+        i++;//note: done
+        newHeader[i] = "Previous MS1 precursor rel. intensity [%]";
+        i++; //note: done
+        newHeader[i] = "Previous MS1 precursor abs. intensity [au]";
+        i++; //note: done
+        //information about Signature peaks and the dominant residues
+        newHeader[i] = "Signature peaks detected Alpha";
+        i++; //0-6 //note: done
+        newHeader[i] = "Summed signature features Alpha abs int. [au]";
+        i++; //note: done
+        newHeader[i] = "Summed signature features Alpha compared to MS2-TIC [%]";
+        i++;//note: done
+        newHeader[i] = "Signature peaks detected Beta";
+        i++;//note: done
+        newHeader[i] = "Summed signature features Beta abs int. [au]";
+        i++;//note: done
+        newHeader[i] = "Summed signature features Beta compared to MS2-TIC [%]";
+        i++;//note: done
+        newHeader[i] = "Signature peaks detected total";
+        i++;//note: done
+        newHeader[i] = "Summed signature peaks total abs int. [au]";
+        i++;//note: done
+        newHeader[i] = "Summed signature peaks total compared to MS2-TIC [%]";
+        i++;//note: done
+        newHeader[i] = "Alpha charge states detected";
+        i++;//note: done
+        newHeader[i] = "Beta charge states detected";
+        i++;//note: done
+        newHeader[i] = "Alpha dominant charge state";
+        i++;//note: done
+        newHeader[i] = "Beta dominant charge state";
+        i++;//note: done
+        newHeader[i] = "Alpha sides detected";
+        i++; //note: done//short, long, both
+        newHeader[i] = "Beta sides detected";
+        i++;//note: done
+        newHeader[i] = "Alpha dominant side detected";
+        i++;//note: done
+        newHeader[i] = "Beta dominant side detected";
+        i++;//note: done
 
-    newHeader[i] = "Alpha mods detected";i++; //short, long, both
-    newHeader[i] = "Beta mods detected";i++;
-    newHeader[i] = "Alpha dominant mod detected";i++;
-    newHeader[i] = "Beta dominant mods detected";i++;
+        newHeader[i] = "Alpha mods detected";
+        i++; //note: done //short, long, both
+        newHeader[i] = "Beta mods detected";
+        i++;//note: done
+        newHeader[i] = "Alpha dominant mod detected";
+        i++;//note: done
+        newHeader[i] = "Beta dominant mods detected";
+        i++;//note: done
 
-    //information about the detected fragments
-    newHeader[i] = "Alpha alkene short detected";i++; //true||false
-    newHeader[i] = "Alpha thial short detected";i++;
-    newHeader[i] = "Alpha SO short detected";i++;
-    newHeader[i] = "Alpha alkene long detected";i++;
-    newHeader[i] = "Alpha thial long detected";i++;
-    newHeader[i] = "Alpha SO long detected";i++;
-    newHeader[i] = "Beta alkene short detected";i++; //true||false
-    newHeader[i] = "Beta thial short detected";i++;
-    newHeader[i] = "Beta SO short detected";i++;
-    newHeader[i] = "Beta alkene long detected";i++;
-    newHeader[i] = "Beta thial long detected";i++;
-    newHeader[i] = "Beta SO long detected";i++;
+        //information about the detected fragments
+        newHeader[i] = "Alpha alkene short detected";
+        i++; //note: done//true||false
+        newHeader[i] = "Alpha thial short detected";
+        i++;//note: done
+        newHeader[i] = "Alpha SO short detected";
+        i++;//note: done
+        newHeader[i] = "Alpha alkene long detected";
+        i++;//note: done
+        newHeader[i] = "Alpha thial long detected";
+        i++;//note: done
+        newHeader[i] = "Alpha SO long detected";
+        i++;//note: done
+        newHeader[i] = "Beta alkene short detected";
+        i++;//note: done //true||false
+        newHeader[i] = "Beta thial short detected";
+        i++;//note: done
+        newHeader[i] = "Beta SO short detected";
+        i++;//note: done
+        newHeader[i] = "Beta alkene long detected";
+        i++;//note: done
+        newHeader[i] = "Beta thial long detected";
+        i++;//note: done
+        newHeader[i] = "Beta SO long detected";
+        i++;//note: done
 
 
-    newHeader[i] = "Summed alpha alkene short rel. int. to MS2 TIC [%]";i++;
-    newHeader[i] = "Summed alpha thial short rel. int. to MS2 TIC [%]";i++;
-    newHeader[i] = "Summed alpha SO short rel. int. to MS2 TIC [%]";i++;
-    newHeader[i] = "Summed alpha alkene long rel. int. to MS2 TIC [%]";i++;
-    newHeader[i] = "Summed alpha thial long rel. int. to MS2 TIC [%]";i++;
-    newHeader[i] = "Summed alpha SO long rel. int. to MS2 TIC [%]";i++;
-    newHeader[i] = "Summed beta alkene short rel. int. to MS2 TIC [%]";i++;
-    newHeader[i] = "Summed beta thial short rel. int. to MS2 TIC [%]";i++;
-    newHeader[i] = "Summed beta SO short rel. int. to MS2 TIC [%]";i++;
-    newHeader[i] = "Summed beta alkene long rel. int. to MS2 TIC [%]";i++;
-    newHeader[i] = "Summed beta thial long rel. int. to MS2 TIC [%]";i++;
-    newHeader[i] = "Summed beta SO long rel. int. to MS2 TIC [%]";i++;
+        newHeader[i] = "Summed alpha alkene short feat. rel. int. to MS2 TIC [%]";
+        i++;//note: done
+        newHeader[i] = "Summed alpha thial short feat. rel. int. to MS2 TIC [%]";
+        i++;//note: done
+        newHeader[i] = "Summed alpha SO short feat. rel. int. to MS2 TIC [%]";
+        i++;//note: done
+        newHeader[i] = "Summed alpha alkene long feat. rel. int. to MS2 TIC [%]";
+        i++;//note: done
+        newHeader[i] = "Summed alpha thial long feat. rel. int. to MS2 TIC [%]";
+        i++;//note: done
+        newHeader[i] = "Summed alpha SO long feat. rel. int. to MS2 TIC [%]";
+        i++;//note: done
+        newHeader[i] = "Summed beta alkene short feat. rel. int. to MS2 TIC [%]";
+        i++;//note: done
+        newHeader[i] = "Summed beta thial short feat. rel. int. to MS2 TIC [%]";
+        i++;//note: done
+        newHeader[i] = "Summed beta SO short feat. rel. int. to MS2 TIC [%]";
+        i++;//note: done
+        newHeader[i] = "Summed beta alkene long feat. rel. int. to MS2 TIC [%]";
+        i++;//note: done
+        newHeader[i] = "Summed beta thial long feat. rel. int. to MS2 TIC [%]";
+        i++;//note: done
+        newHeader[i] = "Summed beta SO long feat. rel. int. to MS2 TIC [%]";
+        i++;//note: done
 
-    newHeader[i] = "Summed alpha alkene short abs. int. [au]";i++;
-    newHeader[i] = "Summed alpha thial short abs. int. [au]";i++;
-    newHeader[i] = "Summed alpha SO short abs. int. [au]";i++;
-    newHeader[i] = "Summed alpha alkene long abs. int. [au]";i++;
-    newHeader[i] = "Summed alpha thial long abs. int. [au]";i++;
-    newHeader[i] = "Summed alpha SO long abs. int. [au]";i++;
-    newHeader[i] = "Summed beta alkene short abs. int. [au]";i++;
-    newHeader[i] = "Summed beta thial short abs. int. [au]";i++;
-    newHeader[i] = "Summed beta SO short abs. int. [au]";i++;
-    newHeader[i] = "Summed beta alkene long abs. int. [au]";i++;
-    newHeader[i] = "Summed beta thial long abs. int. [au]";i++;
-    newHeader[i] = "Summed beta SO long abs. int. [au]"; i++;
-    newHeader[i] = "Most intense signature peak (peptide and charge)"; i++;
-    newHeader[i] = "Most intense signature peak (mod and size)"; i++;
-    newHeader[i] = "Most intense signature peak rel. int. [%]"; i++;
-    newHeader[i] = "Most intense signature peak abs. int. [au]"; i++;
-    newHeader[i] = "2nd most intense signature peak (peptide and charge)"; i++;
-    newHeader[i] = "2nd most intense signature peak (mod and size)"; i++;
-    newHeader[i] = "2nd most intense signature peak rel. int. [%]"; i++;
-    newHeader[i] = "2nd most intense signature peak abs. int. [au]"; i++;
-    newHeader[i] = "3rd most intense signature peak (peptide and charge)"; i++;
-    newHeader[i] = "3rd most intense signature peak (mod and size)"; i++;
-    newHeader[i] = "3rd most intense signature peak rel. int. [%]"; i++;
-    newHeader[i] = "3rd most intense signature peak abs. int. [au]"; i++;
-    newHeader[i] = "4th most intense signature peak (peptide and charge)"; i++;
-    newHeader[i] = "4th most intense signature peak (mod and size)"; i++;
-    newHeader[i] = "4th most intense signature peak rel. int. [%]"; i++;
-    newHeader[i] = "4th most intense signature peak abs. int. [au]";
+        newHeader[i] = "Summed alpha alkene short feat. abs. int. [au]";
+        i++;//note: done
+        newHeader[i] = "Summed alpha thial short feat. abs. int. [au]";
+        i++;//note: done
+        newHeader[i] = "Summed alpha SO short feat. abs. int. [au]";
+        i++;//note: done
+        newHeader[i] = "Summed alpha alkene long feat. abs. int. [au]";
+        i++;//note: done
+        newHeader[i] = "Summed alpha thial long feat. abs. int. [au]";
+        i++;//note: done
+        newHeader[i] = "Summed alpha SO long feat. abs. int. [au]";
+        i++;//note: done
+        newHeader[i] = "Summed beta alkene short feat. abs. int. [au]";
+        i++;//note: done
+        newHeader[i] = "Summed beta thial short feat. abs. int. [au]";
+        i++;//note: done
+        newHeader[i] = "Summed beta SO short feat. abs. int. [au]";
+        i++;//note: done
+        newHeader[i] = "Summed beta alkene long feat. abs. int. [au]";
+        i++;//note: done
+        newHeader[i] = "Summed beta thial long feat. abs. int. [au]";
+        i++;//note: done
+        newHeader[i] = "Summed beta SO long feat. abs. int. [au]";
+        i++;//note: done
 
-    //TODO: add how many peak pairs have a distance of 32Da?
+        newHeader[i] = "Most intense signature peak (peptide and charge)";
+        i++;//note: done
+        newHeader[i] = "Most intense signature peak (mod and size)";
+        i++;//note: done
+        newHeader[i] = "Most intense signature peak rel. int. [%]";
+        i++;//note: done
+        newHeader[i] = "Most intense signature peak abs. int. [au]";
+        i++;//note: done
+        newHeader[i] = "2nd most intense signature peak (peptide and charge)";
+        i++;//note: done
+        newHeader[i] = "2nd most intense signature peak (mod and size)";
+        i++;//note: done
+        newHeader[i] = "2nd most intense signature peak rel. int. [%]";
+        i++;//note: done
+        newHeader[i] = "2nd most intense signature peak abs. int. [au]";
+        i++;//note: done
+        newHeader[i] = "3rd most intense signature peak (peptide and charge)";
+        i++;//note: done
+        newHeader[i] = "3rd most intense signature peak (mod and size)";
+        i++;//note: done
+        newHeader[i] = "3rd most intense signature peak rel. int. [%]";
+        i++;//note: done
+        newHeader[i] = "3rd most intense signature peak abs. int. [au]";
+        i++;//note: done
+        newHeader[i] = "4th most intense signature peak (peptide and charge)";
+        i++;//note: done
+        newHeader[i] = "4th most intense signature peak (mod and size)";
+        i++;//note: done
+        newHeader[i] = "4th most intense signature peak rel. int. [%]";
+        i++;//note: done
+        newHeader[i] = "4th most intense signature peak abs. int. [au]";
+        i++;//note: done
+        newHeader[i] = "Number of peak pairs with 31.9715 Da mass difference";
+    }
+
+    else {
+        newHeader = new String[71];
+        newHeader[i] = "Peptide alpha";
+        i++;//note: done
+        newHeader[i] = "Peptide beta";
+        i++;//note: done
+        newHeader[i] = "Alpha amino acid";
+        i++;//note: done
+        newHeader[i] = "Beta amino acid";
+        i++;//note: done
+        newHeader[i] = "Alpha position";
+        i++;//note: done
+        newHeader[i] = "Beta position";
+        i++;//note: done
+        newHeader[i] = "HCD Scan Number";
+        i++;//note: done
+        newHeader[i] = "CID Scan Number";
+        i++;//note: done
+        newHeader[i] = "Calculated precursor m/z";
+        i++;//note: done
+        newHeader[i] = "Precursor Charge";
+        i++;//note: done
+        newHeader[i] = "Isolated m/z";
+        i++;//note: done
+        newHeader[i] = "Triggering MS1 scan number";
+        i++;//note: done
+        newHeader[i] = "Triggering precursor mass dev. [ppm]";
+        i++;//note: done
+        newHeader[i] = "Triggering precursor monoisotopic offset";
+        i++;//note: done
+        newHeader[i] = "Triggering precursor rel. intensity [%]";
+        i++;//note: done
+        newHeader[i] = "Triggering precursor abs. intensity [au]";
+        i++;//note: done
+        newHeader[i] = "Previous MS1 scan number";
+        i++;//note: done
+        newHeader[i] = "Previous MS1 precursor rel. intensity [%]";
+        i++;//note: done
+        newHeader[i] = "Previous MS1 precursor abs. intensity [au]";
+        i++;//note: done
+        //information about Signature peaks and the dominant residues
+        newHeader[i] = "Signature peaks detected Alpha";
+        i++; //note: done
+        newHeader[i] = "Summed signature features Alpha abs int. [au]";
+        i++;//note: done
+        newHeader[i] = "Summed signature features Alpha compared to MS2-TIC [%]";
+        i++;//note: done
+        newHeader[i] = "Signature peaks detected Beta";
+        i++;//note: done
+        newHeader[i] = "Summed signature features Beta abs int. [au]";
+        i++;//note: done
+        newHeader[i] = "Summed signature features Beta compared to MS2-TIC [%]";
+        i++;//note: done
+        newHeader[i] = "Signature peaks detected total";
+        i++;//note: done
+        newHeader[i] = "Summed signature peaks total abs int. [au]";
+        i++;//note: done
+        newHeader[i] = "Summed signature peaks total compared to MS2-TIC [%]";
+        i++;//note: done
+        newHeader[i] = "Alpha charge states detected";
+        i++;//note: done
+        newHeader[i] = "Beta charge states detected";
+        i++;//note: done
+        newHeader[i] = "Alpha dominant charge state";
+        i++;//note: done
+        newHeader[i] = "Beta dominant charge state";
+        i++;//note: done
+
+
+        newHeader[i] = "Alpha mods detected";
+        i++;//note: done
+        newHeader[i] = "Beta mods detected";
+        i++;//note: done
+        newHeader[i] = "Alpha dominant mod detected";
+        i++;//note: done
+        newHeader[i] = "Beta dominant mods detected";
+        i++;//note: done
+
+        //information about the detected fragments
+        newHeader[i] = "Alpha alkene detected";
+        i++;//note: done
+        newHeader[i] = "Alpha thial detected";
+        i++;//note: done
+        newHeader[i] = "Alpha SO detected";
+        i++;//note: done
+
+        newHeader[i] = "Beta alkene detected";
+        i++;//note: done
+        newHeader[i] = "Beta thial detected";
+        i++;//note: done
+        newHeader[i] = "Beta SO detected";
+        i++;//note: done
+
+
+
+        newHeader[i] = "Summed alpha alkene feat. rel. int. to MS2 TIC [%]";
+        i++;//note: done
+        newHeader[i] = "Summed alpha thial feat. rel. int. to MS2 TIC [%]";
+        i++;//note: done
+        newHeader[i] = "Summed alpha SO feat. rel. int. to MS2 TIC [%]";
+        i++;//note: done
+
+        newHeader[i] = "Summed beta alkene feat. rel. int. to MS2 TIC [%]";
+        i++;//note: done
+        newHeader[i] = "Summed beta thial feat. rel. int. to MS2 TIC [%]";
+        i++;//note: done
+        newHeader[i] = "Summed beta SO feat. rel. int. to MS2 TIC [%]";
+        i++;//note: done
+
+
+        newHeader[i] = "Summed alpha alkene feat. abs. int. [au]";
+        i++;//note: done
+        newHeader[i] = "Summed alpha thial feat. abs. int. [au]";
+        i++;//note: done
+        newHeader[i] = "Summed alpha SO feat. abs. int. [au]";
+        i++;//note: done
+
+        newHeader[i] = "Summed beta alkene feat. abs. int. [au]";
+        i++;//note: done
+        newHeader[i] = "Summed beta thial feat. abs. int. [au]";
+        i++;//note: done
+        newHeader[i] = "Summed beta SO feat. abs. int. [au]";
+        i++;//note: done
+
+
+        newHeader[i] = "Most intense signature peak (peptide and charge)";
+        i++;//note: done
+        newHeader[i] = "Most intense signature peak (mod)";
+        i++;//note: done
+        newHeader[i] = "Most intense signature peak rel. int. [%]";
+        i++;//note: done
+        newHeader[i] = "Most intense signature peak abs. int. [au]";
+        i++;//note: done
+        newHeader[i] = "2nd most intense signature peak (peptide and charge)";
+        i++;//note: done
+        newHeader[i] = "2nd most intense signature peak (mod)";
+        i++;//note: done
+        newHeader[i] = "2nd most intense signature peak rel. int. [%]";
+        i++;//note: done
+        newHeader[i] = "2nd most intense signature peak abs. int. [au]";
+        i++;//note: done
+        newHeader[i] = "3rd most intense signature peak (peptide and charge)";
+        i++;//note: done
+        newHeader[i] = "3rd most intense signature peak (mod)";
+        i++;//note: done
+        newHeader[i] = "3rd most intense signature peak rel. int. [%]";
+        i++;//note: done
+        newHeader[i] = "3rd most intense signature peak abs. int. [au]";
+        i++;//note: done
+        newHeader[i] = "4th most intense signature peak (peptide and charge)";
+        i++;//note: done
+        newHeader[i] = "4th most intense signature peak (mod)";
+        i++;//note: done
+        newHeader[i] = "4th most intense signature peak rel. int. [%]";
+        i++;//note: done
+        newHeader[i] = "4th most intense signature peak abs. int. [au]";
+        i++;//note: done
+        newHeader[i] = "Number of peak pairs with 31.9715 Da mass difference";
+    }
+
 
 
     //this loop generates the header
@@ -704,6 +959,7 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
         int xlPos2 = Integer.parseInt(linkagePep2);
 
         //invoke XL constructor
+        //note: this also works for DSSO
         Xl currentXl = new Xl(peptide1, peptide2, xlIn, xlChargeState, hcdScanNumber, cidScanNumber, fragMethodIn, cidIsoMassToCharge, xlPos1,
                 xlPos2, aaListIn, cidRT);
 
@@ -713,12 +969,12 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
         currentCIDSpectrum.assignZAndFeatures(ppmDevIn);
 
         //use the Xl class to check the spectrum for the specific peaks
+        //note: works as well for DSSO
         currentXl.xlIonMatcher(currentCIDSpectrum, ppmDevIn);
 
         //Stringproducer needs 3 spectra: precursor, HCD, CID
         //i think HCD is not used currently, but make available anyway for future analysis
-        //note:afaik, this is the triggering full scan, not necessarily the previous one
-        //it would the interesting to get both, triggering MS1 and previous MS1 to get more correct picture of ion flux
+        //get both, triggering MS1 and previous MS1 to get more correct picture of ion flux
         int triggeringScanNumber = hcdScan.getPrecursorMz().get(0).getPrecursorScanNum().intValue();
         MySpectrum triggeringMySpectrum = MzXMLReadIn.mzXMLToMySpectrum(runIn, Integer.toString(triggeringScanNumber));
         //find previous MS1 spectrum
@@ -731,7 +987,11 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
         MySpectrum closestMS1MySpectrum = MzXMLReadIn.mzXMLToMySpectrum(runIn, Integer.toString(closestMS1Scan));
         MySpectrum hcdMySpectrum = MzXMLReadIn.mzXMLToMySpectrum(runIn, Integer.toString(hcdScanNumber));
         //get String for writing data
-        String output = currentXl.xlMatchesStringProducer(triggeringMySpectrum, closestMS1MySpectrum, hcdMySpectrum, currentCIDSpectrum, ppmDevIn);
+        String output;
+        if(xlIn.equals("cliXlink"))
+            output = currentXl.cliXlinkMatchesStringProducer(triggeringMySpectrum, closestMS1MySpectrum, hcdMySpectrum, currentCIDSpectrum, ppmDevIn);
+        else
+            output = currentXl.dssoMatchesStringProducer(triggeringMySpectrum, closestMS1MySpectrum, hcdMySpectrum, currentCIDSpectrum, ppmDevIn);
 
         //new line is already attached from function
         csvWriter.write(output);

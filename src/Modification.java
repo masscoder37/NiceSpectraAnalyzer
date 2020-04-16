@@ -143,6 +143,15 @@ public class Modification {
         return modListOut;
     }
 
+    public static ArrayList<Modification> dssoModList (int pos){
+        ArrayList<Modification> modListOut = new ArrayList<>();
+        //DSSO mods are equal to the cliXlink short mods
+        modListOut.add(cliXlinkShortAlk(pos));
+        modListOut.add(cliXlinkShortSO(pos));
+        modListOut.add(cliXlinkShortThial(pos));
+        return modListOut;
+    }
+
     public static Modification cliXlinkLongAlk (int pos) {
         Modification cliXlinkShortAlk = new Modification("alk_l", "C9H9NO2", pos);
         return cliXlinkShortAlk;

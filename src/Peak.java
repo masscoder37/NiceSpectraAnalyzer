@@ -17,6 +17,7 @@ public class Peak {
     private boolean chargeStateKnown;
     private boolean isPartOfFeature;
     private Feature associatedFeature;
+    private boolean isMonoisotopic;
     //add information about noise directly in the peak
     private double noise;
     private double signalToNoise;
@@ -39,6 +40,7 @@ public class Peak {
         this.isBasePeak = false;
         this.isPartOfFeature = false;
         this.associatedFeature = null;
+        this.isMonoisotopic = false;
     }
 
     //second constructor if charge is unknown, has to be set later
@@ -54,6 +56,7 @@ public class Peak {
         this.associatedFeature = null;
         this.noise = 0;
         this.signalToNoise = intensityIn;
+        this.isMonoisotopic = false;
     }
 
     //another overloaded constructor for incorporating noise information
@@ -73,6 +76,7 @@ public class Peak {
         else
             signalToNoise = intensityIn;
         this.noiseSet = true;
+        this.isMonoisotopic = false;
     }
 
 
@@ -98,6 +102,10 @@ public class Peak {
     public void setFeature(Feature featureIn){
         this.associatedFeature = featureIn;
         this.isPartOfFeature = true;
+    }
+
+    public void setMonoisotopic(){
+        this.isMonoisotopic = true;
     }
 
 
@@ -156,6 +164,8 @@ public class Peak {
     }
 
     public double getSignalToNoise(){return this.signalToNoise;}
+
+    public boolean isMonoisotopicPeak(){return this.isMonoisotopic;}
 
 
     public void peakPrinter (){

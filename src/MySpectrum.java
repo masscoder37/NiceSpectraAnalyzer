@@ -411,6 +411,130 @@ public class MySpectrum {
         return isolatedPrecursorMass;
     }
 
+    public ArrayList<Peak[]> getNumberofPeaksWithSpecificMassDifference(double massDiffIn, double ppmDevIn){
+        //note: validating
+        ArrayList<Peak[]> out = new ArrayList<>();
+
+        //for accounting of 2 peaks, double ppmDev
+        ppmDevIn = 2 * ppmDevIn;
+
+        int occurrence = 0;
+        //check if charge states and features where assigned in current spectrum
+        if(!this.zAndFeaturesAssigned)
+            this.assignZAndFeatures(ppmDevIn);
+
+        //Work with exclusion list
+        ArrayList<Double> excludedMasses = new ArrayList<>();
+        //loop through all the peaks
+        for (int i = 0; i < this.peakList.size(); i++) {
+            //only want to compare the monoisotopic peaks if part of feature
+            //since coming from the left, peak is always the monoisotopic one, just add all the peaks of the feature to exclusion list afterwards
+            Peak current = this.peakList.get(i);
+            //check if peak is part of excluded masses list
+            if (excludedMasses.contains(current.getMass()))
+                continue;
+            //assemble following peaks
+            ArrayList<Peak> followingPeaks = new ArrayList<>();
+            for (int m = 1; m < 30; m++) {
+                //try deals with not enough neighbours
+                try {
+                    Peak next = this.peakList.get(m + i);
+                    //first check if distance is important. otherwise, break the loop prematurely
+                    if (next.getMass() > massDiffIn + 2 + current.getMass())
+                        break;
+                    //check if part of exclusion list, skip if that's the case
+                    if (excludedMasses.contains(next.getMass()))
+                        continue;
+                    //check if peak is part of any feature
+                    if (next.isPartOfFeature()) {
+                        //exclude if its part of the same feature as current peak
+                        if (current.getFeature() == next.getFeature())
+                            continue;
+                        //exclude if it's not the monoisotopic peak of the feature
+                        if (!next.isMonoisotopicPeak())
+                            continue;
+                    }
+                    //adds if: not out of mass range, not in exclusion list, not part of same feature, is featureless or monoisotopic peak
+                    followingPeaks.add(next);
+                } catch (IndexOutOfBoundsException e) {
+                    break;
+                }
+            }
+            double massShifted;
+            //of charge is known, that takes precedent
+            if (current.isChargeStateKnown()) {
+                massShifted = current.getMass() + massDiffIn / current.getCharge();
+            }
+            //if not, assume z=1
+            else {
+                massShifted = current.getMass() + massDiffIn;
+            }
+
+            for (Peak nextPeak : followingPeaks) {
+                //first check if charge state of the following peak is known. if it's different, then discard
+                if (nextPeak.getCharge() == current.getCharge() || !nextPeak.isChargeStateKnown()) {
+                    //if they have the same charge, use the normal shifted mass
+                    if (DeviationCalc.ppmMatch(massShifted, nextPeak.getMass(), ppmDevIn)) {
+                        occurrence++;
+                        Peak[] match = new Peak[2];
+                        match[0] = current;
+                        match[1] = nextPeak;
+                        out.add(match);
+                        //add all masses to exclusion list
+                        if (nextPeak.isPartOfFeature()) {
+                            for (Peak peak : nextPeak.getFeature().getPeakList()) {
+                                excludedMasses.add(peak.getMass());
+                            }
+                        } else {
+                            excludedMasses.add(nextPeak.getMass());
+                        }
+                        break;
+                    }
+                }
+                //handle case if current charge state is unknown, but next peak charge state is known
+                if (!current.isChargeStateKnown() && nextPeak.isChargeStateKnown()) {
+                    massShifted = current.getMass() + massDiffIn / nextPeak.getCharge();
+                    if (DeviationCalc.ppmMatch(massShifted, nextPeak.getMass(), ppmDevIn)) {
+                        occurrence++;
+                        Peak[] match = new Peak[2];
+                        match[0] = current;
+                        match[1] = nextPeak;
+                        out.add(match);
+                        //peak has to be part of feature, otherwise charge state wouldn't be known
+                        for (Peak peak : nextPeak.getFeature().getPeakList()) {
+                            excludedMasses.add(peak.getMass());
+                        }
+                        break;
+                    }
+                }
+
+                if (!current.isChargeStateKnown() && !nextPeak.isChargeStateKnown()) {
+                    if (DeviationCalc.ppmMatch(massShifted, nextPeak.getMass(), ppmDevIn)) {
+                        occurrence++;
+                        Peak[] match = new Peak[2];
+                        match[0] = current;
+                        match[1] = nextPeak;
+                        out.add(match);
+                        excludedMasses.add(nextPeak.getMass());
+                        break;
+                    }
+                }
+            }
+            //add current peak and all feature peaks to exclusion list
+            if (current.isPartOfFeature()) {
+                for (Peak peak : current.getFeature().getPeakList()) {
+                    excludedMasses.add(peak.getMass());
+                }
+            } else {
+                excludedMasses.add(current.getMass());
+            }
+        }
+        return out;
+    }
+
+
+
+
     public int[] getChargeStateDistributionNumber() {
         int chargeUnknown = 0;
         int charge1 = 0;

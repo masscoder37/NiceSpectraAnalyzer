@@ -6,26 +6,26 @@ public class XlFragmentIon extends Ion {
     private Peptide modPeptide;
     private String originPeptideSequence;
     private String pepType; //alpha or beta peptide
-    private String cliXlinkSize; //long or short side of clixlink
-    private String cliXlinkMod; //alk, thial, or SO
-    private int cliXlinkPos; //where is the peptide modified
+    private String size; //long or short side of clixlink
+    private String modType; //alk, thial, or SO
+    private int modPos; //where is the peptide modified
 
-    public XlFragmentIon(Peptide modPeptideIn, String originPeptideSequenceIn, String pepTypeIn, String cliXlinkSideIn,
-                         int chargeStateIn, SumFormula sumFormulaIn, int cliXlinkPosIn){
+    public XlFragmentIon(Peptide modPeptideIn, String originPeptideSequenceIn, String pepTypeIn, String sideIn,
+                         int chargeStateIn, SumFormula sumFormulaIn, int posIn){
         super (sumFormulaIn, chargeStateIn);
         this.modPeptide = modPeptideIn;
         if (this.modPeptide.getSequence().contains("alk"))
-            this.cliXlinkMod = "alk";
+            this.modType = "alk";
         else if (this.modPeptide.getSequence().contains("thial"))
-            this.cliXlinkMod = "thial";
+            this.modType = "thial";
         else if (this.modPeptide.getSequence().contains("SO"))
-            this.cliXlinkMod = "SO";
+            this.modType = "SO";
         else
             throw new IllegalArgumentException("Modification of XlFragmentIon not recognized! Please use alk, thial or SO. Mod. sequence: "+this.modPeptide.getSequence());
         this.originPeptideSequence = originPeptideSequenceIn;
         this.pepType = pepTypeIn;
-        this.cliXlinkSize = cliXlinkSideIn;
-        this.cliXlinkPos = cliXlinkPosIn;
+        this.size = sideIn; //states "dsso" for DSSO
+        this.modPos = posIn;
     }
 
     public Peptide getModPeptide() {
@@ -40,14 +40,14 @@ public class XlFragmentIon extends Ion {
         return pepType;
     }
 
-    public String getCliXlinkSize() {
-        return cliXlinkSize;
+    public String getSize() {
+        return size;
     }
 
-    public int getCliXlinkPos() {
-        return cliXlinkPos;
+    public int getModPos() {
+        return modPos;
     }
 
-    public String getCliXlinkMod() {return cliXlinkMod; };
+    public String getModType() {return modType; };
 
 }

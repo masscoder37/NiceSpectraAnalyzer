@@ -8,15 +8,15 @@ public class SpecificXLIonMatch {
     private XlFragmentIon matchedFragIon;
     private double massDeviation;
     private String modType; //alk, thial, SO
-    private String modSize; //long, short
+    private String modSize; //long, short, or dsso for DSSO
 
 
     public SpecificXLIonMatch(Peak peakIn, XlFragmentIon fragIonIn) {
         this.matchedPeak = peakIn;
         this.matchedFragIon = fragIonIn;
         this.massDeviation = DeviationCalc.ppmDeviationCalc(this.matchedFragIon.getMToZ(), this.matchedPeak.getMass());
-        this.modSize = fragIonIn.getCliXlinkSize();
-        int position = fragIonIn.getCliXlinkPos();
+        this.modSize = fragIonIn.getSize();
+        int position = fragIonIn.getModPos();
         String modName = fragIonIn.getModPeptide().getAminoAcidsList().get(position - 1).getModification().getModificationName();
         if (modName.contains("alk"))
             this.modType = "alk";

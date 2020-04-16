@@ -132,23 +132,32 @@ public class Main {
 
 
 
-        String meroxFilePath = "C:\\Programmingfolder\\CID_HCD_Comparison\\newAnalysis\\TGR_08646_CID20_10ms_forAnalysis_CSV.csv";
-        //File meroxFile = new File(meroxFilePath);
+        String meroxFilePath = "C:\\Programmingfolder\\CID_HCD_Comparison\\newAnalysis\\TGR_08656_CID25_10ms_0p5uL_forAnalysis_CSV.csv";
+        File meroxFile = new File(meroxFilePath);
 
 
         //Visualization.spectrumPlotter(mzXMLRun,10);
         String toExtractFilePath = "C:\\Programmingfolder\\Thao_Hai\\defaultInput.csv";
         String scanDescriptionFilePath = "C:\\Programmingfolder\\Thao_Hai\\scanNumbersUsed.csv";
 
-        String runFilePath = "C:\\Programmingfolder\\TMTPro_Alex\\TGR_08914_triceratops.mzXML";
+        String runFilePath = "C:\\Programmingfolder\\CID_HCD_Comparison\\newAnalysis\\TGR_08656_CID25_10ms_0p5uL.mzXML";
         File runFile = new File(runFilePath);
-        //MzXMLFile mzXMLRun = new MzXMLFile(runFile);
+        MzXMLFile mzXMLRun = new MzXMLFile(runFile);
         String inputFilePath = "C:\\Programmingfolder\\TMTPro_Alex\\TGR_08914_input_adjustedPeaksfromSpectrum.csv";
-        //ExtractSpectrumData.extractStoNValues(runFilePath, inputFilePath);
-        //ExtractSpectrumData.getInjectionTimes(runFilePath);
+
+        CSVReader.xlSpectraChecker(meroxFile, mzXMLRun, "CID", "cliXlink", aminoAcidsList, 10);
+        MySpectrum test = MzXMLReadIn.mzXMLToMySpectrum(mzXMLRun, "5272");
+
+        ArrayList<Peak[]> testList = test.getNumberofPeaksWithSpecificMassDifference(31.9715, 10);
+
+        for(Peak[] peaks : testList){
+            System.out.println("Mass: "+fourDec.format(peaks[0].getMass()) + " (" + peaks[0].getCharge()+")     "+"Mass: "+fourDec.format(peaks[1].getMass()) + " (" + peaks[1].getCharge()+")     Diff:"+fourDec.format(peaks[1].getMass()-peaks[0].getMass()));
+        }
 
 
-        //ExtractSpectrumData.extractStoNAllMS2Prec(runFilePath);
+
+
+
 
 
 

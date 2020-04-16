@@ -131,8 +131,13 @@ public class SumFormula {
     }
 
     public static SumFormula getCliXlinkFormula (){
-        SumFormula cliXlinkFormula =new SumFormula("C12H13NO4S");
+        SumFormula cliXlinkFormula = new SumFormula("C12H13NO4S");
         return cliXlinkFormula;
+    }
+
+    public static SumFormula getDSSOFormula(){
+        SumFormula dssoFormula = new SumFormula("C6H6O3S");
+        return dssoFormula;
     }
 
     public int getProtonNumber(){
