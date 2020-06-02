@@ -491,7 +491,7 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
     //general XL information
     int i = 0;
     if(xlIn.equals("cliXlink")) {
-        newHeader = new String[93];
+        newHeader = new String[95];
         newHeader[i] = "Peptide alpha";
         i++; //note: done
         newHeader[i] = "Peptide beta";
@@ -530,6 +530,11 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
         i++; //note: done
         newHeader[i] = "Previous MS1 precursor abs. intensity [au]";
         i++; //note: done
+        //added information on surviving precursor
+        newHeader[i] = "Surviving isolated precursor rel. intensity [%]";
+        i++;
+        newHeader[i] = "Surviving isolated precursor abs. intensity [au]";
+        i++;
         //information about Signature peaks and the dominant residues
         newHeader[i] = "Signature peaks detected Alpha";
         i++; //0-6 //note: done
@@ -688,7 +693,7 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
     }
 
     else {
-        newHeader = new String[71];
+        newHeader = new String[73];
         newHeader[i] = "Peptide alpha";
         i++;//note: done
         newHeader[i] = "Peptide beta";
@@ -727,6 +732,12 @@ public static void xlSpectraChecker(File resultFileIn, MzXMLFile runIn, String f
         i++;//note: done
         newHeader[i] = "Previous MS1 precursor abs. intensity [au]";
         i++;//note: done
+        //added information on surviving precursor
+        //TODO: this is not implemented yet for DSSO!
+        newHeader[i] = "Surviving isolated precursor rel. intensity [%]";
+        i++;
+        newHeader[i] = "Surviving isolated precursor abs. intensity [au]";
+        i++;
         //information about Signature peaks and the dominant residues
         newHeader[i] = "Signature peaks detected Alpha";
         i++; //note: done

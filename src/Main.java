@@ -132,27 +132,29 @@ public class Main {
 
 
 
-        String meroxFilePath = "C:\\Programmingfolder\\CID_HCD_Comparison\\newAnalysis\\TGR_08656_CID25_10ms_0p5uL_forAnalysis_CSV.csv";
+        String meroxFilePath = "C:\\Programmingfolder\\CID_HCD_Comparison\\newAnalysis\\cliXlink\\TGR_09158_CID30_10ms_forAnalysis.csv";
         File meroxFile = new File(meroxFilePath);
 
 
-        //Visualization.spectrumPlotter(mzXMLRun,10);
-        String toExtractFilePath = "C:\\Programmingfolder\\Thao_Hai\\defaultInput.csv";
-        String scanDescriptionFilePath = "C:\\Programmingfolder\\Thao_Hai\\scanNumbersUsed.csv";
 
-        String runFilePath = "C:\\Programmingfolder\\CID_HCD_Comparison\\newAnalysis\\TGR_08656_CID25_10ms_0p5uL.mzXML";
+
+
+        String runFilePath = "C:\\Programmingfolder\\CID_HCD_Comparison\\newAnalysis\\cliXlink\\TGR_09158.mzXML";
         File runFile = new File(runFilePath);
+
+        //String inputFilePath = "C:\\Programmingfolder\\Thao_Hai\\defaultInput.csv";
         MzXMLFile mzXMLRun = new MzXMLFile(runFile);
-        String inputFilePath = "C:\\Programmingfolder\\TMTPro_Alex\\TGR_08914_input_adjustedPeaksfromSpectrum.csv";
+        //Visualization.spectrumPlotter(mzXMLRun,10);
+
 
         CSVReader.xlSpectraChecker(meroxFile, mzXMLRun, "CID", "cliXlink", aminoAcidsList, 10);
-        MySpectrum test = MzXMLReadIn.mzXMLToMySpectrum(mzXMLRun, "5272");
+        //ExtractSpectrumData.massExtractor(runFilePath,inputFilePath);
+        //System.out.println("Anzahl Spektren: "+ ExtractSpectrumData.getMsNScanCount(runFilePath,686.9669,2,"CID"));
 
-        ArrayList<Peak[]> testList = test.getNumberofPeaksWithSpecificMassDifference(31.9715, 10);
+        //ExtractSpectrumData.getInjectionTimes("C:\\Programmingfolder\\TMTPro_Alex\\TGR_09073.mzXML");
+        //ExtractSpectrumData.extractStoNAllMS2Prec("C:\\Programmingfolder\\TMTPro_Alex\\TGR_09073.mzXML");
 
-        for(Peak[] peaks : testList){
-            System.out.println("Mass: "+fourDec.format(peaks[0].getMass()) + " (" + peaks[0].getCharge()+")     "+"Mass: "+fourDec.format(peaks[1].getMass()) + " (" + peaks[1].getCharge()+")     Diff:"+fourDec.format(peaks[1].getMass()-peaks[0].getMass()));
-        }
+
 
 
 

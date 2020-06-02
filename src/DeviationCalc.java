@@ -47,6 +47,20 @@ public class DeviationCalc {
     }
 
 
+    //TODO: redo this method to take the MySpectrum and look at the real feature instead of checking M0 through M5?
+    public static boolean isPartofIsotopeEnvelope(double m0MassIn, double massToCheckIn, int chargeStateIn, double ppmDevAllowed){
+        boolean isMatch = false;
+        for(int i = 0; i < 5; i++){
+            double shiftedMass = m0MassIn + (i*AtomicMasses.getNEUTRON()/chargeStateIn);
+            if(ppmMatch(shiftedMass, massToCheckIn, ppmDevAllowed)){
+                isMatch = true;
+                break;
+            }
+        }
+        return isMatch;
+    }
+
+
 
 
 

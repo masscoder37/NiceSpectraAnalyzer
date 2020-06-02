@@ -380,6 +380,18 @@ private static class PlotSize{
                     comp.requestFocusInWindow();
                 }
 
+                //seed new random colors
+                if(e.getKeyCode()==67){
+                    featureColors.clear();
+                    for (int i = 0; i<250;i++){
+                        featureColors.add(new Color(random.nextFloat(), random.nextFloat(), random.nextFloat()));
+                    }
+                    //actually replot
+                    comp.clearLines();
+                    graphProducer(comp, toPlot, massRange, plotSize);
+                    comp.requestFocusInWindow();
+                }
+
             }
 
             @Override
@@ -430,7 +442,6 @@ private static class PlotSize{
         comp.addAxis(plotSize.getxX1(),plotSize.getxY(),plotSize.getxX2(),plotSize.getxY(), 3, "x-Axis", "x");
 
         //draw mass peaks
-        //implement that you can see the mass difference to previous/next peak
         //for (Peak peak : toPlot.getPeakList()){
         for (int i = 0; i < toPlot.getPeakList().size(); i++){
             Peak peak = toPlot.getPeakList().get(i);

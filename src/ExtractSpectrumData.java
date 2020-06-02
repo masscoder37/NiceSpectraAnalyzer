@@ -38,7 +38,7 @@ public class ExtractSpectrumData {
         }
     }
 
-    public static void massExctrator(String mzXMLPath, String inputFilePath) throws MzXMLParsingException, JMzReaderException {
+    public static void massExtractor(String mzXMLPath, String inputFilePath) throws MzXMLParsingException, JMzReaderException {
         //set up input file
         File inputFile = new File(inputFilePath);
         Scanner scanner = null;
@@ -150,10 +150,15 @@ public class ExtractSpectrumData {
             //check all the precursors and see if the mass is present
             boolean precursorPresent = false;
             double currentPrecursor = currentScan.getPrecursorMz().get(0).getValue();
+            int precursorCharge = Math.toIntExact(currentScan.getPrecursorMz().get(0).getPrecursorCharge());
             //loop through all the precursors and set variable if one is present
             for (double precursor : precursorList) {
-                if (DeviationCalc.ppmMatch(precursor, currentPrecursor, 10))
+                //note: also need to check the shift to the M1 peak
+                if (DeviationCalc.isPartofIsotopeEnvelope(precursor, currentPrecursor, precursorCharge, 10)) {
                     precursorPresent = true;
+                    break;
+                }
+
             }
             //skip if still false
             if (!precursorPresent)
@@ -163,7 +168,7 @@ public class ExtractSpectrumData {
             numberOfScansUsed++;
 
             //get precursor charge state
-            int precursorCharge = Math.toIntExact(currentScan.getPrecursorMz().get(0).getPrecursorCharge());
+
 
             //now, only if spectrum fulfills requirements, it'll be analyzed
             //convert to MySpectrum and run Feature Assignment
@@ -197,6 +202,8 @@ public class ExtractSpectrumData {
             } else {
                 if (featureIntUsed) {
                     precursorInt = precursorPeak.getFeatureRelIntPerTIC();
+                    if(!precursorPeak.isPartOfFeature())
+                        precursorInt = precursorPeak.getRelIntensity()/currentMySpectrum.getSpectrumTIC()*100;
                 } else {
                     precursorInt = precursorPeak.getRelIntensity();
                 }
@@ -217,6 +224,9 @@ public class ExtractSpectrumData {
                 } else {
                     if (featureIntUsed) {
                         intensities[currentPosInt] = matchingPeak.getFeatureRelIntPerTIC();
+                        if(!matchingPeak.isPartOfFeature())
+                            intensities[currentPosInt] = matchingPeak.getRelIntensity()/currentMySpectrum.getSpectrumTIC()*100;
+
                     } else {
                         intensities[currentPosInt] = matchingPeak.getRelIntensity();
                     }
@@ -361,6 +371,13 @@ public class ExtractSpectrumData {
         //start working with MzXML file
         File mzXMLFile = new File(spectrumPathIn);
         MzXMLFile msRun = new MzXMLFile(mzXMLFile);
+        int numberMS1 = 0;
+        int numberMS2 = 0;
+        int numberMS2HCD=0;
+        int numberMS2CID=0;
+        int numberMS3=0;
+
+
         //loop through all the spectra
         for (int i = 1; i < msRun.getSpectraCount(); i++) {
         Scan currentScan = null;
@@ -371,7 +388,19 @@ public class ExtractSpectrumData {
         catch (MzXMLParsingException e){
             continue;
         }
-            System.out.println("spectrum: "+i);
+        if(currentScan.getMsLevel() == 1)
+            numberMS1++;
+        if(currentScan.getMsLevel()==2){
+            numberMS2++;
+            if(currentScan.getPrecursorMz().get(0).getActivationMethod().equals("HCD"))
+                numberMS2HCD++;
+            if(currentScan.getPrecursorMz().get(0).getActivationMethod().equals("CID"))
+                numberMS2CID++;
+        }
+        if(currentScan.getMsLevel() == 3){
+            numberMS3++;
+        }
+
         //only look at current MS level, skip otherwise
         if(currentScan.getMsLevel() != (long) scanLevelIn)
             continue;
@@ -381,9 +410,16 @@ public class ExtractSpectrumData {
 
         //check if precursor is within limits
         double currentPrecursor = currentScan.getPrecursorMz().get(0).getValue();
-        if(precursorIn - 0.005 < currentPrecursor && precursorIn + 0.005 > currentPrecursor)
+        int precCharge = Math.toIntExact(currentScan.getPrecursorMz().get(0).getPrecursorCharge());
+        if(DeviationCalc.isPartofIsotopeEnvelope(precursorIn, currentPrecursor, precCharge, 20))
             numberOfSpectra++;
         }
+
+        System.out.println("MS1-Scans: "+numberMS1);
+        System.out.println("MS2-Scans: "+numberMS2);
+        System.out.println("MS2-HCD: "+numberMS2HCD);
+        System.out.println("MS2-CID: "+numberMS2CID);
+        System.out.println("MS3-Scans: "+numberMS3);
 
         return numberOfSpectra;
     }

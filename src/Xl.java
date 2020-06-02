@@ -16,7 +16,7 @@ public class Xl {
     //note: in addition, with the triceratops version, the filter line is available to give the isolated mass
     //note: testing showed that triceratops actually gives the isolated mass, while MSConvert gives the monoisotopic one
     //note: because triceratops is working and has more information, use that
-    //note: monoisotopic peak of XL can be assigned from feature detection in MS1
+    //note: monoisotopic peak of XL can be assigned from feature detection in MS1 and from theoretical ion
     private double isolatedMassToCharge;
     private int hcdScanNumber;
     private int cidScanNumber;
@@ -411,6 +411,13 @@ public class Xl {
         sb.append(twoDec.format(closestPrecPeak.getRelIntensity())).append(",");
         sb.append(scientific.format(closestPrecPeak.getIntensity())).append(",");
 
+        //get information about the surviving precursor in the MS2 CID spectrum
+        Peak survivingPrecursor = cidScanIn.getMatchingPeak(this.isolatedMassToCharge, ppmDevIn);
+        if(survivingPrecursor == null){
+            survivingPrecursor = new Peak(this.isolatedMassToCharge, 0, 1, 1);
+        }
+        sb.append(twoDec.format(survivingPrecursor.getFeatureRelIntPerTIC())).append(",");
+        sb.append(scientific.format(survivingPrecursor.getFeatureIntensity())).append(",");
 
         //information about the specific signature peaks
         //all the matches are contained in the xlIonMatches list
@@ -1101,8 +1108,16 @@ public class Xl {
             closestPrecPeak = new Peak(this.theoreticalXLIon.getExactMass(), 0, 1, 1);
         }
 
-        sb.append(twoDec.format(closestPrecPeak.getRelIntensity())).append(",");
-        sb.append(scientific.format(closestPrecPeak.getIntensity())).append(",");
+        sb.append(twoDec.format(closestPrecPeak.getFeatureRelIntPerTIC())).append(",");
+        sb.append(scientific.format(closestPrecPeak.getFeatureIntensity())).append(",");
+
+        //get information about the surviving precursor in the MS2 CID spectrum
+        Peak survivingPrecursor = cidScanIn.getMatchingPeak(this.isolatedMassToCharge, ppmDevIn);
+        if(survivingPrecursor == null){
+            survivingPrecursor = new Peak(this.isolatedMassToCharge, 0, 1, 1);
+        }
+        sb.append(twoDec.format(survivingPrecursor.getRelIntensity())).append(",");
+        sb.append(scientific.format(survivingPrecursor.getIntensity())).append(",");
 
 
         //information about the specific signature peaks
