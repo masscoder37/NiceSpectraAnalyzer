@@ -30,6 +30,7 @@ public class Main {
 
     public static void main(String[] args) throws MzXMLParsingException, JMzReaderException, FileNotFoundException {
         DecimalFormat fourDec = new DecimalFormat("0.0000");
+        DecimalFormat twoDec = new DecimalFormat("0.00");
 
         //The provided amino acids list is read.
         //TODO: Please change your file path accordingly so that it points to the provided amino acids list
@@ -140,19 +141,23 @@ public class Main {
 
 
         String runFilePath = "C:\\Programmingfolder\\CID_HCD_Comparison\\newAnalysis\\cliXlink\\TGR_09158.mzXML";
-        File runFile = new File(runFilePath);
+        //File runFile = new File(runFilePath);
 
         //String inputFilePath = "C:\\Programmingfolder\\Thao_Hai\\defaultInput.csv";
-        MzXMLFile mzXMLRun = new MzXMLFile(runFile);
+        //MzXMLFile mzXMLRun = new MzXMLFile(runFile);
         //Visualization.spectrumPlotter(mzXMLRun,10);
 
 
-        CSVReader.xlSpectraChecker(meroxFile, mzXMLRun, "CID", "cliXlink", aminoAcidsList, 10);
+        //CSVReader.xlSpectraChecker(meroxFile, mzXMLRun, "CID", "cliXlink", aminoAcidsList, 10);
         //ExtractSpectrumData.massExtractor(runFilePath,inputFilePath);
         //System.out.println("Anzahl Spektren: "+ ExtractSpectrumData.getMsNScanCount(runFilePath,686.9669,2,"CID"));
 
         //ExtractSpectrumData.getInjectionTimes("C:\\Programmingfolder\\TMTPro_Alex\\TGR_09073.mzXML");
         //ExtractSpectrumData.extractStoNAllMS2Prec("C:\\Programmingfolder\\TMTPro_Alex\\TGR_09073.mzXML");
+        double real = 1695.92408;
+        double meas = 1695.9254;
+        System.out.println("Da: "+ fourDec.format(Math.abs(real-meas)));
+        System.out.println("ppm: "+twoDec.format(DeviationCalc.ppmDeviationCalc(real, meas)));
 
 
 
