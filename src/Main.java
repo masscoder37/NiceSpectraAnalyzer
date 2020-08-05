@@ -8,6 +8,7 @@ import uk.ac.ebi.pride.tools.mzxml_parser.mzxml.model.Scan;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -28,7 +29,7 @@ public class Main {
 
 
 
-    public static void main(String[] args) throws MzXMLParsingException, JMzReaderException, FileNotFoundException {
+    public static void main(String[] args) throws MzXMLParsingException, JMzReaderException, IOException {
         DecimalFormat fourDec = new DecimalFormat("0.0000");
         DecimalFormat twoDec = new DecimalFormat("0.00");
 
@@ -152,12 +153,14 @@ public class Main {
         //ExtractSpectrumData.massExtractor(runFilePath,inputFilePath);
         //System.out.println("Anzahl Spektren: "+ ExtractSpectrumData.getMsNScanCount(runFilePath,686.9669,2,"CID"));
 
-        //ExtractSpectrumData.getInjectionTimes("C:\\Programmingfolder\\TMTPro_Alex\\TGR_09073.mzXML");
-        //ExtractSpectrumData.extractStoNAllMS2Prec("C:\\Programmingfolder\\TMTPro_Alex\\TGR_09073.mzXML");
-        double real = 1695.92408;
-        double meas = 1695.9254;
-        System.out.println("Da: "+ fourDec.format(Math.abs(real-meas)));
-        System.out.println("ppm: "+twoDec.format(DeviationCalc.ppmDeviationCalc(real, meas)));
+        //ExtractSpectrumData.getInjectionTimes("C:\\Programmingfolder\\TMTPro_Alex\\TGR_03550.mzXML");
+        //ExtractSpectrumData.extractStoNAllMS2Prec("C:\\Programmingfolder\\TMTPro_Alex\\TGR_03550.mzXML");
+
+        String fastaFilePath = "C:\\Programmingfolder\\SARS_COV_2_UP000464024.fasta";
+        FastaDigester.inclusionListFabricator(fastaFilePath, "Trypsin", 0);
+
+
+
 
 
 

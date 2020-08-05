@@ -6,21 +6,21 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="mzxml-parser" />
         <module name="mzdata-parser" />
         <module name="pkl-parser" />
         <module name="apl-parser" />
         <module name="mzml-wrapper" />
         <module name="ms2-parser" />
-        <module name="jmzreader" />
+        <module name="slf4j-api (2)" />
+        <module name="dta-parser" />
         <module name="pride-wrapper" />
         <module name="braf" />
         <module name="mgf-parser" />
-        <module name="dta-parser" />
-        <module name="slf4j-api (2)" />
+        <module name="jmzreader" />
+        <module name="mzxml-parser" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="8">
+    <bytecodeTargetLevel target="13">
       <module name="apl-parser" target="1.7" />
       <module name="braf" target="1.7" />
       <module name="dta-parser" target="1.7" />
@@ -33,9 +33,6 @@
       <module name="mzxml-parser" target="1.7" />
       <module name="pkl-parser" target="1.7" />
       <module name="pride-wrapper" target="1.7" />
-      <module name="slf4j-api" target="8" />
-      <module name="slf4j-api (1)" target="1.5" />
-      <module name="slf4j-api (2)" target="8" />
     </bytecodeTargetLevel>
   </component>
 </project>

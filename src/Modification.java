@@ -99,6 +99,11 @@ public class Modification {
         Modification carbamidomethyl = new Modification("Cam", "C2H3NO", 'C');
         return carbamidomethyl;
     }
+    public static Modification nemModification(){
+        Modification nem = new Modification("NEM", "C6H7NO2", 'C');
+        return nem;
+    }
+
 
     public static Modification oxidation(int pos) {
         Modification oxidation = new Modification("Ox.", "O", pos);

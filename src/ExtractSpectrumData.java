@@ -342,7 +342,7 @@ public class ExtractSpectrumData {
 
         //loop through all scans
         for (int i = 0; i < numberOfScans; i++) {
-            System.out.println("working on scan: " + i + 1);
+            System.out.println("working on scan: " +( i + 1));
             Scan currentScan = null;
             try {
                 currentScan = msRun.getScanByNum((long) i + 1);
