@@ -153,11 +153,21 @@ public class Main {
         //ExtractSpectrumData.massExtractor(runFilePath,inputFilePath);
         //System.out.println("Anzahl Spektren: "+ ExtractSpectrumData.getMsNScanCount(runFilePath,686.9669,2,"CID"));
 
-        //ExtractSpectrumData.getInjectionTimes("C:\\Programmingfolder\\TMTPro_Alex\\TGR_03550.mzXML");
-        //ExtractSpectrumData.extractStoNAllMS2Prec("C:\\Programmingfolder\\TMTPro_Alex\\TGR_03550.mzXML");
+        //ExtractSpectrumData.getInjectionTimes("C:\\Programmingfolder\\TMTPro_Alex\\TGR_09834.mzXML");
+        //ExtractSpectrumData.extractStoNAllMS2Prec("C:\\Programmingfolder\\TMTPro_Alex\\TGR_09834.mzXML");
 
-        String fastaFilePath = "C:\\Programmingfolder\\SARS_COV_2_UP000464024.fasta";
-        FastaDigester.inclusionListFabricator(fastaFilePath, "Trypsin", 0);
+        String fastaFilePath = "C:\\Programmingfolder\\20200814_Uniprot_SARSCov2_subgenome.fasta";
+        //FastaDigester.inclusionListFabricator(fastaFilePath, "Trypsin", 0);
+
+        String input1 = "C:\\Programmingfolder\\TMTProPaper\\TGR_03549.csv";
+        String input2 = "C:\\Programmingfolder\\TMTProPaper\\TGR_09114.csv";
+        String file1 = "C:\\Programmingfolder\\TMTProPaper\\TGR_03549.mzXML";
+        String file2 = "C:\\Programmingfolder\\TMTProPaper\\TGR_09114.mzXML";
+
+        RandomTools.findSimilarSpectra(input1, file1, input2, file2);
+
+
+
 
 
 
