@@ -208,6 +208,13 @@ public class RandomTools {
         System.out.println("--- Output file created: "+((System.currentTimeMillis()-startTime)) + " milliseconds passed ---");
     }
 
+
+    //this function is handed 2 sequences: query and target. It generates tryptic peptides for both
+    //TODO: build this
+    public static void sequenceUniquenessCalculator (){
+
+    }
+
     //removes the starting and leading characters from allosaurus sequences
     //e.g.: K.PEPTIDE.R --> PEPTIDE
     //TODO: error handling? detection of points?

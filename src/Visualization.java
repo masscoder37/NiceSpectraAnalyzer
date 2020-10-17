@@ -10,6 +10,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.*;
+import javax.swing.border.Border;
 
 
 public class Visualization {
@@ -17,7 +18,6 @@ public class Visualization {
     private static DecimalFormat fourDec = new DecimalFormat("0.0000");
     private static DecimalFormat scientific = new DecimalFormat("0.0E0");
 
-    static Random random = new Random();
     static ArrayList<Color> featureColors = new ArrayList<>();
     static double zoomFactor = 1;
     static MySpectrum toPlot;
@@ -29,35 +29,32 @@ public class Visualization {
     static boolean showLabels = false;
 
 
-
     //helper class to handle changing mass ranges
-    private static class MassRange{
+    private static class MassRange {
         double minMass;
         double maxMass;
         double massRange;
 
-         MassRange(double mass1In, double mass2In){
-            if(mass1In <= mass2In) {
+        MassRange(double mass1In, double mass2In) {
+            if (mass1In <= mass2In) {
                 this.minMass = mass1In;
                 this.maxMass = mass2In;
-            }
-            else {
+            } else {
                 this.minMass = mass2In;
                 this.maxMass = mass1In;
             }
             massRanger();
         }
 
-        private void massRanger(){
-            this.massRange = this.maxMass-this.minMass;
+        private void massRanger() {
+            this.massRange = this.maxMass - this.minMass;
         }
 
-        public void setNewMasses(double mass1In, double mass2In){
-            if(mass1In <= mass2In) {
+        public void setNewMasses(double mass1In, double mass2In) {
+            if (mass1In <= mass2In) {
                 this.minMass = mass1In;
                 this.maxMass = mass2In;
-            }
-            else {
+            } else {
                 this.minMass = mass2In;
                 this.maxMass = mass1In;
             }
@@ -78,7 +75,7 @@ public class Visualization {
     }
 
     //helper class to help with changing canvas sizes
-private static class PlotSize{
+    private static class PlotSize {
         //axes coordinates
         //y-axis: 100, 75, 100, 900
         //x-axis: 100, 900, 1900, 900
@@ -92,22 +89,23 @@ private static class PlotSize{
 
         double yAxisLength;//= Math.abs(yY1-yY2);
         double xAxisLength;//= Math.abs(xX1-xX2);
-        PlotSize(int canvasWidthIn, int canvasHeightIn){
+
+        PlotSize(int canvasWidthIn, int canvasHeightIn) {
             coordCalc(canvasWidthIn, canvasHeightIn);
         }
 
-        private void coordCalc(int canvasWidthIn, int canvasHeightIn){
-            this.yX = 0.04*canvasWidthIn;
-            this.yY1 = 0.9*canvasHeightIn;
-            this.yY2 = 0.075*canvasHeightIn;
-            this.xY = 0.9*canvasHeightIn;
-            this.xX1 = 0.04*canvasWidthIn;
-            this.xX2 = 0.96*canvasWidthIn;
-            this.yAxisLength = Math.abs(this.yY1-this.yY2);
-            this.xAxisLength = Math.abs(this.xX1-this.xX2);
+        private void coordCalc(int canvasWidthIn, int canvasHeightIn) {
+            this.yX = 0.04 * canvasWidthIn;
+            this.yY1 = 0.9 * canvasHeightIn;
+            this.yY2 = 0.075 * canvasHeightIn;
+            this.xY = 0.9 * canvasHeightIn;
+            this.xX1 = 0.04 * canvasWidthIn;
+            this.xX2 = 0.96 * canvasWidthIn;
+            this.yAxisLength = Math.abs(this.yY1 - this.yY2);
+            this.xAxisLength = Math.abs(this.xX1 - this.xX2);
         }
 
-        public void changeCanvasSize(int newCanvasWidthIn, int newCanvasHeightIn){
+        public void changeCanvasSize(int newCanvasWidthIn, int newCanvasHeightIn) {
             coordCalc(newCanvasWidthIn, newCanvasHeightIn);
         }
 
@@ -144,19 +142,19 @@ private static class PlotSize{
         }
     }
 
-//method in which mass spectra are produced
+    //method in which mass spectra are produced
     public static void spectrumPlotter(MzXMLFile runIn, double ppmDevIn) throws JMzReaderException, MzXMLParsingException {
         //setup the Spectrum to look at
         //long is so annoying, fuck performance -.-
         java.util.List<Long> scanNumberListLong = runIn.getScanNumbers();
         ArrayList<Integer> scanNumberList = new ArrayList<>();
-        for (Long number : scanNumberListLong){
+        for (Long number : scanNumberListLong) {
             scanNumberList.add(Math.toIntExact(number));
         }
 
         currentSpectrum = scanNumberList.get(0);
         //first spectrum is the first one in the file
-        toPlot = MzXMLReadIn.mzXMLToMySpectrum(runIn, ""+currentSpectrum);
+        toPlot = MzXMLReadIn.mzXMLToMySpectrum(runIn, "" + currentSpectrum);
         //toPlot.assignChargeStates(ppmDevIn);
         //toPlot.assignFeatures(ppmDevIn);
         toPlot.assignZAndFeatures(10);
@@ -176,7 +174,7 @@ private static class PlotSize{
         JTextField scanToPlot = new JTextField("Scan-#");
         Font textFieldFont = new Font("Arial", Font.BOLD, 12);
         scanToPlot.setFont(textFieldFont);
-        JLabel instructions = new JLabel("Choose a spectrum to Plot! Current spectrum: "+currentSpectrum+"     "+toPlot.getScanHeader()+"      TIC:"+scientific.format(toPlot.getSpectrumTIC()));
+        JLabel instructions = new JLabel("Choose a spectrum to Plot! Current spectrum: " + currentSpectrum + "     " + toPlot.getScanHeader() + "      TIC:" + scientific.format(toPlot.getSpectrumTIC()));
         Font labelFont = new Font("Arial", Font.BOLD, 18);
         instructions.setFont(labelFont);
         input.add(scanToPlot);
@@ -188,7 +186,7 @@ private static class PlotSize{
 
         //initialize random colors
         Random random = new Random();
-        for (int i = 0; i<250;i++){
+        for (int i = 0; i < 250; i++) {
             featureColors.add(new Color(random.nextFloat(), random.nextFloat(), random.nextFloat()));
         }
 
@@ -202,14 +200,15 @@ private static class PlotSize{
 
         //these variables are dynamic
         MassRange massRange = new MassRange(fullRoundedMinMass, fullRoundedMaxMass);
-        PlotSize plotSize = new PlotSize(2500,1000);
+        PlotSize plotSize = new PlotSize(2500, 1000);
 
         //actually plotting the spectra
         graphProducer(comp, toPlot, massRange, plotSize);
 
+        //deals with resizing the window
         comp.addComponentListener(new ComponentAdapter() {
             @Override
-            public void componentResized(ComponentEvent e){
+            public void componentResized(ComponentEvent e) {
                 int canvasWidth = (int) Math.round(comp.getWidth());
                 int canvasHeight = (int) Math.round(comp.getHeight());
                 plotSize.changeCanvasSize(canvasWidth, canvasHeight);
@@ -225,14 +224,16 @@ private static class PlotSize{
                     massRange.setNewMasses(fullRoundedMinMass, fullRoundedMaxMass);
                     zoomFactor = 1;
                     comp.clearLines();
-                    graphProducer(comp, toPlot,massRange,plotSize);
+                    graphProducer(comp, toPlot, massRange, plotSize);
                 }
 
             }
+
             @Override
             public void mousePressed(MouseEvent e) {
                 comp.setMouseStart(e.getPoint());
             }
+
             @Override
             public void mouseReleased(MouseEvent e) {
                 comp.setMouseEnd(e.getPoint());
@@ -247,9 +248,11 @@ private static class PlotSize{
                     comp.setMouseStart(null);
                 }
             }
+
             @Override
             public void mouseEntered(MouseEvent e) {
             }
+
             @Override
             public void mouseExited(MouseEvent e) {
             }
@@ -260,8 +263,9 @@ private static class PlotSize{
                 super.mouseDragged(e);
                 comp.setMouseEnd(e.getPoint());
                 if (comp.getMouseStart() != comp.getMouseEnd())
-                comp.redraw();
+                    comp.redraw();
             }
+
             @Override
             public void mouseMoved(MouseEvent e) {
                 super.mouseMoved(e);
@@ -271,15 +275,15 @@ private static class PlotSize{
         comp.addMouseWheelListener(new MouseWheelListener() {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
-                if (e.getWheelRotation() < 0){
-                    double oldZoomfactor =  zoomFactor;
+                if (e.getWheelRotation() < 0) {
+                    double oldZoomfactor = zoomFactor;
                     zoomFactor += 0.4;
                     comp.clearLines();
                     graphProducer(comp, toPlot, massRange, plotSize);
                 }
 
-                if (e.getWheelRotation() > 0){
-                    double oldZoomfactor =  zoomFactor;
+                if (e.getWheelRotation() > 0) {
+                    double oldZoomfactor = zoomFactor;
                     zoomFactor -= 0.4;
                     if (zoomFactor <= 0)
                         zoomFactor = 0.1;
@@ -293,7 +297,7 @@ private static class PlotSize{
         //event handler to delete textfield text if clicked
         scanToPlot.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e){
+            public void mouseClicked(MouseEvent e) {
                 scanToPlot.setText("");
             }
         });
@@ -302,25 +306,23 @@ private static class PlotSize{
             @Override
             public void actionPerformed(ActionEvent e) {
                 //error handling
-                try{
+                try {
                     currentSpectrum = Integer.parseInt(scanToPlot.getText());
-                }
-                catch (NumberFormatException f){
+                } catch (NumberFormatException f) {
                     scanToPlot.setText("Scan-#");
                     instructions.setText("Please input a whole number!");
                 }
                 //more error handling: scan number entered out of range
-                if (!scanNumberList.contains(currentSpectrum)){
+                if (!scanNumberList.contains(currentSpectrum)) {
                     currentSpectrum = scanNumberList.get(0);
                     scanToPlot.setText("Scan-#");
-                    instructions.setText("Out of Range! Scans available: "+scanNumberList.get(0)+" - "+scanNumberList.get(scanNumberList.size()-1));
-                }
-                else {
+                    instructions.setText("Out of Range! Scans available: " + scanNumberList.get(0) + " - " + scanNumberList.get(scanNumberList.size() - 1));
+                } else {
                     try {
                         toPlot = MzXMLReadIn.mzXMLToMySpectrum(runIn, Integer.toString(currentSpectrum));
 
                     } catch (JMzReaderException | MzXMLParsingException ex) {
-                        instructions.setText("Spectrum Read In went wrong! Spectrum: "+currentSpectrum);
+                        instructions.setText("Spectrum Read In went wrong! Spectrum: " + currentSpectrum);
                     }
                     //toPlot.assignChargeStates(ppmDevIn);
                     //toPlot.assignFeatures(ppmDevIn);
@@ -337,7 +339,7 @@ private static class PlotSize{
                     fragMethod += toPlot.getFragmentationMethod();
                     if (fragMethod.equals("     NA"))
                         fragMethod = "";
-                    instructions.setText("Spectrum plotted! Current spectrum: "+currentSpectrum+"     "+toPlot.getScanHeader()+ fragMethod +"      TIC:"+scientific.format(toPlot.getSpectrumTIC()));
+                    instructions.setText("Spectrum plotted! Current spectrum: " + currentSpectrum + "     " + toPlot.getScanHeader() + fragMethod + "      TIC:" + scientific.format(toPlot.getSpectrumTIC()));
                     zoomFactor = 1;
                     comp.clearLines();
                     //toPlot and massRange was changed
@@ -355,22 +357,22 @@ private static class PlotSize{
             @Override
             public void keyPressed(KeyEvent e) {
                 //next spectrum
-                if(e.getKeyCode()==39){
+                if (e.getKeyCode() == 39) {
                     currentSpectrum += 1;
                     scanToPlot.setText(Integer.toString(currentSpectrum));
                     plotButton.doClick();
                 }
 
                 //previousSpectrum
-                if(e.getKeyCode()==37){
+                if (e.getKeyCode() == 37) {
                     currentSpectrum -= 1;
                     scanToPlot.setText(Integer.toString(currentSpectrum));
                     plotButton.doClick();
                 }
 
                 //toggle labels
-                if(e.getKeyCode()==76){
-                    if(showLabels)
+                if (e.getKeyCode() == 76) {
+                    if (showLabels)
                         showLabels = false;
                     else
                         showLabels = true;
@@ -381,9 +383,9 @@ private static class PlotSize{
                 }
 
                 //seed new random colors
-                if(e.getKeyCode()==67){
+                if (e.getKeyCode() == 67) {
                     featureColors.clear();
-                    for (int i = 0; i<250;i++){
+                    for (int i = 0; i < 250; i++) {
                         featureColors.add(new Color(random.nextFloat(), random.nextFloat(), random.nextFloat()));
                     }
                     //actually replot
@@ -400,63 +402,59 @@ private static class PlotSize{
         });
 
 
-
-
         window.pack();
         window.setVisible(true);
     }
 
 
-
-    private static int minMass (){
+    private static int minMass() {
         return (int) Math.round(toPlot.getPeakList().get(0).getMass());
     }
-    private static int maxMass (){
-        return (int) Math.round(toPlot.getPeakList().get(toPlot.getPeakList().size()-1).getMass());
-    }
-    private static int roundedMinMass(int minMassIn){
-        return minMassIn/100*100;
-    }
-    private static int roundedMaxMass(int maxMassIn){
-        return (maxMassIn+99)/100*100;
+
+    private static int maxMass() {
+        return (int) Math.round(toPlot.getPeakList().get(toPlot.getPeakList().size() - 1).getMass());
     }
 
+    private static int roundedMinMass(int minMassIn) {
+        return minMassIn / 100 * 100;
+    }
+
+    private static int roundedMaxMass(int maxMassIn) {
+        return (maxMassIn + 99) / 100 * 100;
+    }
 
 
-
-    public static void graphProducer(SpectrumDraw comp, MySpectrum toPlot, MassRange massRange, PlotSize plotSize){
-        for (int i = 0; i<5; i++) {
-            double axisSteps = 25/zoomFactor;
-           comp.addTicks(plotSize.getyX(), (plotSize.getyY1()-(plotSize.getyAxisLength()/100)*i*25),plotSize.getyX()-10, (plotSize.getyY1()-(plotSize.getyAxisLength()/100)*i*25), 3, twoDec.format(i*axisSteps) +"%", "y");
+    public static void graphProducer(SpectrumDraw comp, MySpectrum toPlot, MassRange massRange, PlotSize plotSize) {
+        for (int i = 0; i < 5; i++) {
+            double axisSteps = 25 / zoomFactor;
+            comp.addTicks(plotSize.getyX(), (plotSize.getyY1() - (plotSize.getyAxisLength() / 100) * i * 25), plotSize.getyX() - 10, (plotSize.getyY1() - (plotSize.getyAxisLength() / 100) * i * 25), 3, twoDec.format(i * axisSteps) + "%", "y");
         }
         //ticks for the mass axis
-        for (int i = 0; i<6; i++) {
-            double xCord = (plotSize.getyX() + (plotSize.getxAxisLength()/massRange.getMassRange())*(massRange.getMassRange())*i*0.2);
-            double xMass = massRange.getMassRange()*i*0.2+massRange.getMinMass();
-            comp.addTicks(xCord, plotSize.getxY(), xCord, plotSize.getxY()+10, 3, twoDec.format(xMass), "x");
+        for (int i = 0; i < 6; i++) {
+            double xCord = (plotSize.getyX() + (plotSize.getxAxisLength() / massRange.getMassRange()) * (massRange.getMassRange()) * i * 0.2);
+            double xMass = massRange.getMassRange() * i * 0.2 + massRange.getMinMass();
+            comp.addTicks(xCord, plotSize.getxY(), xCord, plotSize.getxY() + 10, 3, twoDec.format(xMass), "x");
         }
         //draw main axes
         //y-axis
-        comp.addAxis(plotSize.getyX(),plotSize.getyY1(),plotSize.getyX(),plotSize.getyY2(),3, "y-Axis", "y");
+        comp.addAxis(plotSize.getyX(), plotSize.getyY1(), plotSize.getyX(), plotSize.getyY2(), 3, "y-Axis", "y");
         //x-axis
-        comp.addAxis(plotSize.getxX1(),plotSize.getxY(),plotSize.getxX2(),plotSize.getxY(), 3, "x-Axis", "x");
+        comp.addAxis(plotSize.getxX1(), plotSize.getxY(), plotSize.getxX2(), plotSize.getxY(), 3, "x-Axis", "x");
 
         //draw mass peaks
         //for (Peak peak : toPlot.getPeakList()){
-        for (int i = 0; i < toPlot.getPeakList().size(); i++){
+        for (int i = 0; i < toPlot.getPeakList().size(); i++) {
             Peak peak = toPlot.getPeakList().get(i);
             Peak prevPeak;
             try {
-             prevPeak = toPlot.getPeakList().get(i-1);
-            }
-            catch (IndexOutOfBoundsException ex2){
+                prevPeak = toPlot.getPeakList().get(i - 1);
+            } catch (IndexOutOfBoundsException ex2) {
                 prevPeak = peak;
             }
             Peak nextPeak;
             try {
-                nextPeak = toPlot.getPeakList().get(i+1);
-            }
-            catch (IndexOutOfBoundsException ex3){
+                nextPeak = toPlot.getPeakList().get(i + 1);
+            } catch (IndexOutOfBoundsException ex3) {
                 nextPeak = peak;
             }
 
@@ -466,13 +464,13 @@ private static class PlotSize{
                 continue;
 
             double relInt = peak.getRelIntensity();
-            double xCord = (plotSize.getyX()+(plotSize.getxAxisLength()/massRange.getMassRange())*(mass-massRange.getMinMass()));
-            double yCordMax = plotSize.yY1-(plotSize.yAxisLength/100)*relInt*zoomFactor;
-            String diffPrev = "<--  " + fourDec.format(peak.getMass()-prevPeak.getMass());
+            double xCord = (plotSize.getyX() + (plotSize.getxAxisLength() / massRange.getMassRange()) * (mass - massRange.getMinMass()));
+            double yCordMax = plotSize.yY1 - (plotSize.yAxisLength / 100) * relInt * zoomFactor;
+            String diffPrev = "<--  " + fourDec.format(peak.getMass() - prevPeak.getMass());
             String diffNext = fourDec.format(nextPeak.getMass() - peak.getMass()) + "  -->";
             String label = "";
             //only plot if labels are toggled
-            if(showLabels) {
+            if (showLabels) {
                 if (relInt >= 0) {
                     label += fourDec.format(mass) + " m/z;" + twoDec.format(relInt) + "%;" + peak.getCharge() + "+;" + diffPrev + ";" + diffNext;
                     if (peak.isPartOfFeature()) {
@@ -484,18 +482,16 @@ private static class PlotSize{
         }
 
 
-
         int colChanger = 0;
-        for (Feature feature : toPlot.getFeatureList()){
+        for (Feature feature : toPlot.getFeatureList()) {
             Color color;
             try {
-                 color = featureColors.get(colChanger);
-            }
-            catch (IndexOutOfBoundsException e){
+                color = featureColors.get(colChanger);
+            } catch (IndexOutOfBoundsException e) {
                 color = Color.red;
                 colChanger = 0;
             }
-            for (Peak peak : feature.getPeakList()){
+            for (Peak peak : feature.getPeakList()) {
                 double mass = peak.getMass();
                 //skip if out of mass range
                 if (mass < massRange.getMinMass() || mass > massRange.getMaxMass()) {
@@ -504,8 +500,8 @@ private static class PlotSize{
                 }
 
                 double relInt = peak.getRelIntensity();
-                double xCord = (plotSize.getyX()+(plotSize.getxAxisLength()/massRange.getMassRange())*(mass-massRange.getMinMass()));
-                double yCordMax = plotSize.yY1-(plotSize.yAxisLength/100)*relInt*zoomFactor;
+                double xCord = (plotSize.getyX() + (plotSize.getxAxisLength() / massRange.getMassRange()) * (mass - massRange.getMinMass()));
+                double yCordMax = plotSize.yY1 - (plotSize.yAxisLength / 100) * relInt * zoomFactor;
                 String label = "";
                 comp.addPeak(xCord, plotSize.xY, xCord, yCordMax, label, color);
                 colChanger++;
@@ -513,69 +509,10 @@ private static class PlotSize{
         }
         comp.redraw();
     }
+
+
 }
 
-  /*  public void componentResized(ComponentEvent e){
-        int canvasWidth = (int) Math.round(comp.getWidth());
-        int canvasHeight = (int) Math.round(comp.getHeight());
-
-        double yX = 0.04*canvasWidth;
-        double yY1 = 0.9*canvasHeight;
-        double yY2 = 0.075*canvasHeight;
-
-        double xY = 0.9*canvasHeight;
-        double xX1 = 0.04*canvasWidth;
-        double xX2 = 0.96*canvasWidth;
-        double yAxisLength = Math.abs(yY1-yY2);
-        double xAxisLength = Math.abs(xX1-xX2);
-
-        comp.clearLines();
-
-        for (int i = 0; i<5; i++) {
-            comp.addTicks(yX,(yY1-(yAxisLength/100)*i*25), yX-10, (yY1-(yAxisLength/100)*i*25), 3, i*25 +"%", "y");
-        }
-        //ticks for the mass axis
-        for (int i = 0; i<6; i++) {
-            double xcord = (yX+(xAxisLength/massRange.getMassRange())*(massRange.getMassRange())*i*0.2);
-            double xMass = massRange.getMassRange()*i*0.2+massRange.getMinMass();
-            comp.addTicks(xcord, xY, xcord, xY+10, 3, twoDec.format(xMass), "x");
-        }
-        //draw main axes
-        //y-axis
-        comp.addAxis(yX, yY1,yX,yY2,3, "y-Axis", "y");
-        //x-axis
-        comp.addAxis(xX1, xY, xX2, xY, 3, "x-Axis", "x");
-
-        //draw mass peaks
-        for (Peak peak : toPlot.getPeakList()){
-            double mass = peak.getMass();
-            double relInt = peak.getRelIntensity();
-            double xCord = (yX+(xAxisLength/massRange.getMassRange())*(mass-massRange.getMinMass()));
-            double yCordMax = yY1-(yAxisLength/100)*relInt;
-            String label = "";
-            if (relInt >=50){
-                label += fourDec.format(mass);
-            }
-
-            comp.addPeak(xCord, xY, xCord, yCordMax, label, Color.black);
-        }
-
-        Random random = new Random();
-
-        for (Feature feature : toPlot.getFeatureList()){
-            Color color = new Color(random.nextFloat(), random.nextFloat(), random.nextFloat());
-            for (Peak peak : feature.getPeakList()){
-                double mass = peak.getMass();
-                double relInt = peak.getRelIntensity();
-                double xCord = (yX+(xAxisLength/massRange.getMassRange())*(mass-massRange.getMinMass()));
-                double yCordMax = yY1-(yAxisLength/100)*relInt;
-                String label = "";
-                comp.addPeak(xCord, xY, xCord, yCordMax, label, color);
-            }
-        }
-        comp.redraw();
-    }
-});*/
 
 
 

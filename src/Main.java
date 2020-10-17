@@ -11,6 +11,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Michael Stadlmeier on 6/13/2017.
@@ -29,7 +30,7 @@ public class Main {
 
 
 
-    public static void main(String[] args) throws MzXMLParsingException, JMzReaderException, IOException {
+    public static void main(String[] args) throws MzXMLParsingException, JMzReaderException, IOException, InterruptedException {
         DecimalFormat fourDec = new DecimalFormat("0.0000");
         DecimalFormat twoDec = new DecimalFormat("0.00");
 
@@ -142,11 +143,10 @@ public class Main {
 
 
         String runFilePath = "C:\\Programmingfolder\\CID_HCD_Comparison\\newAnalysis\\cliXlink\\TGR_09158.mzXML";
-        //File runFile = new File(runFilePath);
+        File runFile = new File(runFilePath);
 
-        //String inputFilePath = "C:\\Programmingfolder\\Thao_Hai\\defaultInput.csv";
-        //MzXMLFile mzXMLRun = new MzXMLFile(runFile);
-        //Visualization.spectrumPlotter(mzXMLRun,10);
+        String inputFilePath = "C:\\Programmingfolder\\Thao_Hai\\defaultInput.csv";
+
 
 
         //CSVReader.xlSpectraChecker(meroxFile, mzXMLRun, "CID", "cliXlink", aminoAcidsList, 10);
@@ -164,7 +164,15 @@ public class Main {
         String file1 = "C:\\Programmingfolder\\TMTProPaper\\TGR_03549.mzXML";
         String file2 = "C:\\Programmingfolder\\TMTProPaper\\TGR_09114.mzXML";
 
-        RandomTools.findSimilarSpectra(input1, file1, input2, file2);
+        //RandomTools.findSimilarSpectra(input1, file1, input2, file2);
+        //MzXMLFile mzXMLRun = new MzXMLFile(runFile);
+        //Visualization.spectrumPlotter(mzXMLRun,10);
+        String fastaFile = "C:\\Programmingfolder\\FASTA_lists\\REV_Klab_0_8_contam.fasta";
+        String queryFile = "C:\\Programmingfolder\\FASTA_lists\\MBP.fasta";
+
+        //FastaTools.peptideUniquenessChecker(queryFile, fastaFile, 0,2, "Trypsin");
+        FastaTools.generatePeptidesOfFasta(fastaFile, 2, "Trypsin");
+
 
 
 

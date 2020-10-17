@@ -8,7 +8,7 @@ import java.util.Scanner;
  */
 
 //this class handels different AminoAcids
-    //all the information is supplied by a .csv-File with all the AminiAcids
+    //all the information is supplied by a .csv-File with all the AminoAcids
 public class AminoAcid {
     private String name;
     private String threeLetter;

@@ -59,7 +59,7 @@ public class SpectrumDraw extends JComponent {
     }
 
 
-    //these classes add lines to the lists
+    //these functions add lines to the lists
     public void addAxis(double x1In, double y1In, double x2In, double y2In, double widthIn, String labelIn, String orientationIn) {
         axisToDraw.add(new Line(x1In, y1In, x2In, y2In, widthIn, Color.black, labelIn, orientationIn));
     }
