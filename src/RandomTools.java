@@ -45,13 +45,14 @@ public class RandomTools {
             return xcorr;
         }
     }
-    private static class PeptideMatch{
+
+    private static class PeptideMatch {
         private PeptideID pepID1;
         private double pepID1MS2TIC;
         private PeptideID pepID2;
         private double pepID2MS2TIC;
 
-        public PeptideMatch(PeptideID pepID1In, double pepID1MS2TICIn, PeptideID pepID2In, double pepID2MS2TICIn){
+        public PeptideMatch(PeptideID pepID1In, double pepID1MS2TICIn, PeptideID pepID2In, double pepID2MS2TICIn) {
             this.pepID1 = pepID1In;
             this.pepID1MS2TIC = pepID1MS2TICIn;
             this.pepID2 = pepID2In;
@@ -85,7 +86,7 @@ public class RandomTools {
         File mzXMLFile2 = new File(runFileLoc2In);
         MzXMLFile msRun2 = new MzXMLFile(mzXMLFile2);
 
-        System.out.println("--- .mzXML files read in. " +((System.currentTimeMillis()-startTime)/1000) + " seconds passed ---");
+        System.out.println("--- .mzXML files read in. " + ((System.currentTimeMillis() - startTime) / 1000) + " seconds passed ---");
 
         //prepare output file
         String outputFilePath = output1In.replace(".csv", "_matchingPeptides.csv");
@@ -93,8 +94,7 @@ public class RandomTools {
         PrintWriter pw = null;
         try {
             pw = new PrintWriter(outputFile);
-        }
-        catch (FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             System.out.println("File not found! File Location: " + outputFilePath);
         }
 
@@ -120,21 +120,21 @@ public class RandomTools {
         } catch (FileNotFoundException e) {
             System.out.println("File not found! File Location: " + output1In);
         }
-        HashMap <String, PeptideID> sequences1= new HashMap<>();
+        HashMap<String, PeptideID> sequences1 = new HashMap<>();
         //advance over header
         scanner1.next();
-        while (scanner1.hasNext()){
+        while (scanner1.hasNext()) {
             String[] values = scanner1.next().split(",");
             //[0]: Peptide; [1]Scan#; [2]z; [3];XCorr
             String sequence = sequenceOnly(values[0]);
             //only consider if peptide length > 8 && < 16
-            if(sequence.length() < 8 || sequence.length() > 16)
+            if (sequence.length() < 8 || sequence.length() > 16)
                 continue;
             //otherwise, create Peptide ID object
-            sequences1.put(sequence, new PeptideID(sequence, Integer.parseInt(values[2]), Integer.parseInt(values[1]),Double.parseDouble(values[3])));
+            sequences1.put(sequence, new PeptideID(sequence, Integer.parseInt(values[2]), Integer.parseInt(values[1]), Double.parseDouble(values[3])));
         }
         scanner1.close();
-        System.out.println("--- Input 1 read in: "+((System.currentTimeMillis()-startTime)) + " milliseconds passed ---");
+        System.out.println("--- Input 1 read in: " + ((System.currentTimeMillis() - startTime)) + " milliseconds passed ---");
         startTime = System.currentTimeMillis();
 
         //read 2nd file and compare with first file
@@ -153,7 +153,7 @@ public class RandomTools {
         }
         //advance over header
         scanner2.next();
-        while (scanner2.hasNext()){
+        while (scanner2.hasNext()) {
             String[] values = scanner2.next().split(",");
             //[0]: Peptide; [1]Scan#; [2]z; [3];XCorr
             //skip if z=3
@@ -162,23 +162,23 @@ public class RandomTools {
                 continue;
             String sequence = sequenceOnly(values[0]);
             //if sequence is present in sequences1, then create new Peptide Match object
-            if (sequences1.containsKey(sequence)){
+            if (sequences1.containsKey(sequence)) {
                 //sequence is present, so check if XCorrs are similar: +- 0.3
                 PeptideID pepID1 = sequences1.get(sequence);
                 double xcorr2 = Double.parseDouble(values[3]);
-                if (xcorr2 < pepID1.getXcorr() -0.3 || xcorr2 > pepID1.getXcorr() +0.3 )
+                if (xcorr2 < pepID1.getXcorr() - 0.3 || xcorr2 > pepID1.getXcorr() + 0.3)
                     continue;
                 //if sequence are the same && xcorr is similar, extract MS2TIC
                 PeptideID pepID2 = new PeptideID(sequence, charge, Integer.parseInt(values[1]), xcorr2);
                 int scanNumber1 = pepID1.getScanNumber();
                 int scanNumber2 = pepID2.getScanNumber();
 
-                MySpectrum spectrum1 = MzXMLReadIn.mzXMLToMySpectrum(msRun1, ""+scanNumber1);
+                MySpectrum spectrum1 = MzXMLReadIn.mzXMLToMySpectrum(msRun1, "" + scanNumber1);
                 double spectrum1TIC = spectrum1.getSpectrumTIC();
-                MySpectrum spectrum2 = MzXMLReadIn.mzXMLToMySpectrum(msRun2, ""+scanNumber2);
+                MySpectrum spectrum2 = MzXMLReadIn.mzXMLToMySpectrum(msRun2, "" + scanNumber2);
                 double spectrum2TIC = spectrum2.getSpectrumTIC();
                 //check if spectrum TICs are within 10% of each other
-                if(spectrum1TIC < spectrum2TIC / 1.1 || spectrum1TIC > spectrum2TIC * 1.1)
+                if (spectrum1TIC < spectrum2TIC / 1.1 || spectrum1TIC > spectrum2TIC * 1.1)
                     continue;
                 //all filters passed, generate PeptideMatch
                 PeptideMatch match = new PeptideMatch(pepID1, spectrum1TIC, pepID2, spectrum2TIC);
@@ -187,10 +187,10 @@ public class RandomTools {
             }
         }
         scanner2.close();
-        System.out.println("--- Overlapping peptides found: "+ numberOfMatches + " matches. " +((System.currentTimeMillis()-startTime)) + " milliseconds passed ---");
+        System.out.println("--- Overlapping peptides found: " + numberOfMatches + " matches. " + ((System.currentTimeMillis() - startTime)) + " milliseconds passed ---");
         //fill output file
         startTime = System.currentTimeMillis();
-        for(PeptideMatch match : matchList){
+        for (PeptideMatch match : matchList) {
             sb.append(match.getPepID1().getPepSequence()).append(",");
             sb.append(match.getPepID1().getScanNumber()).append(",");
             sb.append(match.getPepID2().getScanNumber()).append(",");
@@ -205,23 +205,46 @@ public class RandomTools {
         }
         pw.flush();
         pw.close();
-        System.out.println("--- Output file created: "+((System.currentTimeMillis()-startTime)) + " milliseconds passed ---");
+        System.out.println("--- Output file created: " + ((System.currentTimeMillis() - startTime)) + " milliseconds passed ---");
     }
 
 
     //this function is handed 2 sequences: query and target. It generates tryptic peptides for both
     //TODO: build this
-    public static void sequenceUniquenessCalculator (){
+    public static void sequenceUniquenessCalculator() {
 
     }
 
     //removes the starting and leading characters from allosaurus sequences
     //e.g.: K.PEPTIDE.R --> PEPTIDE
     //TODO: error handling? detection of points?
-    public static String sequenceOnly(String extendedSequenceIn){
-        String out = extendedSequenceIn.substring(2);
-        out = out.substring(0,out.length()-2);
+    public static String sequenceOnly(String extendedSequenceIn) {
+        //just in case something is odd with the dots, use split method
+        return extendedSequenceIn.split("[.]")[1];
+    }
+
+    //adds Methionine-oxidations to the positions indicated by a * from allosaurus output
+    public static ArrayList<Modification> oxidizedMethionineModification(String sequenceIn) {
+        int oxCounter = 0;
+        ArrayList<Integer> posList = new ArrayList<>();
+        for (int i = 0; i < sequenceIn.length(); i++) {
+            if (sequenceIn.charAt(i) == '*') {
+                //posList adjusts for reporting the correct location of the M. E.g in ABCMDEF, M would be 4 for modlist because of human counting
+                posList.add(i - oxCounter);
+                oxCounter++;
+            }
+        }
+        ArrayList<Modification> out = new ArrayList<>();
+        for (int pos : posList) {
+            out.add(Modification.oxidation(pos));
+        }
         return out;
+    }
+
+    //removes * from oxidized methioninen
+    //e.g. PEPTM*IDE becomes PEPTMIDE
+    public static String removeOxidationSigns(String sequenceIn){
+        return sequenceIn.replace("*","");
     }
 
 }

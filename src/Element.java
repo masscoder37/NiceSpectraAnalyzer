@@ -10,48 +10,52 @@ public class Element {
     private String elementName;
     private double elementMass;
 
-    public Element(String elementName){
+    public Element(String elementName) {
         this.elementName = elementName;
         elementChooser(this.elementName);
     }
 
     private void elementChooser(String elementName) {
 
-            switch (elementName) {
-                case "H":
-                    this.elementMass = AtomicMasses.getHMASS();
-                    break;
-                case "C":
-                    this.elementMass = AtomicMasses.getCMASS();
-                    break;
-                case "O":
-                    this.elementMass = AtomicMasses.getOMASS();
-                    break;
-                case "N":
-                    this.elementMass = AtomicMasses.getNMASS();
-                    break;
-                case "S":
-                    this.elementMass = AtomicMasses.getSMASS();
-                    break;
-                case "H+":
-                    this.elementMass = AtomicMasses.getPROTON();
-                    break;
-                case "Cx":
-                    this.elementMass = AtomicMasses.getCxMASS();
-                    break;
-                case "F":
-                    this.elementMass = AtomicMasses.getFMASS();
-                    break;
-                case "P":
-                    this.elementMass = AtomicMasses.getPMASS();
-                    break;
+        switch (elementName) {
+            case "H":
+                this.elementMass = AtomicMasses.getHMASS();
+                break;
+            case "C":
+                this.elementMass = AtomicMasses.getCMASS();
+                break;
+            case "O":
+                this.elementMass = AtomicMasses.getOMASS();
+                break;
+            case "N":
+                this.elementMass = AtomicMasses.getNMASS();
+                break;
+            case "S":
+                this.elementMass = AtomicMasses.getSMASS();
+                break;
+            case "H+":
+                this.elementMass = AtomicMasses.getPROTON();
+                break;
+            case "Cx":
+                this.elementMass = AtomicMasses.getCxMASS();
+                break;
+            case "F":
+                this.elementMass = AtomicMasses.getFMASS();
+                break;
+            case "P":
+                this.elementMass = AtomicMasses.getPMASS();
+                break;
+            case "Nx":
+                this.elementMass = AtomicMasses.getNxMASS();
+                break;
 
-                default:
-                    throw new NoSuchElementException("Element unknown: " + elementName);
+            default:
+                throw new NoSuchElementException("Element unknown: " + elementName);
 
-            }
-}
-//implement this method here to have only one class if more supported elements are added
+        }
+    }
+
+    //implement this method here to have only one class if more supported elements are added
     public static String elementsToString(ArrayList<Element> elements) {
         String formula = "";
         int quantH = 0;
@@ -63,6 +67,7 @@ public class Element {
         int quantCx = 0;
         int quantF = 0;
         int quantP = 0;
+        int quantNx = 0;
         //this loop gets the element counts for each element
         for (Element e : elements) {
             String currentName = e.getElementName();
@@ -94,7 +99,9 @@ public class Element {
                 case "P":
                     quantP++;
                     break;
-
+                case "Nx":
+                    quantNx++;
+                    break;
             }
         }
         //Strings for the elements, to filter out quantities with 0
@@ -105,8 +112,9 @@ public class Element {
         String S = "S" + quantS;
         String HPlus = "H+" + quantHPlus;
         String Cx = "Cx" + quantCx;
+        String Nx = "Nx" + quantNx;
         String F = "F" + quantF;
-        String P = "P"+ quantP;
+        String P = "P" + quantP;
 
         if (quantH == 0) {
             H = "";
@@ -132,21 +140,26 @@ public class Element {
         if (quantF == 0) {
             F = "";
         }
-        if (quantP == 0){
+        if (quantP == 0) {
             P = "";
+        }
+        if (quantNx == 0) {
+            Nx = "";
         }
 
 
-        formula = ""+ C + H  + N + O + S + Cx + F + P + HPlus;
-
-
+        formula = "" + C + H + N + O + S + Cx + Nx + F + P + HPlus;
 
 
         return formula;
     }
 
 
+    public double getElementMass() {
+        return this.elementMass;
+    }
 
-public double getElementMass(){return this.elementMass;}
-public String getElementName(){return this.elementName;}
+    public String getElementName() {
+        return this.elementName;
+    }
 }

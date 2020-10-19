@@ -49,4 +49,5 @@ public class AtomicMasses {
     public static double getFMASS(){return F_MASS;}
     public static double getNEUTRON(){return NEUTRON;}
     public static double getPMASS() {return P_MASS;}
+    public static double getNxMASS(){return Nx_MASS;}
 }

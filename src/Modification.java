@@ -22,7 +22,6 @@ public class Modification {
         this.modificationName = modNameIn;
         this.modificationFormula = new SumFormula(sumFormulaIn);
         this.modificationMass = this.modificationFormula.getExactMass();
-        this.modificationMass = this.modificationFormula.getExactMass();
         this.certainPosition = false;
         this.aminoAcidName = aminoAcidModIn;
     }
@@ -30,7 +29,6 @@ public class Modification {
     public Modification(String modNameIn, String sumFormulaIn, int positionModIn){
         this.modificationName = modNameIn;
         this.modificationFormula = new SumFormula(sumFormulaIn);
-        this.modificationMass = this.modificationFormula.getExactMass();
         this.modificationMass = this.modificationFormula.getExactMass();
         this.certainPosition = true;
         //calculate -1 to directly get index of lists
@@ -96,42 +94,34 @@ public class Modification {
 
 
     public static Modification carbamidomethylation(){
-        Modification carbamidomethyl = new Modification("Cam", "C2H3NO", 'C');
-        return carbamidomethyl;
+        return new Modification("Cam", "C2H3NO", 'C');
     }
     public static Modification nemModification(){
-        Modification nem = new Modification("NEM", "C6H7NO2", 'C');
-        return nem;
+        return new Modification("NEM", "C6H7NO2", 'C');
     }
 
 
     public static Modification oxidation(int pos) {
-        Modification oxidation = new Modification("Ox.", "O", pos);
-        return oxidation;
+        return new Modification("Ox.", "O", pos);
     }
 
     public static Modification acetylation(int pos){
-        Modification acetylation = new Modification("Ac", "H2C2O",pos);
-        return acetylation;
+        return new Modification("Ac", "H2C2O",pos);
     }
 
 
     public static  Modification phosphorylation (int pos) {
-        Modification phosphorylation = new Modification("phos.", "HO3P", pos);
-        return phosphorylation;
+        return new Modification("phos.", "HO3P", pos);
     }
 
     public static Modification cliXlinkShortAlk (int pos) {
-        Modification cliXlinkShortAlk = new Modification("alk_s", "C3H2O", pos);
-        return cliXlinkShortAlk;
+        return new Modification("alk_s", "C3H2O", pos);
     }
     public static Modification cliXlinkShortSO(int pos) {
-        Modification cliXlinkShortSO = new Modification("SO_s", "C3H4O2S", pos);
-        return cliXlinkShortSO;
+        return new Modification("SO_s", "C3H4O2S", pos);
     }
     public static Modification cliXlinkShortThial (int pos) {
-        Modification cliXlinkShortThial = new Modification("thial_s", "C3H2OS", pos);
-        return cliXlinkShortThial;
+        return new Modification("thial_s", "C3H2OS", pos);
     }
     public static ArrayList<Modification> cliXlinkShortModList (int pos){
         ArrayList<Modification> modListOut = new ArrayList<>();
@@ -158,31 +148,25 @@ public class Modification {
     }
 
     public static Modification cliXlinkLongAlk (int pos) {
-        Modification cliXlinkShortAlk = new Modification("alk_l", "C9H9NO2", pos);
-        return cliXlinkShortAlk;
+        return new Modification("alk_l", "C9H9NO2", pos);
     }
     public static Modification cliXlinkLongSO(int pos) {
-        Modification cliXlinkShortSO = new Modification("SO_l", "C9H11NO3S", pos);
-        return cliXlinkShortSO;
+        return new Modification("SO_l", "C9H11NO3S", pos);
     }
     public static Modification cliXlinkLongThial (int pos) {
-        Modification cliXlinkShortThial = new Modification("thial_l", "C9H9NO2S", pos);
-        return cliXlinkShortThial;
+        return new Modification("thial_l", "C9H9NO2S", pos);
     }
 
     public static Modification ncHSEC_A(int pos){
-        Modification ncHSECA = new Modification("ncHSEC_A", "C12H13NO4", pos);
-        return ncHSECA;
+        return new Modification("ncHSEC_A", "C12H13NO4", pos);
     }
 
     public static Modification cHSEC_A(int pos){
-        Modification cHSECA = new Modification("cHSEK_A", "C7H9NO3", pos);
-        return cHSECA;
+        return new Modification("cHSEK_A", "C7H9NO3", pos);
     }
 
     public static Modification ncHSEC_SH(int pos){
-        Modification ncHSECSH = new Modification("ncHSEC_SH", "C12H13NO4S", pos);
-        return ncHSECSH;
+        return new Modification("ncHSEC_SH", "C12H13NO4S", pos);
 
     }
 
@@ -202,6 +186,47 @@ public class Modification {
         cleavedlsST.isCleaved = true;
         return cleavedlsST;
     }
+
+    //TMTPro Modifications
+    //lys
+    public static Modification tmtPro0(){
+        Modification out = new Modification("TMTPro0","C15H25N3O3",'K');
+        out.isLabel = true;
+        out.isCleaved = false;
+        return out;
+    }
+    //n-term
+    public static Modification tmtPro0(int pos){
+        Modification out = new Modification("TMTPro0","C15H25N3O3",pos);
+        out.isLabel = true;
+        out.isCleaved = false;
+        return out;
+    }
+    //lys
+    public static Modification tmtPro(){
+        Modification out = new Modification("TMTPro","C8Cx7H25NNx2O3",'K');
+        out.isLabel = true;
+        out.isCleaved = false;
+        return out;
+    }
+    //n-term
+    public static Modification tmtPro(int pos){
+        Modification out = new Modification("TMTPro","C8Cx7H25NNx2O3",pos);
+        out.isLabel = true;
+        out.isCleaved = false;
+        return out;
+    }
+
+    //complementary ions TMTPro0
+    //lys
+    //TODO: check if that is the correct way to define that
+    public static Modification tmtPro0Comp(){
+        Modification out = new Modification("TMTPro0Comp","C6H10N2O2",'K');
+        out.isLabel = true;
+        out.isCleaved = true;
+        return out;
+    }
+
 
 
     //if this function gets a modified peptide, then return the list of modifications present on the peptide

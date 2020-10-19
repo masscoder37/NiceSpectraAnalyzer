@@ -25,6 +25,10 @@ public class FastaTools {
         //add int variable to track number of generated peptides
         int generatedPeptides = 0;
 
+        //handle weird characters in some uniprot fasta files
+        if(seqIn.contains("\r")){
+            seqIn = seqIn.replace("\r","");
+        }
         //add size variable
         int sizeOfFasta = seqIn.length();
 
@@ -261,7 +265,7 @@ public class FastaTools {
     public static HashSet<String> generatePeptidesOfFasta(String fastaLocationIn, int maxAllowedMissedCleavages, String proteaseIn) throws IOException {
         long startTime = System.currentTimeMillis();
         //HashSet<String> uniquePeptideSequences = new HashSet<>();
-        HashSet<String> allUniquePeptideSequences = new HashSet<>();
+        HashSet<String> allUniquePeptideSequences = new HashSet<>(5000);
         //read complete contents of Fasta File into String
         Path filePath = Path.of(fastaLocationIn);
         String contents = Files.readString(filePath);
@@ -272,7 +276,7 @@ public class FastaTools {
         //first entry of this String array is empty because every sequence starts with >
         //remove the first entry
         individiualSeqs = Arrays.copyOfRange(individiualSeqs, 1, individiualSeqs.length);
-        ArrayList<String> proteins = new ArrayList<>();
+        ArrayList<String> proteins = new ArrayList<>(1000);
         //each individualSeq has the fasta header still attached and is split by \n
         //remove the first entry and combine all the remaining lines into one string
         //use StringBuilder to combine the individual lines
@@ -329,6 +333,7 @@ public class FastaTools {
         for (int i = 1; i < splitSequence.length; i++) {
             sb.append(splitSequence[i]);
         }
+
         String querySequence = sb.toString();
         //digest protein
         ArrayList<String> queryPeptides = digestSequence(querySequence, proteaseIn, allowedMissedCleavagesQuery);
