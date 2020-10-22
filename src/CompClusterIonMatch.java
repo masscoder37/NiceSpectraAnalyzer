@@ -29,6 +29,5 @@ public class CompClusterIonMatch extends IonMatch {
     public boolean getMixedLabels(){return this.isMixed;}
     public String getScanHeader(){return this.scanHeader;}
     public String getLeadingProteins(){return this.leadingProteins;}
-
-
+    public int getLabelQuantity() {return labelQuantity;}
 }

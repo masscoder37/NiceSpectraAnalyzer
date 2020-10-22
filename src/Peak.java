@@ -6,7 +6,6 @@ import java.util.ArrayList;
  */
 
 
-//TODO: implement association with specific feature in spectrum
 public class Peak {
     private double mass;
     private int charge;

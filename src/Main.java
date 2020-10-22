@@ -22,19 +22,29 @@ public class Main {
     public static void main(String[] args) throws MzXMLParsingException, JMzReaderException, IOException, InterruptedException {
         DecimalFormat fourDec = new DecimalFormat("0.0000");
         DecimalFormat twoDec = new DecimalFormat("0.00");
+        DecimalFormat xDec = new DecimalFormat("0.000000000");
 
         //Visualization.spectrumPlotter(mzXMLRun,10);
-        String fastaFile = "C:\\Programmingfolder\\FASTA_lists\\HomoSapiens_Uniprot_16102020.fasta";
-        String queryFile = "C:\\Programmingfolder\\FASTA_lists\\MBP.fasta";
-
-        //FastaTools.peptideUniquenessChecker(queryFile, fastaFile, 0,2, "Trypsin");
-
-
-        Peptide peptide = new Peptide("AK", AminoAcid.getAminoAcidList());
+        //String runPath = "C:\\Programmingfolder\\Targeted\\TGR_09933.mzXML";
+        //String idPath = "C:\\Programmingfolder\\Targeted\\TGR_09933_BSA_TMTPro0_CID.csv";
+        //TMTProC.tmtproCCLusterID(runPath, idPath, 10, true, "IAA");
         ArrayList<Modification> modList = new ArrayList<>();
-        modList.add(Modification.tmtPro0Comp());
-        peptide = peptide.peptideModifier(modList);
-        System.out.println("lalala");
+        modList.add(Modification.carbamidomethylation());
+        Peptide pep = new Peptide("EHCKTR", AminoAcid.getAminoAcidList());
+
+
+        TMTproCCompIon.compIonCreator(pep, modList, true);
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -195,7 +195,6 @@ public class Modification {
         out.isCleaved = false;
         return out;
     }
-    //n-term
     public static Modification tmtPro0(int pos){
         Modification out = new Modification("TMTPro0","C15H25N3O3",pos);
         out.isLabel = true;
@@ -209,7 +208,6 @@ public class Modification {
         out.isCleaved = false;
         return out;
     }
-    //n-term
     public static Modification tmtPro(int pos){
         Modification out = new Modification("TMTPro","C8Cx7H25NNx2O3",pos);
         out.isLabel = true;
@@ -219,9 +217,15 @@ public class Modification {
 
     //complementary ions TMTPro0
     //lys
-    //TODO: check if that is the correct way to define that
     public static Modification tmtPro0Comp(){
-        Modification out = new Modification("TMTPro0Comp","C6H10N2O2",'K');
+        Modification out = new Modification("TMTPro0Comp","C6H9N2O2-",'K');
+        out.isLabel = true;
+        out.isCleaved = true;
+        return out;
+    }
+
+    public static Modification tmtPro0Comp(int pos){
+        Modification out = new Modification("TMTPro0Comp","C6H9N2O2-",pos);
         out.isLabel = true;
         out.isCleaved = true;
         return out;

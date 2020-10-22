@@ -247,4 +247,23 @@ public class RandomTools {
         return sequenceIn.replace("*","");
     }
 
+    public static int determineIsolationOffset(double monoisotopicMZ, double isolatedMZ, double allowedDeviation, int precursorZ){
+        //check if experimental isolated m/z and theoretical mass match or a higher isotope peak was isolated
+        //set the default value to something unobtainable high
+        int precursorIsoOffset = 50;
+        if (DeviationCalc.ppmMatch(monoisotopicMZ, isolatedMZ, allowedDeviation)){
+            precursorIsoOffset = 0;
+        }
+        else{
+            for (int n = 1; n <10; n++){
+                double shiftedMass = monoisotopicMZ + (AtomicMasses.getNEUTRON() * n / precursorZ);
+                if (DeviationCalc.ppmMatch(shiftedMass, isolatedMZ, allowedDeviation)) {
+                    precursorIsoOffset = n;
+                    break;
+                }
+            }
+        }
+        return precursorIsoOffset;
+    }
+
 }

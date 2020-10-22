@@ -22,6 +22,7 @@ public class AtomicMasses {
     private static final double Nx_MASS = 15.00010890;
     private static final double NEUTRON_H = Hx_MASS-H_MASS; //1.006276746
     private static final double NEUTRON_N = Nx_MASS-N_MASS; //0.9970349
+    private static final double ELECTRON = H_MASS-PROTON; //0.000548562
 
     //mean of neutron masses: 1.002222162
     //abundance 13C : 0.011078 --> 0.74365
@@ -50,4 +51,5 @@ public class AtomicMasses {
     public static double getNEUTRON(){return NEUTRON;}
     public static double getPMASS() {return P_MASS;}
     public static double getNxMASS(){return Nx_MASS;}
+    public static double getELECTRON(){return ELECTRON;}
 }

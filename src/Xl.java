@@ -29,7 +29,6 @@ public class Xl {
     //doing so will associate all the matches automatically with the respective XL
     private ArrayList<SpecificXLIonMatch> xlIonMatches;
 
-    //TODO: start to make everything ready for using DSSO as well
     public Xl(String peptide1In, String peptide2In, String xlIn, int chargeStateIn,
               int hcdScanNumberIn,int cidScanNumberIn, String fragmentationMethodIn, double isolatedMassToChargeIn,
               int xlPos1In, int xlPos2In, ArrayList<AminoAcid> aaIn, double retentionTimeIn){

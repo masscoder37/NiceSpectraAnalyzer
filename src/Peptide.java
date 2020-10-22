@@ -15,7 +15,7 @@ public class Peptide {
     private ArrayList<AminoAcid> aminoAcidsList;
     private String unmodifiedSequence;
 
-    private DecimalFormat fiveDec = new DecimalFormat("0.00000");
+    private static DecimalFormat fiveDec = new DecimalFormat("0.00000");
 
     //ArrayList<AminoAcid> acids usually contains all 20 natural amino acids
     //ArrayList<AminoAcid> aminoAcidsList contains only aminoacids in the peptide, in order of the sequence
@@ -76,12 +76,11 @@ public class Peptide {
             //write Modification name in brackets
             //write EC in brackets if you have isobaric Label modification
             if (aminoAcidsListIn.get(a).getModificationStatus()) {
-
                 if (aminoAcidsListIn.get(a).getModification().getLabelStatus()) {
                     if (aminoAcidsListIn.get(a).getModification().getModificationName().contains("EC"))
                         modPos[a] += "(EC)";
-                    if (aminoAcidsListIn.get(a).getModification().getModificationName().contains("TMT"))
-                        modPos[a] += "(TMT)";
+                    if (aminoAcidsListIn.get(a).getModification().getModificationName().contains("TMTPro"))
+                        modPos[a] += "(TMTpro)";
                 } else {
                     modPos[a] += "(" + aminoAcidsListIn.get(a).getModification().getModificationName() + ")";
 
@@ -179,10 +178,10 @@ public class Peptide {
 
 
     //this method uses an ArrayList of Modifications to attach modifications to existing peptides
-    //TODO: this is the old version of the peptide modifier function
-    //TODO: it works, however it does modify the aminoAcid list of the unmodified peptide
-    //TODO: try to fix with another version of the function and see if that works with all current functions
-    //TODO:second version seems to work properly
+    //note: this is the old version of the peptide modifier function
+    //note: it works, however it does modify the aminoAcid list of the unmodified peptide
+    //note: try to fix with another version of the function and see if that works with all current functions
+    //note:second version seems to work properly
     /*public Peptide peptideModifier(ArrayList<Modification> modListIn) {
         ArrayList<AminoAcid> modAAList = this.getAminoAcidsList();
         boolean modStatus = false;
@@ -273,6 +272,65 @@ public class Peptide {
         return modPeptide;
     }
 
+    //overloaded Method to handle single Modification
+    public Peptide peptideModifier(Modification modIn) {
+        //lazy implementation of handling a single mod: add it to the list
+        ArrayList<Modification> modListIn = new ArrayList<>();
+        modListIn.add(modIn);
+        //note: check if the peptide to be modified is already modified. If so, add the modifications to the modlist
+        //if modification is already present on the peptide, it needs to be handled differently
+        boolean modStatus = false;
+        //if this is true, extract the modification list and create a new, unmodified peptide.
+        //this peptide will be modified in the following
+        Peptide unmodifiedPeptide;
+        ArrayList<Modification> oldPresentMods = new ArrayList<>();
+        //this won't modify the original aminoAcidsList
+        ArrayList<AminoAcid> aaList = new ArrayList<>();
+        if (this.getModificationStatus()){
+            oldPresentMods.addAll(Modification.modifiedPeptideModListCreator(this));
+            //generate new, unmodified peptide with same sequence
+            //this peptide has no modification, so use normal constructor
+            unmodifiedPeptide = new Peptide(this.unmodifiedSequence, AminoAcid.getAminoAcidList());
+            //add all the modifications to the modList
+            modListIn.addAll(oldPresentMods);
+            modStatus = true;
+        }
+        //if the peptide is unmodified, nothing changes
+        else{
+            unmodifiedPeptide = this;
+        }
+        aaList.addAll(unmodifiedPeptide.aminoAcidsList);
+        for (Modification mod : modListIn) {
+            boolean fixedModPosition = mod.getPositionType();
+            if (fixedModPosition) {
+                if (mod.getPositionNumber() > aaList.size()) {
+                    break;
+                }
+                AminoAcid currentAcid = aaList.get(mod.getPositionNumber());
+                SumFormula newFormula = SumFormula.sumFormulaJoiner(mod.getModificationFormula(), currentAcid.getSumFormula());
+                AminoAcid modAcid = new AminoAcid(currentAcid.getName() + mod.getModificationName(), currentAcid.get3Let(), ""+currentAcid.get1Let(), newFormula.getSumFormula());
+                aaList.set(mod.getPositionNumber(), modAcid);
+                aaList.get(mod.getPositionNumber()).setHasModification(true);
+                aaList.get(mod.getPositionNumber()).setModification(mod);
+                modStatus = true;
+            }
+            if (!fixedModPosition) {
+                for (int i = 0; i < aaList.size(); i++) {
+                    if (aaList.get(i).get1Let() == mod.getAminoAcidName()) {
+                        AminoAcid currentAcid = aaList.get(i);
+                        SumFormula newFormula = SumFormula.sumFormulaJoiner(mod.getModificationFormula(), currentAcid.getSumFormula());
+                        AminoAcid modAcid = new AminoAcid(currentAcid.getName() + mod.getModificationName(), currentAcid.get3Let(), ""+currentAcid.get1Let(), newFormula.getSumFormula());
+                        aaList.set(i, modAcid);
+                        aaList.get(i).setHasModification(true);
+                        aaList.get(i).setModification(mod);
+                        modStatus = true;
+                    }
+                }
+            }
+        }
+        return new Peptide(unmodifiedPeptide.getUnmodifiedSequence(), aaList, modStatus);
+    }
+
 
     public String getSequence() {
         return this.sequence;
@@ -314,12 +372,16 @@ public class Peptide {
         boolean containsChargeStateY = false;
 
         for (FragmentIon fragmentIon : this.bIons) {
-            if (chargeIn == fragmentIon.getCharge())
+            if (chargeIn == fragmentIon.getCharge()) {
                 containsChargeStateB = true;
+                break;
+            }
         }
         for (FragmentIon fragmentIon : this.yIons) {
-            if (chargeIn == fragmentIon.getCharge())
+            if (chargeIn == fragmentIon.getCharge()) {
                 containsChargeStateY = true;
+                break;
+            }
         }
 
         if (!containsChargeStateB) {
@@ -329,6 +391,16 @@ public class Peptide {
             this.yIonBuilder(chargeIn);
         }
 
+    }
+
+    //returns the number of Lysines on a peptide
+    public int getLysineNumber(){
+        int out = 0;
+        for (AminoAcid aa : this.getAminoAcidsList()){
+            if(aa.get1Let() == 'K')
+                out++;
+        }
+        return out;
     }
 
     public void peptidePrinter(){

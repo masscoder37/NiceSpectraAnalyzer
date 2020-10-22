@@ -15,9 +15,6 @@ public class FragmentIon extends Ion {
     //implement new variables for modifications
     private ArrayList<AminoAcid> aminoAcidsList;
 
-
-
-
     private static DecimalFormat fiveDec = new DecimalFormat("0.00000");
 
 

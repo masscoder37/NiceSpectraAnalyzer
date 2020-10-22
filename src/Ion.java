@@ -9,7 +9,7 @@ public class Ion {
     private double exactMass;
     private int charge;
     private boolean chargeStateKnown;
-    private double massToCharge;//needs to be implemented later...maybe by going by the protons in the sum formula?
+    private double massToCharge;
     private SumFormula formula;
 
     //default Constructor
@@ -55,6 +55,18 @@ public class Ion {
             throw new IllegalArgumentException("Charge state of Ions can't be 0!");
         this.chargeStateKnown = true;
         this.massToCharge = this.exactMass/this.charge;
+    }
+
+    //sumFormula in, charge inferred from Formula
+    public Ion(SumFormula sumFormulaIn){
+        this.formula = sumFormulaIn;
+        this.exactMass = this.formula.getExactMass();
+        this.charge = this.formula.getDefaultChargeState();
+        this.massToCharge = this.exactMass/this.charge;
+        //this can conceivably happen...it's better to report 0 instead of throwing an error
+        if (this.charge == 0)
+            this.massToCharge = 0;
+        this.chargeStateKnown = true;
     }
 
 
