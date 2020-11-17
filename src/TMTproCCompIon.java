@@ -7,29 +7,42 @@ import java.util.ArrayList;
 public class TMTproCCompIon {
     private boolean isFullLength; //true: full-peptide comp Ion, false: fragment ion
     private boolean isMixed; //true: contains both cleaved and intact TMTPro tags
+    private int numberOfCleavedLabels = 1; //true: 2 or more TMT tags are present which are cleaved
     private int numberOfTags;
     private boolean tmtPro0; //false: TMTproC 8plex
     private Ion ion = null; // for full length peptide
     private FragmentIon fragIon = null; // for fragment ions
     private String peptideOrigin;
+    private boolean isClassicalCompIon = false; //true: is the standard comp ion, only 1 cleaved tag, intact
     //two constructors - one for full length ion, one for fragment ion
 
-    //ion constructor
-    public TMTproCCompIon(boolean isFullLengthIn, boolean isMixedIn, boolean tmtPro0In, Ion ionIn, String peptideOriginIn, int numberOfTagsIn) {
+    //intact ion constructor
+    public TMTproCCompIon(boolean isFullLengthIn, boolean isMixedIn, boolean tmtPro0In, Ion ionIn, String peptideOriginIn, int numberOfTagsIn, int numberOfCleavedLabelsIn) {
         this.isFullLength = isFullLengthIn;
         this.isMixed = isMixedIn;
         this.tmtPro0 = tmtPro0In;
         this.ion = ionIn;
         this.peptideOrigin = peptideOriginIn;
+        Peptide pep = new Peptide(peptideOriginIn, AminoAcid.getAminoAcidList());
+        int tagNumber = pep.getLysineNumber() +1;
+        this.numberOfTags = tagNumber;
+        //this is most important/only needed? for intact comp ions?!
+        this.numberOfCleavedLabels = numberOfCleavedLabelsIn;
         this.numberOfTags = numberOfTagsIn;
+        if(this.numberOfCleavedLabels == 1){
+            this.isClassicalCompIon = true;
+        }
     }
 
+    //fragment ion constructor
     public TMTproCCompIon(boolean isFullLengthIn, boolean isMixedIn, boolean tmtPro0In, FragmentIon ionIn, String peptideOriginIn, int numberOfTagsIn) {
         this.isFullLength = isFullLengthIn;
         this.isMixed = isMixedIn;
         this.tmtPro0 = tmtPro0In;
         this.fragIon = ionIn;
         this.peptideOrigin = peptideOriginIn;
+        Peptide pep = new Peptide(peptideOriginIn, AminoAcid.getAminoAcidList());
+        this.numberOfTags = pep.getLysineNumber() +1;;
         this.numberOfTags = numberOfTagsIn;
     }
 
@@ -49,6 +62,12 @@ public class TMTproCCompIon {
         return peptideOrigin;
     }
 
+    public int getNumberOfCleavedLabels() { return numberOfCleavedLabels; }
+
+    public int getNumberOfTags(){ return numberOfTags; }
+
+    public boolean isClassicalCompIon(){return isClassicalCompIon;}
+
     //special getter for ion
     //fragmentIon extends Ion, so it can be returned with this method
     public Ion getIon() {
@@ -62,7 +81,7 @@ public class TMTproCCompIon {
     //modify this code from the SOT legacy code
     //TODO: create switch between TMTpro0 and TMTproC-8plex
     public static ArrayList<TMTproCCompIon> compIonCreator(Peptide unmodPeptideIn, ArrayList<Modification> modListIn, boolean tmtpro0, int precursorZIn) {
-        ArrayList<TMTproCCompIon> out = new ArrayList<>();
+        ArrayList<TMTproCCompIon> fullList = new ArrayList<>();
         //find all positions which can be modified
         ArrayList<Integer> modPos = new ArrayList<>();
         //add pos 1 (peptide counting starts from 1) to handle N-Terminus
@@ -108,6 +127,7 @@ public class TMTproCCompIon {
             ArrayList<String> labelStatus = new ArrayList<>();
             ArrayList<AminoAcid> aaList = pep.getAminoAcidsList();
             boolean containsCleavedTag = false;
+            int cleavedLabelNumber = 0;
             for (AminoAcid aa : aaList){
                 //only of aa has mod
                 if (aa.getModificationStatus()){
@@ -115,6 +135,7 @@ public class TMTproCCompIon {
                     if(aa.getModification().getLabelStatus()){
                         if(aa.getModification().getCleavedStatus()){
                             containsCleavedTag = true;
+                            cleavedLabelNumber++;
                             labelStatus.add("cleaved");
                         }
                         else
@@ -138,19 +159,52 @@ public class TMTproCCompIon {
             }
             //now, Ion can be created. charge state inferred by formula
             Ion fullLengthCompIon = new Ion(compIonFormula);
-            out.add(new TMTproCCompIon(true, isMixed, tmtpro0, fullLengthCompIon, pep.getUnmodifiedSequence(), modPos.size()));
+            fullList.add(new TMTproCCompIon(true, isMixed, tmtpro0, fullLengthCompIon, pep.getUnmodifiedSequence(), modPos.size(), cleavedLabelNumber));
 
-
-
-
+            //for comp fragment ions, take the normal z = 1 fragment ions
+            //however, add another proton to the SumFormula, otherwise it would be invisible
+            ArrayList<FragmentIon> allFragmentIons = new ArrayList<>(pep.getbIons());
+            allFragmentIons.addAll(pep.getyIons());
+            //only add relevant FragmentIon SumFormulas to list
+            //charge state 1 and 2 of modified peptides are generated automatically, filter for only 1+ (not sure how +2 works with comp ions)
+            for (FragmentIon fragIon : allFragmentIons){
+                //skip unmodified fragment ions
+                if (!fragIon.getLabelStatus())
+                    continue;
+                //also skip uncleaved = no complement ions
+                if (!fragIon.getCleavedLabelStatus())
+                    continue;
+                //fragment ions can be of full length, but that's weird and unecessary...remove this from fragmentIons maybe?
+                //skip if this is the case
+                if(fragIon.getIonNumber() == pep.getSequenceLength())
+                    continue;
+                if(fragIon.getCharge() == 2)
+                    continue;
+                //only possible interesting ions remain
+                //increase z by 1 to compensate for negative charge on complement Ion
+                SumFormula adjustedFormula = SumFormula.sumFormulaJoiner(SumFormula.getProtonFormula(), fragIon.getFormula());
+                //in principle, its possible that protonation has to happen more often: e.g. 2 cleaved labels, additional proton necessary --> unlikely though!
+                //TODO: think about adding more than one proton, up to precursorZ-1
+                //skip those cases for now
+                if (adjustedFormula.getDefaultChargeState() == 0)
+                    continue;
+                //create new FragmentIon with the adjusted SumFormula
+                FragmentIon adjustedFragIon = new FragmentIon(adjustedFormula, adjustedFormula.getDefaultChargeState(), pep, fragIon.getIonSeries(), fragIon.getIonNumber(),
+                        fragIon.getModificationStatus(), fragIon.getAminoAcidsList());
+                fullList.add(new TMTproCCompIon(false, fragIon.getLabelMixingStatus(), tmtpro0, adjustedFragIon, pep.getUnmodifiedSequence(), fragIon.getLabelQuantity()));
+            }
         }
-
-
-
-
-
-
-        return out;
+        //out is still overloaded with the same comp. Ion multiple times
+        //filter so that only ions with unique m/z remain
+        ArrayList<Double> uniqueMZList = new ArrayList<>();
+        ArrayList<TMTproCCompIon> reducedList = new ArrayList<>();
+        for(TMTproCCompIon ion : fullList){
+            if (!uniqueMZList.contains(ion.getIon().getMToZ())){
+                uniqueMZList.add(ion.getIon().getMToZ());
+                reducedList.add(ion);
+            }
+        }
+        return reducedList;
     }
 
 

@@ -25,15 +25,13 @@ public class Main {
         DecimalFormat xDec = new DecimalFormat("0.000000000");
 
         //Visualization.spectrumPlotter(mzXMLRun,10);
-        //String runPath = "C:\\Programmingfolder\\Targeted\\TGR_09933.mzXML";
-        //String idPath = "C:\\Programmingfolder\\Targeted\\TGR_09933_BSA_TMTPro0_CID.csv";
-        //TMTProC.tmtproCCLusterID(runPath, idPath, 10, true, "IAA");
-        ArrayList<Modification> modList = new ArrayList<>();
-        modList.add(Modification.carbamidomethylation());
-        Peptide pep = new Peptide("EHCKTR", AminoAcid.getAminoAcidList());
+        String runPath = "C:\\Programmingfolder\\Targeted\\TGR_09945.mzXML";
+        String idPath = "C:\\Programmingfolder\\Targeted\\TGR_09945_BSA_TMTPro0_HCD.csv";
+        TMTProC.tmtproCCLusterID(runPath, idPath, 10, true, "NEM");
 
+        String fastaPath = "C:\\Programmingfolder\\Targeted\\BSA.fasta";
+        //TMTProC.targetedMS3ListGenerator(fastaPath, "IAA");
 
-        TMTproCCompIon.compIonCreator(pep, modList, true);
 
 
 

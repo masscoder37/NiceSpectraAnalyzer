@@ -48,6 +48,19 @@ public class FragmentIon extends Ion {
         }
         return hasLabel;
     }
+
+    public boolean getCleavedLabelStatus(){
+        boolean hasCleavedLabel = false;
+        for (AminoAcid aa : this.aminoAcidsList){
+            if(aa.getModification()!=null) {
+                if (aa.getModification().getLabelStatus()){
+                    if (aa.getModification().getCleavedStatus())
+                        hasCleavedLabel = true;
+                }
+            }
+        }
+        return hasCleavedLabel;
+    }
     //how many labels are there in the fragment ion
     public int getLabelQuantity(){
         int labelQuantity = 0;
@@ -59,6 +72,43 @@ public class FragmentIon extends Ion {
         }
         return labelQuantity;
     }
+
+    //is the modification mixed, e.g. contains cleaved and intact tmt?
+    //true: mixed
+    public boolean getLabelMixingStatus(){
+        boolean isMixed = false;
+        ArrayList<String> mixList = new ArrayList<>();
+        for (AminoAcid aa : this.aminoAcidsList) {
+            if (aa.getModification() != null) {
+                if (aa.getModification().getLabelStatus()){
+                    if(aa.getModification().getCleavedStatus())
+                        mixList.add("cleaved");
+                    else
+                        mixList.add("intact");
+                }
+            }
+        }
+        if (mixList.contains("cleaved")&&mixList.contains("intact"))
+            isMixed = true;
+        return isMixed;
+    }
+    public int getNumberOfCleavedLabels() {
+        int cleavedLabels = 0;
+        for (AminoAcid aa : this.aminoAcidsList) {
+            if (aa.getModification() != null) {
+                if (aa.getModification().getLabelStatus()) {
+                    if (aa.getModification().getCleavedStatus())
+                        cleavedLabels++;
+                }
+            }
+        }
+        return cleavedLabels;
+    }
+
+
+
+
+
     //returns the labeled amino acids
      public ArrayList<AminoAcid> getLabelAAs(){
         ArrayList<AminoAcid> labeledAAs = new ArrayList<>();

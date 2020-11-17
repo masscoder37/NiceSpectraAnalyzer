@@ -403,6 +403,17 @@ public class Peptide {
         return out;
     }
 
+    public int getLikelyChargeState(){
+        //N-term is always present, start with 1
+        int out = 1;
+        //H, R and K increase charge state
+        for (AminoAcid aa : this.getAminoAcidsList()){
+            if(aa.get1Let() == 'K' || aa.get1Let() == 'R' || aa.get1Let() == 'H')
+                out++;
+        }
+        return out;
+    }
+
     public void peptidePrinter(){
         System.out.println("");
         System.out.println("Peptide: "+this.sequence);

@@ -94,7 +94,7 @@ public class Modification {
 
 
     public static Modification carbamidomethylation(){
-        return new Modification("Cam", "C2H3NO", 'C');
+        return new Modification("IAA", "C2H3NO", 'C');
     }
     public static Modification nemModification(){
         return new Modification("NEM", "C6H7NO2", 'C');

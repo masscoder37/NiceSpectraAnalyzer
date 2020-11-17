@@ -7,10 +7,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Scanner;
 
 public class RandomTools {
     private static DecimalFormat scientific = new DecimalFormat("0.00E0");
@@ -264,6 +262,18 @@ public class RandomTools {
             }
         }
         return precursorIsoOffset;
+    }
+
+
+    public static double calculateMedian(ArrayList<Double> valueListIn){
+        if (valueListIn.size() == 0)
+            return 0;
+
+        Collections.sort(valueListIn);
+        if (valueListIn.size() % 2 == 0)
+            return  (valueListIn.get(valueListIn.size()/2) + valueListIn.get((valueListIn.size()-1)/2))/2;
+        else
+            return valueListIn.get(valueListIn.size()/2);
     }
 
 }
