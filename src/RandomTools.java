@@ -239,7 +239,7 @@ public class RandomTools {
         return out;
     }
 
-    //removes * from oxidized methioninen
+    //removes * from oxidized methionine
     //e.g. PEPTM*IDE becomes PEPTMIDE
     public static String removeOxidationSigns(String sequenceIn){
         return sequenceIn.replace("*","");
@@ -274,6 +274,17 @@ public class RandomTools {
             return  (valueListIn.get(valueListIn.size()/2) + valueListIn.get((valueListIn.size()-1)/2))/2;
         else
             return valueListIn.get(valueListIn.size()/2);
+    }
+
+    public static int getNumberOfTMTTags(String sequenceIn){
+        //always 1 for Nterm
+        int out = 1;
+        for (int i = 0; i < sequenceIn.length(); i++){
+            char query = sequenceIn.charAt(i);
+            if(query == 'K')
+                out++;
+        }
+        return out;
     }
 
 }

@@ -288,13 +288,14 @@ public class TMTProC {
         double medianIntact = RandomTools.calculateMedian(compIonFormationEfficiency);
         double medianFrag = RandomTools.calculateMedian(compFragIonFormationEfficiency);
 
-        System.out.println("bla");
+        System.out.println("");
 
 
-        System.out.println("Comp. Ions mean formation efficiency: "+twoDec.format(meanIntact*100));
-        System.out.println("Comp. Ions median formation efficiency: "+twoDec.format(medianIntact*100));
-        System.out.println("Comp. fragment Ions mean formation efficiency: "+twoDec.format(meanFrag*100));
-        System.out.println("Comp. fragment Ions median formation efficiency: "+twoDec.format(medianFrag*100));
+        System.out.println("Comp. ions mean formation efficiency: "+twoDec.format(meanIntact*100));
+        System.out.println("Comp. ions median formation efficiency: "+twoDec.format(medianIntact*100));
+        System.out.println("Comp. fragment ions mean formation efficiency: "+twoDec.format(meanFrag*100));
+        System.out.println("Comp. fragment ions median formation efficiency: "+twoDec.format(medianFrag*100));
+
 
 
 
@@ -483,7 +484,7 @@ public class TMTProC {
 
 
 
-    private static double formationEfficiencyCalculator(double ms1IT, double msnIT, double ms1SN, double msnSN, int precursorZ, int ionZ){
+    public static double formationEfficiencyCalculator(double ms1IT, double msnIT, double ms1SN, double msnSN, int precursorZ, int ionZ){
         //TODO: adjust values for the different resolutions
         //values out of BACIQ paper as discussed with Alex J.
         final double MS1ConversionFactor = 1.3;
