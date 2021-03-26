@@ -272,7 +272,11 @@ public class FastaTools {
         System.out.println("Read-in .FASTA file in " + (System.currentTimeMillis() - startTime) + " ms");
 
         //split String in substrings according to >, which denotes new sequence
-        String[] individiualSeqs = contents.split(">");
+        //note: > also appears in a handful of proteins, e.g. >sp|P14060|3BHS1_HUMAN 3 beta-hydroxysteroid dehydrogenase/Delta 5-->4-isomerase type 1
+        //note: therefore, use \n> as regex?
+        //note: seems to have fixed the issue
+
+        String[] individiualSeqs = contents.split("\n>");
         //first entry of this String array is empty because every sequence starts with >
         //remove the first entry
         individiualSeqs = Arrays.copyOfRange(individiualSeqs, 1, individiualSeqs.length);
@@ -289,6 +293,7 @@ public class FastaTools {
             //splitSeq must have at least header and one line of sequence. if not, skip
             if (splitSeq.length < 2)
                 continue;
+
             //ignore first line (header), then add all the others together
             for (int i = 1; i < splitSeq.length; i++) {
                 sb.append(splitSeq[i]);

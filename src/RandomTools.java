@@ -287,4 +287,41 @@ public class RandomTools {
         return out;
     }
 
+    //removes the annoying additional error messages from TMTproC output
+    //lines to filter: "<br />"
+    public static void fixTMTproCOutput(String filePathIn){
+        //create input file
+        File inputFile = new File(filePathIn);
+        Scanner scanner = null;
+        try {
+            scanner = new Scanner(inputFile);
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found! File Location: " + filePathIn);
+        }
+        //prepare output .csv File
+        String outputFilePath = filePathIn.replace(".csv", "_fixed.csv");
+        File outputFile = new File(outputFilePath);
+        PrintWriter pw = null;
+        try {
+            pw = new PrintWriter(outputFile);
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found! File Location: " + outputFilePath);
+        }
+        assert pw !=null;
+        assert scanner != null;
+        while (scanner.hasNext()){
+            String line = scanner.nextLine();
+            //filters out lines with that string
+            if(line.contains("<br />"))
+                continue;
+            //if not, then write line to file
+            //append line break
+            pw.write(line + "\n");
+        }
+        pw.flush();
+        pw.close();
+    }
+
+
+
 }

@@ -27,14 +27,13 @@ public class Main {
         //Visualization.spectrumPlotter(mzXMLRun,10);
         String runPath = "C:\\Programmingfolder\\Targeted\\TGR_10042.mzXML";
         String idPath = "C:\\Programmingfolder\\Targeted\\TGR_10042_BSA_TMTPro0_CID_reshoot_formated.csv";
-        //TMTProC.tmtproCCLusterID(runPath, idPath, 10, true, "NEM");
 
 
-        String fastaPath = "C:\\Programmingfolder\\Targeted\\BSA.fasta";
-        //TMTProC.targetedMS3ListGenerator(fastaPath, "IAA");
 
-        String filePath = "C:\\Programmingfolder\\Targeted\\TGR_10515_Tar3_BSA_TMTpro0_HCD_ObsMZ_forReadIn.csv";
-        TargetedTools.inclusionListCreator(filePath);
+        String queryLocation ="C:\\Programmingfolder\\FASTA_lists\\BSA.fasta";
+        String fastaLocation ="C:\\Programmingfolder\\FASTA_lists\\HomoSapiens_Uniprot_16102020.fasta";
+        FastaTools.peptideUniquenessChecker(queryLocation, fastaLocation, 0, 2, "Trypsin");
+
 
 
 
