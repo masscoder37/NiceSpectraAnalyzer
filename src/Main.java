@@ -25,14 +25,14 @@ public class Main {
         DecimalFormat xDec = new DecimalFormat("0.000000000");
 
         //Visualization.spectrumPlotter(mzXMLRun,10);
-        String runPath = "C:\\Programmingfolder\\Targeted\\TGR_10042.mzXML";
-        String idPath = "C:\\Programmingfolder\\Targeted\\TGR_10042_BSA_TMTPro0_CID_reshoot_formated.csv";
+        String peptidePath = "C:\\Programmingfolder\\Targeted\\TGR_10578_Tar3_BSAmix_C100_proSearch.csv";
+        String runPath = "C:\\Programmingfolder\\Targeted\\TGR_10578.mzXML";
+
+        RandomTools.ms1PrecursorInfo(peptidePath, runPath);
 
 
 
-        String queryLocation ="C:\\Programmingfolder\\FASTA_lists\\BSA.fasta";
-        String fastaLocation ="C:\\Programmingfolder\\FASTA_lists\\HomoSapiens_Uniprot_16102020.fasta";
-        FastaTools.peptideUniquenessChecker(queryLocation, fastaLocation, 0, 2, "Trypsin");
+
 
 
 

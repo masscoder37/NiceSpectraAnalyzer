@@ -1,6 +1,7 @@
 import uk.ac.ebi.pride.tools.jmzreader.JMzReaderException;
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLFile;
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLParsingException;
+import uk.ac.ebi.pride.tools.mzxml_parser.mzxml.model.Scan;
 
 import java.awt.*;
 import java.io.File;
@@ -13,6 +14,8 @@ import java.util.List;
 public class RandomTools {
     private static DecimalFormat scientific = new DecimalFormat("0.00E0");
     private static DecimalFormat twoDec = new DecimalFormat("0.00");
+    private static DecimalFormat fourDec = new DecimalFormat("0.0000");
+
 
     private static class PeptideID {
         private String pepSequence;
@@ -320,6 +323,117 @@ public class RandomTools {
         }
         pw.flush();
         pw.close();
+    }
+
+    //method to extract precursor ion intensities for TMTpro tagged BSA peptides (targeted-related)
+    //output: peptide ID, peptide (allosaurus format), z, scan#, RT, intensity (if !=0), SN, ion injection time
+    public static void ms1PrecursorInfo(String peptideListIn, String runFilePathIn) throws MzXMLParsingException, JMzReaderException {
+        //create input peptide file
+        File peptideInputFile = new File(peptideListIn);
+        Scanner scanner = null;
+        try {
+            scanner = new Scanner(peptideInputFile);
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found! File Location: " + peptideListIn);
+        }
+        assert scanner != null;
+        //prepare output .csv File
+        String outputFilePath = peptideListIn.replace(".csv", "_extractedMS1Int.csv");
+        File outputFile = new File(outputFilePath);
+        PrintWriter pw = null;
+        try {
+            pw = new PrintWriter(outputFile);
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found! File Location: " + outputFilePath);
+        }
+        assert pw !=null;
+        //write header
+        StringBuilder sb = new StringBuilder();
+        sb.append("Peptide ID,Peptide,z,scan#,MS1 intensity[a.u.],signal/noise,MS1 ion injection time[ms],\n");
+        pw.write(sb.toString());
+        sb.setLength(0);
+
+        //get columns of "Peptide" ,"ScanF" and "Theo m/z", "z"
+        //where are the required fields located
+        String headers = scanner.nextLine();
+        String[] splitHeaders = headers.split(",");
+        Map<String, Integer> headerPositions = new HashMap<>();
+        for (int i = 0; i < splitHeaders.length; i++){
+            String caption = splitHeaders[i];
+            switch(caption){
+                case("Peptide"):
+                    headerPositions.put("peptide", i);
+                    break;
+                case("z"):
+                    headerPositions.put("z", i);
+                    break;
+                case("ScanF"):
+                    headerPositions.put("scan#",i);
+                    break;
+                case("Theo m/z"):
+                    headerPositions.put("m/z",i);
+                    break;
+            }
+        }
+        if(headerPositions.size() != 4)
+            throw new IllegalArgumentException("Missing input columns, please check input! Of 4 headers detected: "+headerPositions.size());
+
+        //prepare allosaurus mzXML file
+        File runFile = new File(runFilePathIn);
+        MzXMLFile run = new MzXMLFile(runFile);
+        //create ScanList
+        ScanLists runScanLists = new ScanLists(run);
+        //Peptide ID variable which is individual for each
+        int pepID = 1;
+        //loop through different peptides
+        while(scanner.hasNext()){
+            //get line
+            String values = scanner.nextLine();
+            //split
+            String[] splitValues = values.split(",");
+            //get values according to the headers
+            String peptide = splitValues[headerPositions.get("peptide")];
+            String z = splitValues[headerPositions.get("z")];
+            int startingScanNumber = Integer.parseInt(splitValues[headerPositions.get("scan#")]);
+            double massToCharge = Double.parseDouble(splitValues[headerPositions.get("m/z")]);
+            //get scans to look at
+            //start from scan - 200 and go to 300 scans; so -200 scans and +200 scans
+            ArrayList<Integer> relevantScanNumbers = runScanLists.getNextNMS1Scans(startingScanNumber-200,400);
+            //inner loop: go through all the MS1 spectra
+            for(Integer scan:relevantScanNumbers){
+                //create MySpectrum object
+                MySpectrum spectrum = MzXMLReadIn.mzXMLToMySpectrum(run, scan);
+                //check if peak is present
+                double intensity = 0;
+                Peak matchingPeak = spectrum.getMatchingPeak(massToCharge, 15);
+                if(matchingPeak!= null){
+                    intensity = matchingPeak.getIntensity();
+                }
+                //this skips peaks with int = 0;
+                else
+                    continue;
+                //get Scan for injection time
+                Scan mzXMLScan = run.getScanByNum((long) scan);
+                double injectionTime = mzXMLScan.getIonInjectionTime();
+                //write output
+                //sb.append("Peptide ID,Peptide,z,scan#,MS1 intensity[a.u.],signal/noise,MS1 ion injection time[ms],\n");
+                sb.append(pepID).append(",");
+                sb.append(peptide).append(",");
+                sb.append(z).append(",");
+                sb.append(scan).append(",");
+                sb.append(scientific.format(intensity)).append(",");
+                sb.append(fourDec.format(matchingPeak.getSignalToNoise())).append(",");
+                sb.append(fourDec.format(injectionTime)).append(",");
+                sb.append("\n");
+                pw.write(sb.toString());
+                sb.setLength(0);
+            }
+            //increment pepID prior to next peptide
+            pepID++;
+        }
+        pw.flush();
+        pw.close();
+        scanner.close();
     }
 
 
