@@ -3,6 +3,7 @@ import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLFile;
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLParsingException;
 import uk.ac.ebi.pride.tools.mzxml_parser.mzxml.model.Scan;
 
+import javax.xml.datatype.Duration;
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -349,7 +350,7 @@ public class RandomTools {
         assert pw !=null;
         //write header
         StringBuilder sb = new StringBuilder();
-        sb.append("Peptide ID,Peptide,z,scan#,MS1 intensity[a.u.],signal/noise,MS1 ion injection time[ms],\n");
+        sb.append("Peptide ID,Peptide,z,scan#,RT[s],MS1 intensity[a.u.],signal/noise,MS1 ion injection time[ms],\n");
         pw.write(sb.toString());
         sb.setLength(0);
 
@@ -415,12 +416,17 @@ public class RandomTools {
                 //get Scan for injection time
                 Scan mzXMLScan = run.getScanByNum((long) scan);
                 double injectionTime = mzXMLScan.getIonInjectionTime();
+                Duration d = mzXMLScan.getRetentionTime();
+                String rt = d.toString();
+                rt = rt.replace("PT", "");
+                rt = rt.replace("S","");
                 //write output
                 //sb.append("Peptide ID,Peptide,z,scan#,MS1 intensity[a.u.],signal/noise,MS1 ion injection time[ms],\n");
                 sb.append(pepID).append(",");
                 sb.append(peptide).append(",");
                 sb.append(z).append(",");
                 sb.append(scan).append(",");
+                sb.append(rt).append(",");
                 sb.append(scientific.format(intensity)).append(",");
                 sb.append(fourDec.format(matchingPeak.getSignalToNoise())).append(",");
                 sb.append(fourDec.format(injectionTime)).append(",");
@@ -434,6 +440,174 @@ public class RandomTools {
         pw.flush();
         pw.close();
         scanner.close();
+    }
+
+    //this method takes the TMTpro0 tagged peptides, determines at which scan they occur, gets max peak int, and then corresponding max peak in for targeted version
+    public static void ms1PrecursorInfoAdvanced(String triggerListIn, String runFilePathIn) throws MzXMLParsingException, JMzReaderException {
+        //create input peptide file
+        File peptideInputFile = new File(triggerListIn);
+        Scanner scanner = null;
+        try {
+            scanner = new Scanner(peptideInputFile);
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found! File Location: " + triggerListIn);
+        }
+        assert scanner != null;
+        //prepare output .csv File
+        String outputFilePath = triggerListIn.replace(".csv", "_extractedMS1PeakMaxInt.csv");
+        File outputFile = new File(outputFilePath);
+        PrintWriter pw = null;
+        try {
+            pw = new PrintWriter(outputFile);
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found! File Location: " + outputFilePath);
+        }
+        assert pw !=null;
+        //write header
+        StringBuilder sb = new StringBuilder();
+        sb.append("Peptide,z,scan trigger,RT [s],scan target,m/z pro0 trigger,m/z pro target,max. int. pro0 trigger [a.u.],max. int. pro target [a.u.],\n");
+        pw.write(sb.toString());
+        sb.setLength(0);
+
+        //get columns of "Peptide" ,"ScanF" and "Theo m/z", "z"
+        //where are the required fields located
+        String headers = scanner.nextLine();
+        String[] splitHeaders = headers.split(",");
+        Map<String, Integer> headerPositions = new HashMap<>();
+        for (int i = 0; i < splitHeaders.length; i++){
+            String caption = splitHeaders[i];
+            switch(caption){
+                case("Peptide"):
+                    headerPositions.put("peptide", i);
+                    break;
+                case("z"):
+                    headerPositions.put("z", i);
+                    break;
+                case("ScanF"):
+                    headerPositions.put("scan#",i);
+                    break;
+                case("Theo m/z"):
+                    headerPositions.put("m/z",i);
+                    break;
+            }
+        }
+        if(headerPositions.size() != 4)
+            throw new IllegalArgumentException("Missing input columns, please check input! Of 4 headers detected: "+headerPositions.size());
+
+        //prepare allosaurus mzXML file
+        File runFile = new File(runFilePathIn);
+        MzXMLFile run = new MzXMLFile(runFile);
+        //create ScanList
+        ScanLists runScanLists = new ScanLists(run);
+        //loop through different peptides
+        while(scanner.hasNext()){
+            //get line
+            String values = scanner.nextLine();
+            //split
+            String[] splitValues = values.split(",");
+            //get values according to the headers
+            String peptide = splitValues[headerPositions.get("peptide")];
+            int z = Integer.parseInt(splitValues[headerPositions.get("z")]);
+            int startingScanNumber = Integer.parseInt(splitValues[headerPositions.get("scan#")]);
+            double massToChargeTrigger = Double.parseDouble(splitValues[headerPositions.get("m/z")]);
+            double maxIntensityTrigger = 0;
+            int maxIntensityTriggerScan = 0;
+            double maxIntensityTarget = 0;
+            int maxIntensityTargetScan=0;
+            //set masses for the pro peptides
+            //with required things read in, calculate new mass and the offset
+            //remove leading and trailing AAs, but leave M oxidation in
+            String sequence = RandomTools.sequenceOnly(peptide);
+            int numberOfTags = RandomTools.getNumberOfTMTTags(sequence);
+            double massToChargeTarget = 0;
+            //calculate new target mass and offset
+            if(z == 2){
+                massToChargeTarget = massToChargeTrigger + 4.509 * numberOfTags;
+            }
+            if(z == 3){
+                massToChargeTarget = massToChargeTrigger + 3.0058 * numberOfTags;
+            }
+            if(z == 4){
+                massToChargeTarget = massToChargeTrigger + 2.25 * numberOfTags;
+            }
+            //get scans to look at
+            //start from scan - 5 and go to 15 scans;
+            ArrayList<Integer> relevantScanNumbers = runScanLists.getNextNMS1Scans(startingScanNumber,75);
+            //go through all the relevant MS1 spectra
+            for(Integer scan:relevantScanNumbers){
+                //create MySpectrum object
+                MySpectrum spectrum = MzXMLReadIn.mzXMLToMySpectrum(run, scan);
+                //check if peak is present
+                double intensityTrigger = 0;
+                double intensityTarget = 0;
+                Peak matchingPeakTrigger = spectrum.getMatchingPeak(massToChargeTrigger, 15);
+                if(matchingPeakTrigger!= null){
+                    intensityTrigger = matchingPeakTrigger.getIntensity();
+                }
+                //check if this is the new max
+                if(intensityTrigger > maxIntensityTrigger) {
+                    maxIntensityTrigger = intensityTrigger;
+                    maxIntensityTriggerScan = scan;
+                }
+            }
+            //max precursor intensity is set, check +-3 scans for the target
+            ArrayList<Integer> relevantScanNumbersTarget = runScanLists.getNextNMS1Scans(maxIntensityTriggerScan -3,6);
+
+
+            //go through all the relevant MS1 spectra
+            for(Integer scan:relevantScanNumbersTarget){
+                //create MySpectrum object
+                MySpectrum spectrum = MzXMLReadIn.mzXMLToMySpectrum(run, scan);
+                //check if peak is present
+                double intensityTarget = 0;
+                Peak matchingPeakTarget = spectrum.getMatchingPeak(massToChargeTarget, 15);
+                if(matchingPeakTarget!= null){
+                    intensityTarget = matchingPeakTarget.getIntensity();
+                }
+                //check if this is the new max
+                if(intensityTarget > maxIntensityTarget) {
+                    maxIntensityTarget = intensityTarget;
+                    maxIntensityTargetScan = scan;
+                }
+            }
+
+            //get retention time
+            Scan bestScan  = null;
+            String rt = "";
+            try {
+                bestScan = run.getScanByNum((long) maxIntensityTriggerScan);
+                rt = RandomTools.formatRetentionTime(bestScan.getRetentionTime());
+            }
+            catch (MzXMLParsingException e){
+                rt = "";
+            }
+
+            //write output
+            //sb.append("Peptide,z,scan trigger,RT [s],m/z pro0 trigger,m/z pro target,max. int. pro0 trigger [a.u.],max. int. pro target [a.u.],\n");
+            sb.append(peptide).append(",");
+            sb.append(z).append(",");
+            sb.append(maxIntensityTriggerScan).append(",");
+            sb.append(rt).append(",");
+            sb.append(maxIntensityTargetScan).append(",");
+            sb.append(fourDec.format(massToChargeTrigger)).append(",");
+            sb.append(fourDec.format(massToChargeTarget)).append(",");
+            sb.append(scientific.format(maxIntensityTrigger)).append(",");
+            sb.append(scientific.format(maxIntensityTarget)).append(",");
+            sb.append("\n");
+            pw.write(sb.toString());
+            sb.setLength(0);
+        }
+        pw.flush();
+        pw.close();
+        scanner.close();
+    }
+
+    //reformats retention times from the format PTxxxx.xxS to xxxx.xx
+    public static String formatRetentionTime(Duration dIn){
+        String rt = dIn.toString();
+        rt = rt.replace("PT", "");
+        rt = rt.replace("S","");
+        return rt;
     }
 
 

@@ -24,11 +24,21 @@ public class Main {
         DecimalFormat twoDec = new DecimalFormat("0.00");
         DecimalFormat xDec = new DecimalFormat("0.000000000");
 
-        //Visualization.spectrumPlotter(mzXMLRun,10);
-        String peptidePath = "C:\\Programmingfolder\\Targeted\\TGR_10578_Tar3_BSAmix_C100_proSearch.csv";
-        String runPath = "C:\\Programmingfolder\\Targeted\\TGR_10578.mzXML";
 
-        RandomTools.ms1PrecursorInfo(peptidePath, runPath);
+        String peptidePath = "C:\\Programmingfolder\\Targeted\\TGR_10582_Tar3_BSAmix_C10_pro0Search.csv";
+        String runPath = "C:\\Programmingfolder\\Benenodin\\Lumos_data\\TGR_10744_Bene1_D1_CIDScreen_low_1uL.mzXML";
+        String massListPath = "C:\\Programmingfolder\\Benenodin\\mass list\\Benenodin1_massList.csv";
+        File runFile = new File(runPath);
+        //MzXMLFile runMZXML = new MzXMLFile(runFile);
+        //Visualization.spectrumPlotter(runMZXML, 10);
+        //DnD.willNimaDie(100000000);
+        System.out.println(DeviationCalc.ppmDeviationCalc(721.8560, 721.8537));
+
+
+
+
+
+        //RandomTools.ms1PrecursorInfoAdvanced(peptidePath, runPath);
 
 
 

@@ -22,6 +22,11 @@ public class DeviationCalc {
         return (ppmCalculated <= ppmDevAllowed);
     }
 
+    public static boolean daMatch (double massInReal, double massInMeasured, double daDevAllowed){
+        double deviation = Math.abs(massInReal-massInMeasured);
+        return (deviation <= daDevAllowed);
+    }
+
     public static  boolean isotopeMatch (double massInReal, double massInMeasured, double daAllowed){
         double massDiff = Math.abs(massInReal - massInMeasured);
         return (massDiff<=daAllowed);

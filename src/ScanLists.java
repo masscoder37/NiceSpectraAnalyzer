@@ -1,4 +1,4 @@
-//create scanLists from a .mzXML file and prove functions to iterate through them
+//create scanLists from a .mzXML file and provide functions to iterate through them
 
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLFile;
 import uk.ac.ebi.pride.tools.mzxml_parser.MzXMLParsingException;
@@ -13,6 +13,8 @@ public class ScanLists {
     private int numberMS1 = 0;
     private int numberMS2 = 0;
     private int numberMS3 = 0;
+
+    //scan lists for legacy reasons
     private ArrayList<Integer> ms1ScanNumbers = null;
     private ArrayList<Integer> ms2ScanNumbers = null;
     private ArrayList<Integer> ms3ScanNumbers = null;
@@ -23,19 +25,27 @@ public class ScanLists {
         ArrayList<Integer> ms2ScanNumbersList = new ArrayList<>();
         ArrayList<Integer> ms3ScanNumbersList = new ArrayList<>();
 
+
         //loop through all spectra
         for (long scanNumber : allScanNumbers) {
-            Scan currentScan = runIn.getScanByNum(scanNumber);
-            int currentMSLevel = Math.toIntExact(currentScan.getMsLevel());
-            if (currentMSLevel == 1) {
-                ms1ScanNumbersList.add(Math.toIntExact(scanNumber));
+            //note: for rare cases (with agilent files), this fails --> try/catch
+            try {
+                Scan currentScan = runIn.getScanByNum(scanNumber);
+
+                int currentMSLevel = Math.toIntExact(currentScan.getMsLevel());
+                if (currentMSLevel == 1) {
+                    ms1ScanNumbersList.add(Math.toIntExact(scanNumber));
+                    continue;
+                }
+                if (currentMSLevel == 2) {
+                    ms2ScanNumbersList.add(Math.toIntExact(scanNumber));
+                }
+                if (currentMSLevel == 3) {
+                    ms3ScanNumbersList.add(Math.toIntExact(scanNumber));
+                }
+            }
+            catch (MzXMLParsingException e){
                 continue;
-            }
-            if (currentMSLevel == 2) {
-                ms2ScanNumbersList.add(Math.toIntExact(scanNumber));
-            }
-            if (currentMSLevel == 3) {
-                ms3ScanNumbersList.add(Math.toIntExact(scanNumber));
             }
         }
         //set variables
@@ -97,6 +107,19 @@ public class ScanLists {
         }
         return out;
     }
+
+    public int getPreviousMS1ScanNumber(int msNScanNumber){
+        int out = 1;
+        if (msNScanNumber == 1)
+            return out;
+        for (int ms1ScanNumber : this.getMs1ScanNumbers()) {
+            if (ms1ScanNumber > msNScanNumber)
+                break;
+            out = ms1ScanNumber;
+        }
+        return out;
+    }
+
 
     //return List with next n MS1 scans
     //doesn't matter if the scan you give is MS1 or MSn...just return next full scans

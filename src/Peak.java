@@ -21,6 +21,8 @@ public class Peak {
     private double noise;
     private double signalToNoise;
     private boolean noiseSet = false;
+    //add corresponding spectra TIC to calculate intensity relative to TIC
+    private double spectrumTIC = 0;
 
 
     //initial constructor for peaks
@@ -58,6 +60,8 @@ public class Peak {
         this.isMonoisotopic = false;
     }
 
+
+
     //another overloaded constructor for incorporating noise information
     public Peak(double massIn, double intensityIn, double noiseIn, int scanNumberIn){
         this.mass = massIn;
@@ -83,6 +87,7 @@ public class Peak {
     public void setRelInt(double relIntIn){
         this.relInt = relIntIn;
     }
+    public void setSpectrumTIC(double spectrumTICIn) {this.spectrumTIC = spectrumTICIn;}
 
     public void setBasePeak(){
         this.isBasePeak = true;
@@ -147,8 +152,9 @@ public class Peak {
         if (this.isPartOfFeature){
             intOut = this.associatedFeature.getSummedRelIntensityPerTIC();
         }
+        //each peaks knows the corresponding spectrum tic itself now
         else{
-            intOut = this.relInt;
+            intOut = this.intensity/this.spectrumTIC*100;
         }
         return intOut;
     }
@@ -165,6 +171,8 @@ public class Peak {
     public double getSignalToNoise(){return this.signalToNoise;}
 
     public boolean isMonoisotopicPeak(){return this.isMonoisotopic;}
+
+    public double getSpectrumTIC(){return this.spectrumTIC;}
 
 
     public void peakPrinter (){

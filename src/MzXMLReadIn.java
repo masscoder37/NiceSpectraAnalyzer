@@ -27,6 +27,9 @@ public class MzXMLReadIn {
         //MySpectrum requires PeakList, scan number as int and scan header
         //Peak requires: mass, intensity, scan number affiliation; charge is optional
         Spectrum currentSpectrum = completeMzXML.getSpectrumById(scanNumberIn);
+        //information about fragmentation method is good to know by the MySpectrum itself
+        //unfortunately, only accessible with Scan instead of Spectrum
+        Scan currentScan = completeMzXML.getScanByNum((long) Integer.parseInt(scanNumberIn));
         //scan Header shows precursor M/z and charge of precursor
         String scanHeader = "";
         try {
@@ -66,9 +69,7 @@ public class MzXMLReadIn {
             }
         }
 
-        //information about fragmentation method is good to know by the MySpectrum itself
-        //unfortunately, only accessible with Scan instead of Spectrum
-        Scan currentScan = completeMzXML.getScanByNum((long) Integer.parseInt(scanNumberIn));
+
         String fragmentationMethod;
         if (currentScan.getMsLevel() == 1){
             fragmentationMethod = "NA";
@@ -85,6 +86,9 @@ public class MzXMLReadIn {
         //MySpectrum requires PeakList, scan number as int and scan header
         //Peak requires: mass, intensity, scan number affiliation; charge is optional
         Spectrum currentSpectrum = completeMzXML.getSpectrumById(Integer.toString(scanNumberIn));
+        //information about fragmentation method is good to know by the MySpectrum itself
+        //unfortunately, only accessible with Scan instead of Spectrum
+        Scan currentScan = completeMzXML.getScanByNum((long) scanNumberIn);
         //scan Header shows precursor M/z and charge of precursor
         String scanHeader = "";
         try {
@@ -124,9 +128,7 @@ public class MzXMLReadIn {
             }
         }
 
-        //information about fragmentation method is good to know by the MySpectrum itself
-        //unfortunately, only accessible with Scan instead of Spectrum
-        Scan currentScan = completeMzXML.getScanByNum((long) scanNumberIn);
+
         String fragmentationMethod;
         if (currentScan.getMsLevel() == 1){
             fragmentationMethod = "NA";

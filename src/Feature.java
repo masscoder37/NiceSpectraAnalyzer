@@ -14,6 +14,7 @@ public class Feature {
     private int featureNumber; //counts the Feature in the spectra
     private int indexOfMostIntensePeak;
 
+
     public Feature(ArrayList<Peak> featurePeaksIn, double spectrumTICIn, int featureNumberIn) {
         this.peakList = new ArrayList<>();
         this.peakList.addAll(featurePeaksIn);
@@ -36,6 +37,7 @@ public class Feature {
             }
             this.summedRelIntensityPerTIC = this.summedAbsIntensity / spectrumTICIn * 100;
             this.featureNumber = featureNumberIn;
+
         }
     }
     //overloaded constructor for new MySpectrum.assignZAndFeatures
@@ -215,5 +217,6 @@ public class Feature {
         }
         return isPart;
     }
+
 
 }

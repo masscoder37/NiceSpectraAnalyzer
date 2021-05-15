@@ -23,16 +23,17 @@ public class MySpectrum {
     private DecimalFormat scientific = new DecimalFormat("0.00E0");
 
     //helper class to deal with the determined charge and associated peaklist
-    private static class WinningChargeState{
+    private static class WinningChargeState {
         private int chargeState;
         private ArrayList<Peak> peakList; //this peaklist also includes the original peak
 
-        private WinningChargeState(int chargeStateIn, ArrayList<Peak> peakListIn){
+        private WinningChargeState(int chargeStateIn, ArrayList<Peak> peakListIn) {
             this.chargeState = chargeStateIn;
             this.peakList = peakListIn;
         }
 
 
+        //note: one issue are very small peaks at the beginning of the envelope...this often is NOT the monoisotopic peak or belongs to the envelope at all
         public static WinningChargeState determineChargeState(ArrayList<ArrayList<Peak>> candidatesIn) {
             ArrayList<Peak> winningPeaks = new ArrayList<>();
             int winningZ = 0;
@@ -40,14 +41,55 @@ public class MySpectrum {
             if (candidatesIn.size() != 8)
                 throw new IllegalArgumentException("Something went wrong with charge state determination!");
 
+            //note: try to enforce that peaks of an isotope pattern are roughly between 1.5x and 0.3x of the intensity, in comparison to the next peak
+            //note: if that's not the case set boolean to false and discard later
+            Boolean[] intensitiesReasonable = new Boolean[8];
+            //loop through all array lists
+            for (int m = 0; m < candidatesIn.size(); m++) {
+                ArrayList<Peak> peakList = candidatesIn.get(m);
+                intensitiesReasonable[m] = true;
+                //no need to check if there are no matches
+                if (peakList.size() == 1)
+                    continue;
+                //if there are more than 1 peak, loop through the peaks and check if their intensities make sense
+                for (int a = 0; a < peakList.size(); a++) {
+                    //get the current peak intensity
+                    double currentInt = peakList.get(a).getIntensity();
+                    //try-catch to deal with overflow
+                    try {
+                        //get intensity of following peak
+                        double nextInt = peakList.get(a + 1).getIntensity();
+                        //check if the intensity is outside the feasible range of possible intensities
+                        //TODO: those numbers might need tweaking!
+                        if (currentInt * 0.3 < nextInt || currentInt * 5 > nextInt)
+                            intensitiesReasonable[m] = false;
+                    } catch (IndexOutOfBoundsException e) {
+                        continue;
+                    }
+                }
+            }
+            //now, only if all peaks make sense, intensitiesReasonable is still true
+            //don't want to make changes to the list for real, so implement an array which tracks the result with length 8
+            //if every boolean is false now, no valid peaks remain
+            //exit with charge state 0
+            for(boolean bol: intensitiesReasonable){
+                System.out.println(bol);
+            }
+            if (!Arrays.asList(intensitiesReasonable).contains(true)) {
+                return new WinningChargeState(0, candidatesIn.get(0));
+            }
+
             //find the highest list size
             //list size is always at least 1 for the current peak
             //check afterwards if maxSize is still 1
             int maxSize = 1;
+            //also check here if intensities boolean is ok
+            for (int m = 0; m < candidatesIn.size();m++) {
 
-            for (ArrayList<Peak> list : candidatesIn) {
-                if (list.size() > maxSize)
-                    maxSize = list.size();
+                if (candidatesIn.get(m).size() > maxSize) {
+                    if(intensitiesReasonable[m])
+                    maxSize = candidatesIn.get(m).size();
+                }
             }
 
             //if all charge state lists are 1, there were no features detected
@@ -55,17 +97,20 @@ public class MySpectrum {
                 //charge state detected is zero, list doesn't matter
                 return new WinningChargeState(0, candidatesIn.get(0));
             }
+
+
             //determine which charge states have the highest abundance
             ArrayList<ArrayList<Peak>> biggestSizes = new ArrayList<>();
             //add index for keeping track of the charge state, this time with REAL charge states
             ArrayList<Integer> zTracking = new ArrayList<>();
             for (int m = 0; m < candidatesIn.size(); m++) {
                 if (candidatesIn.get(m).size() == maxSize) {
-                    biggestSizes.add(candidatesIn.get(m));
-                    //REAL charge state is added there!
-                    zTracking.add(m + 1);
+                        biggestSizes.add(candidatesIn.get(m));
+                        //REAL charge state is added there!
+                        zTracking.add(m + 1);
                 }
             }
+
             if (biggestSizes.size() == 1) {
                 return new WinningChargeState(zTracking.get(0), biggestSizes.get(0));
             } else {
@@ -87,8 +132,13 @@ public class MySpectrum {
             }
         }
 
-        public int getChargeState(){return this.chargeState;}
-        public ArrayList<Peak> getPeakList(){return this.peakList;}
+        public int getChargeState() {
+            return this.chargeState;
+        }
+
+        public ArrayList<Peak> getPeakList() {
+            return this.peakList;
+        }
 
     }
 
@@ -100,16 +150,16 @@ public class MySpectrum {
         //implemented QuickSort Algorithm
         //TODO: I assume that peaksIn is always already ordered, leading to a case where quicksort is not efficient?
         peaksIn = QuickSort.peakListQuickSort(peaksIn);
+        this.spectrumTIC = 0;
+        for (Peak peak : peaksIn) {
+            spectrumTIC += peak.getIntensity();
+        }
         this.peakList = peakPacker(peaksIn);
         this.numberOfPeaks = this.peakList.size();
         this.zAndFeaturesAssigned = false;
-        this.spectrumTIC = 0;
-        for (Peak peak : this.peakList){
-            spectrumTIC += peak.getIntensity();
-        }
 
-        if (fragmentationMethodIn.equals("CID")||fragmentationMethodIn.equals("HCD"))
-        this.fragmentationMethod = fragmentationMethodIn;
+        if (fragmentationMethodIn.equals("CID") || fragmentationMethodIn.equals("HCD"))
+            this.fragmentationMethod = fragmentationMethodIn;
         else
             this.fragmentationMethod = "NA";
         //only if noise isn't present, this method might be used somewhere
@@ -123,15 +173,15 @@ public class MySpectrum {
         //make sure that peakList is ordered
         //implemented QuickSort Algorithm
         peaksIn = QuickSort.peakListQuickSort(peaksIn);
+        this.spectrumTIC = 0;
+        for (Peak peak : peaksIn) {
+            spectrumTIC += peak.getIntensity();
+        }
         this.peakList = peakPacker(peaksIn);
         this.noisePresent = noisePresentIn;
         this.numberOfPeaks = this.peakList.size();
         this.zAndFeaturesAssigned = false;
-        this.spectrumTIC = 0;
-        for (Peak peak : this.peakList){
-            spectrumTIC += peak.getIntensity();
-        }
-        if (fragmentationMethodIn.equals("CID")||fragmentationMethodIn.equals("HCD"))
+        if (fragmentationMethodIn.equals("CID") || fragmentationMethodIn.equals("HCD"))
             this.fragmentationMethod = fragmentationMethodIn;
         else
             this.fragmentationMethod = "NA";
@@ -148,14 +198,15 @@ public class MySpectrum {
         double relIntCalc;
         int wrongScanNumber = 0;
         int peakNumber = peaksToPack.size();
-//sort out all the peaks which don't belong to spectrum
-        for (int a = 0; a < peakNumber; a++) {
+        //note: i think this is super unnecessary - removed
+        //sort out all the peaks which don't belong to spectrum
+        /*for (int a = 0; a < peakNumber; a++) {
             if (scanNumber != peaksToPack.get(a).getScanNumber()) {
                 peaksToPack.remove(a);
                 peakNumber = peakNumber - 1;
                 wrongScanNumber++;
             }
-        }
+        }*/
         //find highest intensity
         for (Peak peak : peaksToPack) {
             currentInt = peak.getIntensity();
@@ -167,6 +218,8 @@ public class MySpectrum {
         for (Peak peak : peaksToPack) {
             relIntCalc = (peak.getIntensity() / highestInt) * 100;
             peak.setRelInt(relIntCalc);
+            //also, set Spectrum TIC here
+            peak.setSpectrumTIC(this.spectrumTIC);
             if (relIntCalc == 100) {
                 peak.setBasePeak();
             }
@@ -185,15 +238,15 @@ public class MySpectrum {
     //this is an iteration of the assignChargeStates and the Feature.featureAssigner functions
     //since you can't have a feature without a charge state and vice versa, it makes sense to combine them
     //so, concurrently detect charge states and features
-    public void assignZAndFeatures(double ppmDevIn){
+    public void assignZAndFeatures(double ppmDevIn) {
         this.featureList = new ArrayList<>();
         //double ppmDev to cover the worst case scenario
-        double ppmDev = 2*ppmDevIn;
+        double ppmDev = 2 * ppmDevIn;
 
         //set up HashMap to quickly access the peaks to set values without looping through the complete arraylist
         //peak mass is unique and key
         HashMap<Double, Peak> fastAccessMap = new HashMap<>();
-        for (Peak peak : this.peakList){
+        for (Peak peak : this.peakList) {
             fastAccessMap.put(peak.getMass(), peak);
         }
 
@@ -204,7 +257,7 @@ public class MySpectrum {
         //set up "exclusion list" which handles peaks to be ignored as soon as they are assigned to be part of a feature
         ArrayList<Double> excludedPeaks = new ArrayList<>();
         //start looping through the peaks
-        for (int i = 0; i < this.peakList.size(); i++){
+        for (int i = 0; i < this.peakList.size(); i++) {
             Peak current = this.peakList.get(i);
             //handle if peak was already assigned
             if (excludedPeaks.contains(current.getMass()))
@@ -212,30 +265,28 @@ public class MySpectrum {
             //follow the same logic as FeatureAssigner: a feature always stars with the first peak (duh), so just set the following 15 peaks as neighbours
             ArrayList<Peak> followingPeaks = new ArrayList<>();
             //here, again a check for peaks which were already assigned is needed
-
-
-            for (int m = 1; m < 16; m++){
+            for (int m = 1; m < 16; m++) {
                 try {
                     //skip if peak was already assigned to feature
-                    if(excludedPeaks.contains(this.peakList.get(m+i).getMass()))
+                    if (excludedPeaks.contains(this.peakList.get(m + i).getMass()))
                         continue;
 
-                    followingPeaks.add(this.peakList.get(m+i));
+                    followingPeaks.add(this.peakList.get(m + i));
                 }
                 //skip if not enough neighbours present
-                catch (IndexOutOfBoundsException e){
+                catch (IndexOutOfBoundsException e) {
                     continue;
                 }
             }
             //followingPeaks contains all the peaks now
             //loop through
             //here, 2 loops are present: outer loop handles different charge states, inner loop the followingPeaks
-            //note: have a helper class which takes care of the ArrayLists for each individual charge state
+            //note: a helper class which takes care of the ArrayLists for each individual charge state
 
             ArrayList<ArrayList<Peak>> matchesPerZ = new ArrayList<>();
 
             for (int z = 1; z < 9; z++) {
-                //add all matching peaks to the arrow list
+                //add all matching peaks to the array list
                 ArrayList<Peak> initialMatches = new ArrayList<>();
                 //add current peak also to the initial matches that the feature list which can be passed to Feature is complete
                 initialMatches.add(current);
@@ -246,6 +297,7 @@ public class MySpectrum {
                 for (Peak peak : followingPeaks) {
                     double realMass = current.getMass() + isotopeDifference;
                     if (DeviationCalc.isotopeMatchPPM(realMass, peak.getMass(), ppmDev)) {
+                        //todo: include relative peak intensity info here?
                         initialMatches.add(peak);
                         //doing this will avoid hitting a peak several times
                         n++;
@@ -262,7 +314,7 @@ public class MySpectrum {
             WinningChargeState winningZ = WinningChargeState.determineChargeState(matchesPerZ);
             //winningZ should now contains the winning charge state and the corresponding list of peaks
             //if charge state is 0, only the current peak is in the ArrayList
-            if (winningZ.getChargeState() == 0){
+            if (winningZ.getChargeState() == 0) {
                 //add properties via the fast Access hashmap
                 fastAccessMap.get(current.getMass()).setCharge(0);
                 //if the current peak is not part of a feature, it can be ignored for the rest of the analysis
@@ -276,7 +328,7 @@ public class MySpectrum {
                 //now, set all the peaks in the arrayList of peak with the fastAccessMap
                 //also, add masses to the excluded list
                 //current is also part of the peaklist
-                for (Peak peak : winningZ.getPeakList()){
+                for (Peak peak : winningZ.getPeakList()) {
                     Peak toSet = fastAccessMap.get(peak.getMass());
                     toSet.setCharge(winningZ.getChargeState());
                     toSet.setFeature(feature);
@@ -320,22 +372,14 @@ public class MySpectrum {
     }
 
 
-
-
-
-
-
-
-
-
-
-
     //getter
     public ArrayList<Peak> getPeakList() {
         return this.peakList;
     }
 
-    public ArrayList<Feature> getFeatureList(){return this.featureList;}
+    public ArrayList<Feature> getFeatureList() {
+        return this.featureList;
+    }
 
     public int getScanNumber() {
         return this.scanNumber;
@@ -358,10 +402,21 @@ public class MySpectrum {
         return index;
     }
 
-    public boolean areZAndFeaturesAssigned(){return this.zAndFeaturesAssigned;}
-    public double getSpectrumTIC(){return this.spectrumTIC;}
-    public String getFragmentationMethod(){return this.fragmentationMethod;}
-    public boolean isNoisePresent(){return this.noisePresent;}
+    public boolean areZAndFeaturesAssigned() {
+        return this.zAndFeaturesAssigned;
+    }
+
+    public double getSpectrumTIC() {
+        return this.spectrumTIC;
+    }
+
+    public String getFragmentationMethod() {
+        return this.fragmentationMethod;
+    }
+
+    public boolean isNoisePresent() {
+        return this.noisePresent;
+    }
 
     public void spectrumPrinter() {
         System.out.println("");
@@ -385,7 +440,7 @@ public class MySpectrum {
         System.out.println("General spectra properties:");
         System.out.println("");
         System.out.println("Number of Peaks: " + this.peakList.size());
-        System.out.println("Number of printed Peaks (>"+cutOff+"% rel. Int.): " + printedPeaks);
+        System.out.println("Number of printed Peaks (>" + cutOff + "% rel. Int.): " + printedPeaks);
         System.out.println("Mean rel. Intensity: " + twoDec.format((summedIntensity / this.peakList.size())) + "%");
         int basePeakIndex = this.getBasePeakIndex();
         double maxInt = this.peakList.get(basePeakIndex).getIntensity();
@@ -395,23 +450,23 @@ public class MySpectrum {
     }
 
 
-    public static double extractPrecursorFromFilterLine(String filterLine){
+    public static double extractPrecursorFromFilterLine(String filterLine) {
 
         int indexOfAt = filterLine.indexOf('@');
-        String subString = filterLine.substring(indexOfAt-9, indexOfAt);
+        String subString = filterLine.substring(indexOfAt - 9, indexOfAt);
         double isolatedPrecursorMass;
         try {
             isolatedPrecursorMass = Double.parseDouble(subString);
         }
         //if for some reason only 3 decimals are present (shouldn't be the case), number format exception would trigger
-        catch (NumberFormatException e){
+        catch (NumberFormatException e) {
             String reducedSubstring = subString.substring(1);
             isolatedPrecursorMass = Double.parseDouble(reducedSubstring);
         }
         return isolatedPrecursorMass;
     }
 
-    public ArrayList<Peak[]> getNumberofPeaksWithSpecificMassDifference(double massDiffIn, double ppmDevIn){
+    public ArrayList<Peak[]> getNumberofPeaksWithSpecificMassDifference(double massDiffIn, double ppmDevIn) {
         //note: validating
         ArrayList<Peak[]> out = new ArrayList<>();
 
@@ -420,7 +475,7 @@ public class MySpectrum {
 
         int occurrence = 0;
         //check if charge states and features where assigned in current spectrum
-        if(!this.zAndFeaturesAssigned)
+        if (!this.zAndFeaturesAssigned)
             this.assignZAndFeatures(ppmDevIn);
 
         //Work with exclusion list
@@ -533,8 +588,6 @@ public class MySpectrum {
     }
 
 
-
-
     public int[] getChargeStateDistributionNumber() {
         int chargeUnknown = 0;
         int charge1 = 0;
@@ -579,9 +632,7 @@ public class MySpectrum {
 }
 
 
-
-
-    //note: old versions of charge state assigner and feature assigner
+//note: old versions of charge state assigner and feature assigner
     /*public void assignChargeStates(double ppmDevIn) {
         ArrayList<Peak> peaksIn = this.getPeakList();
         //all peaks from MySpectrum are already ordered. Using Quicksort again would be the worst possible case
