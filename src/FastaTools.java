@@ -5,11 +5,8 @@ import java.io.File;
         import java.lang.reflect.Array;
         import java.nio.file.Path;
         import java.text.DecimalFormat;
-        import java.util.ArrayList;
-        import java.nio.file.Files;
-        import java.util.Arrays;
-        import java.util.HashSet;
-        import java.util.Set;
+import java.util.*;
+import java.nio.file.Files;
 
 
 /**
@@ -18,6 +15,7 @@ import java.io.File;
  */
 public class FastaTools {
     public static DecimalFormat fourDec = new DecimalFormat("0.0000");
+    public static DecimalFormat twoDec = new DecimalFormat("0.00");
 
     public static ArrayList<String> digestSequence(String seqIn, String proteaseIn, int missedCleavagesIn) {
         ArrayList<String> peptideListOut = new ArrayList<>();
@@ -380,6 +378,47 @@ public class FastaTools {
         pw.close();
         System.out.println("Analysis complete! Number of unique peptides: " + uniquePeptides);
 
+    }
+
+
+    public static void checkIfMassIsCRAP(String fastaLocationIn, double massIn) throws IOException {
+        //generate unique Peptide Sequences from .fasta
+        HashSet<String> allUniquePeptideSequences = generatePeptidesOfFasta(fastaLocationIn, 1, "Trypsin");
+        int numberOfUniqueSequences = allUniquePeptideSequences.size();
+        System.out.println("Digested .fasta. Created "+numberOfUniqueSequences+" unique sequences.");
+        //create Peptide list from these sequences
+        ArrayList<Peptide> peptideList = new ArrayList<>(allUniquePeptideSequences.size());
+        ProgressBar.progressBar("Creating Peptides", numberOfUniqueSequences);
+        for(String sequence : allUniquePeptideSequences){
+            Peptide pep = new Peptide(sequence, AminoAcid.getAminoAcidList());
+            //in this specific case, modify with TMTpro
+            ArrayList<Modification> modList = new ArrayList<>();
+            modList.add(Modification.tmtPro());
+            modList.add((Modification.tmtPro(1)));
+            Peptide modPep = pep.peptideModifier(modList);
+            peptideList.add(modPep);
+            ProgressBar.progress();
+        }
+        System.out.println("Created Peptides.");
+        ProgressBar.close();
+
+        //check list and compare to mass
+        ArrayList<Peptide> matches = new ArrayList<>();
+        ProgressBar.progressBar("Checking Peptides", numberOfUniqueSequences);
+        for (Peptide pep : peptideList){
+            double massPep = pep.getExactMass();
+            if(DeviationCalc.ppmMatch(massIn, massPep,10))
+                matches.add(pep);
+            ProgressBar.progress();
+        }
+        ProgressBar.close();
+
+        System.out.println("Matches found: "+matches.size());
+        System.out.println("Matches:");
+        //output
+        for(Peptide match : matches){
+            System.out.println("Matched Sequence: "+match.getSequence()+"     Exact Mass: "+fourDec.format(match.getExactMass())+"     PPM Dev: "+twoDec.format(DeviationCalc.ppmDeviationCalc(massIn, match.getExactMass()))+" ppm.");
+        }
     }
 
 

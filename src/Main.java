@@ -32,13 +32,12 @@ public class Main {
         //MzXMLFile runMZXML = new MzXMLFile(runFile);
         //Visualization.spectrumPlotter(runMZXML, 10);
         //DnD.willNimaDie(100000000);
-        System.out.println(DeviationCalc.ppmDeviationCalc(721.8560, 721.8537));
-
-
-
-
-
         //RandomTools.ms1PrecursorInfoAdvanced(peptidePath, runPath);
+
+        RandomTools.fixTMTproCOutput("C:\\Programmingfolder\\Various\\TGR_10805_SR2_Tar3_EColi_TMTproC_60min_1ug_unfiltered.csv");
+
+
+
 
 
 
