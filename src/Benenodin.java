@@ -174,10 +174,10 @@ public class Benenodin {
 
         //TODO: automate this?
         //scan ranges for the individual peaks
-        int[] peak1Range = new int[]{4937,5213};
-        int[] peak2Range = new int[]{6041,6335};
-        int[] peak3Range = new int[]{9641,9737};
-        int[] peak4Range = new int[]{10361,10547};
+        int[] peak1Range = new int[]{4833,5145};
+        int[] peak2Range = new int[]{6063,6375};
+        int[] peak3Range = new int[]{10035,10191};
+        int[] peak4Range = new int[]{10839,11037};
 
         //read in all the masses from the massList
         //format: "name of ion",massToCheck,\n
@@ -356,6 +356,74 @@ public class Benenodin {
         pepFormula = SumFormula.sumFormulaJoiner(pepFormula, SumFormula.getProtonFormula());
         Ion ion = new Ion(pepFormula);
         System.out.println(ion.getMToZ());
+    }
+
+    public static void twoRotaxaneMassCreator(String filePathIn, boolean lostFragmentMasses, int rotaxaneCharge){
+        //error handling
+        if(rotaxaneCharge!=1 && rotaxaneCharge!=2)
+            throw new IllegalArgumentException("Please specify a [2]rotaxane charge between 1 and 2");
+        //scanner for input file with the fragments
+        File massListFile = new File(filePathIn);
+        Scanner scanner = null;
+        try {
+            scanner = new Scanner(massListFile);
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found! File Location: " + filePathIn);
+        }
+        assert scanner != null;
+
+        //prepare output file
+        //prepare output .csv File
+        String outputFilePath;
+        if(lostFragmentMasses)
+                        outputFilePath = filePathIn.replace(".csv", "_lostFragments_toCheck.csv");
+        else {
+            String replacement = "";
+            if(rotaxaneCharge == 1)
+                replacement = "_[2]rotaxanes_z1_toCheck.csv";
+            if(rotaxaneCharge == 2)
+                replacement = "_[2]rotaxanes_z2_toCheck.csv";
+            outputFilePath = filePathIn.replace(".csv", replacement);
+        }
+
+        File outputFile = new File(outputFilePath);
+        PrintWriter pw = null;
+        try {
+            pw = new PrintWriter(outputFile);
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found! File Location: " + outputFilePath);
+        }
+        assert pw != null;
+        StringBuilder sb = new StringBuilder();
+
+        //this is the neutral mass
+        double benenodinMass = 2012.01495;
+        //loop through the file and get the fragments to calculate
+        while(scanner.hasNext()){
+            String values = scanner.nextLine();
+            //just the first value is required
+            String value = values.split(",")[0];
+            //mass for this fragment is: Benenodin - AA(s) - water
+            Peptide fragment = new Peptide(value, AminoAcid.getAminoAcidList());
+            SumFormula fragmentFormula = fragment.getSumFormula();
+            fragmentFormula = SumFormula.sumFormulaSubstractor(fragmentFormula, SumFormula.getWaterFormula());
+            double massToCheck;
+            //in case of [2]rotaxanes
+            if(!lostFragmentMasses) {
+                massToCheck = ((benenodinMass - fragmentFormula.getExactMass()) + rotaxaneCharge * AtomicMasses.getPROTON() )/rotaxaneCharge;
+                sb.append(value).append(" loss ").append(rotaxaneCharge).append("+,").append(fourDec.format(massToCheck)).append(",\n");
+            }
+            //for lost fragment masses
+            else {
+                massToCheck = SumFormula.sumFormulaJoiner(fragmentFormula, SumFormula.getProtonFormula()).getExactMass();
+                sb.append(value).append(",").append(fourDec.format(massToCheck)).append(",\n");
+            }
+
+            pw.write(sb.toString());
+            sb.setLength(0);
+        }
+        pw.flush();
+        pw.close();
     }
 
 

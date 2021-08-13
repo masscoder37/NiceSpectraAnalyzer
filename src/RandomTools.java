@@ -610,6 +610,55 @@ public class RandomTools {
         return rt;
     }
 
+    //random method to prepare file for peptide number rank ordering of proteins
+    public static void rankOrdering(String filePathIn){
+        File geneSymbolInputFile = new File(filePathIn);
+        Scanner scanner = null;
+        try {
+            scanner = new Scanner(geneSymbolInputFile);
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found! File Location: " + filePathIn);
+        }
+        assert scanner != null;
+        //prepare output .csv File
+        String outputFilePath = filePathIn.replace(".csv", "_prepared.csv");
+        File outputFile = new File(outputFilePath);
+        PrintWriter pw = null;
+        try {
+            pw = new PrintWriter(outputFile);
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found! File Location: " + outputFilePath);
+        }
+        assert pw !=null;
+        //write header
+        StringBuilder sb = new StringBuilder();
+        sb.append("Gene Symbol, # total peptides detected,\n");
+        pw.write(sb.toString());
+        sb.setLength(0);
+        //advance over header
+        scanner.next();
+
+        //create dictionary and populate
+        Map<String,Integer> geneNames = new HashMap<>();
+        while(scanner.hasNext()){
+            //get line
+            String geneName = scanner.nextLine();
+            if(!geneNames.containsKey(geneName)){
+                geneNames.put(geneName, 1);
+            }
+            if(geneNames.containsKey(geneName))
+                geneNames.put(geneName, geneNames.get(geneName) +1);
+        }
+        //iterate over map and write values
+        for(Map.Entry<String, Integer> entry:geneNames.entrySet()){
+            sb.append(entry.getKey()).append(",").append(entry.getValue()).append(",\n");
+            pw.write(sb.toString());
+            sb.setLength(0);
+        }
+        pw.flush();
+        pw.close();
+    }
+
 
 
 }

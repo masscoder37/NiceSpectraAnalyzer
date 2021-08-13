@@ -25,16 +25,17 @@ public class Main {
         DecimalFormat xDec = new DecimalFormat("0.000000000");
 
 
-        String peptidePath = "C:\\Programmingfolder\\Targeted\\TGR_10582_Tar3_BSAmix_C10_pro0Search.csv";
-        String runPath = "C:\\Programmingfolder\\Benenodin\\Lumos_data\\TGR_10744_Bene1_D1_CIDScreen_low_1uL.mzXML";
-        String massListPath = "C:\\Programmingfolder\\Benenodin\\mass list\\Benenodin1_massList.csv";
-        File runFile = new File(runPath);
+        String runPath = "C:\\Programmingfolder\\Benenodin\\Lumos_data\\TGR_10728.mzXML";
+        String massListPath = "C:\\Programmingfolder\\Benenodin\\mass list\\2Rotaxane_masses_[2]rotaxanes_z2_toCheck.csv";
         //MzXMLFile runMZXML = new MzXMLFile(runFile);
         //Visualization.spectrumPlotter(runMZXML, 10);
         //DnD.willNimaDie(100000000);
         //RandomTools.ms1PrecursorInfoAdvanced(peptidePath, runPath);
+        //Benenodin.twoRotaxaneMassCreator(massListPath, false,2);
+        Benenodin.fragmentAnalyzerLumos(runPath, massListPath);
 
-        RandomTools.fixTMTproCOutput("C:\\Programmingfolder\\Various\\TGR_10805_SR2_Tar3_EColi_TMTproC_60min_1ug_unfiltered.csv");
+
+
 
 
 
