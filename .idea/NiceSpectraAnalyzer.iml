@@ -9,5 +9,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="mzxml-parser" />
     <orderEntry type="module" module-name="jmzreader" />
+    <orderEntry type="library" name="Maven: javax.xml.bind:jaxb-api:2.2.3" level="project" />
   </component>
 </module>
