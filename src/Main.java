@@ -34,8 +34,8 @@ public class Main {
         //RandomTools.ms1PrecursorInfoAdvanced(peptidePath, runPath);
         //Benenodin.twoRotaxaneMassCreator(massListPath, false,2);
         //Benenodin.fragmentAnalyzerLumos(runPath, massListPath);
-        //MLModifier.mzXMLModifier(runPath);
-        RandomTools.fixTMTproCOutput(resultFile);
+        XMLModifier.mzXMLModifier(runPath);
+        //RandomTools.fixTMTproCOutput(resultFile);
 
 
 

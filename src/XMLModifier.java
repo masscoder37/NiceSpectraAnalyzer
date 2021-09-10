@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlSchema;
 //class to modify XML files, especially mzXML files from allosaurus
 public class XMLModifier {
 
+
     public static void mzXMLModifier(String filePathIn) throws JAXBException {
         File xmlFile = new File(filePathIn);
 
