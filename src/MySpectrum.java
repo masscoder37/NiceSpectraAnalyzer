@@ -238,6 +238,7 @@ public class MySpectrum {
     //this is an iteration of the assignChargeStates and the Feature.featureAssigner functions
     //since you can't have a feature without a charge state and vice versa, it makes sense to combine them
     //so, concurrently detect charge states and features
+    //TODO: not seems to work correctly, fix this!
     public void assignZAndFeatures(double ppmDevIn) {
         this.featureList = new ArrayList<>();
         //double ppmDev to cover the worst case scenario

@@ -1,4 +1,4 @@
-//
+package MymzXMLScheme;//
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.11 generiert
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren.
@@ -10,12 +10,9 @@
 
 
 
-import uk.ac.ebi.pride.tools.mzxml_parser.mzxml.xml.util.AnySimpleTypeAdapter;
-
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.*;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.datatype.Duration;
 
 
@@ -2193,7 +2190,7 @@ public class MzXMLSchema {
                 @XmlAttribute(name = "precursorScanNum")
                 protected Short precursorScanNum;
                 @XmlAttribute(name = "precursorIntensity")
-                protected Integer precursorIntensity;
+                protected Float precursorIntensity;
                 @XmlAttribute(name = "precursorCharge")
                 protected Byte precursorCharge;
                 @XmlAttribute(name = "activationMethod")
@@ -2251,7 +2248,7 @@ public class MzXMLSchema {
                  *     {@link Integer }
                  *
                  */
-                public Integer getPrecursorIntensity() {
+                public Float getPrecursorIntensity() {
                     return precursorIntensity;
                 }
 
@@ -2263,7 +2260,7 @@ public class MzXMLSchema {
                  *     {@link Integer }
                  *
                  */
-                public void setPrecursorIntensity(Integer value) {
+                public void setPrecursorIntensity(Float value) {
                     this.precursorIntensity = value;
                 }
 

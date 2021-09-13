@@ -67,7 +67,7 @@ public class TMTProC {
     //this class identifies TMTProC complementary clusters
     //requires: Allosaurus mzXML run File, Peptide list with scan number
     //TODO: only TMTpro0 supported for now, change for TMTproC 8plex
-    public static void tmtproCCLusterID(String runFileLocIn, String idListIn, int allowedPPMDeviance, boolean tmtPro0, String alkylationIn) throws MzXMLParsingException, FileNotFoundException {
+    public static void tmtproCCLusterID(String runFileLocIn, String idListIn, int allowedPPMDeviance, boolean tmtPro0, String alkylationIn) throws MzXMLParsingException, FileNotFoundException, JMzReaderException {
         ArrayList<String> allowedCysProt = new ArrayList<>();
         allowedCysProt.add("NEM");
         allowedCysProt.add("IAA");
@@ -123,10 +123,12 @@ public class TMTProC {
 
         //prepare output file
 
-        String newFilePath = idFile.getAbsolutePath().replace(".csv", "") + "_CompIons.txt";
+        String newFilePath = idFile.getAbsolutePath().replace(".csv", "") + "_CompIons_maxCompFragAnalysis.txt";
         File outputCSV = new File(newFilePath);
         PrintWriter resultWriter = new PrintWriter(outputCSV);
-
+        //header for interim data analysis
+        resultWriter.write("Scan-#,max comp. frag. ion m/z,max comp. frag. ion efficency [%],max comp. frag. ion SN \n");
+        resultWriter.flush();
         //generate ScanLists for iteration through MS-scans
         ScanLists scanList = new ScanLists(run);
 
@@ -139,10 +141,9 @@ public class TMTProC {
         ArrayList<Double> compIonFormationEfficiency = new ArrayList<>();
         ArrayList<Double> compFragIonFormationEfficiency = new ArrayList<>();
 
-
-
         //loop through Scanner
         while (scanner.hasNext()) {
+
             String[] currentValues = scanner.next().split(",");
             //generate Peptide with all modifications
             //this sequence has . in between, remove them
@@ -196,7 +197,7 @@ public class TMTProC {
             try {
                 precursorSpectrum = MzXMLReadIn.mzXMLToMySpectrum(run, Integer.toString(previousMS1ScanNumber));
             } catch (JMzReaderException e) {
-                throw new IllegalArgumentException("Spectrum couldn't be found! ScanNumber: " + previousMS1ScanNumber);
+                throw new IllegalArgumentException("Spectrum couldn't be read in! ScanNumber: " + previousMS1ScanNumber);
             }
             //figure out precursor
             if (msNScan.getMsLevel() == (long) 1)
@@ -245,6 +246,12 @@ public class TMTProC {
             }
 
             //ion matches is populated, calculate efficiencies
+            //this is to determine the highest Comp Frag ion efficiency per spectrum
+            double highestCompFragEfficiency = 0;
+            double maxCompIonmz = 0;
+            double maxSNCompFrag = 0;
+            double efficiency = 0;
+
             for (IonMatch match : ionMatches){
 
                 //do individually for full comp Ions and fragment ions
@@ -252,11 +259,27 @@ public class TMTProC {
                     compIonFormationEfficiency.add(formationEfficiencyCalculator(ms1IT, msnIT, precursorSN, match.getPeak().getSignalToNoise(), precursorZ, match.getTmtProCCompIon().getIon().getCharge() ));
                 }
                 else
-                    compFragIonFormationEfficiency.add(formationEfficiencyCalculator(ms1IT, msnIT, precursorSN, match.getPeak().getSignalToNoise(), precursorZ, match.getTmtProCCompIon().getIon().getCharge()));
+                    efficiency = formationEfficiencyCalculator(ms1IT, msnIT, precursorSN, match.getPeak().getSignalToNoise(), precursorZ, match.getTmtProCCompIon().getIon().getCharge());
+                    compFragIonFormationEfficiency.add(efficiency);
+                    double currentSN = match.getPeak().getSignalToNoise();
+                    if(efficiency > highestCompFragEfficiency)
+                        highestCompFragEfficiency = efficiency;
+                    if(currentSN > maxSNCompFrag) {
+                        maxSNCompFrag = currentSN;
+                        maxCompIonmz = match.getPeak().getMass();
+                    }
             }
+
+
+
             //output to file
-            String output = qsmStringProducer(psmInfo, ionMatches);
-            resultWriter.write(output);
+            //intitally, used qsm string producer, but interested in comp ions and comp fragment ions
+            //String output = qsmStringProducer(psmInfo, ionMatches);
+
+            resultWriter.write(msnSpectrum.getScanNumber()+",");
+            resultWriter.write(maxCompIonmz+",");
+            resultWriter.write(highestCompFragEfficiency*100+",");
+            resultWriter.write(maxSNCompFrag + "\n");
             resultWriter.flush();
             //at the end, advance progress bar
             ProgressBar.progress();

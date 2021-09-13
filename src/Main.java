@@ -26,16 +26,17 @@ public class Main {
         DecimalFormat xDec = new DecimalFormat("0.000000000");
 
 
-        String runPath = "C:\\Users\\ms93\\Desktop\\spectroswiss_tgr_10805_aft_sn0p6_centroid-mzxml_2021-09-07_2128\\TGR_10805.mzXML";
-        String resultFile = "C:\\Users\\ms93\\Google Drive\\PostDoc\\Projects\\SuperResolution\\SR2\\TGR_10805_SR2_Tar3_EColi_TMTproC_60min_1ug_unfiltered.csv";
+        String runPath = "C:\\Programmingfolder\\Rawdata2.mzXML";
+        String resultFile = "D:\\Michi PC backup Princeton\\Programmingfolder\\Targeted\\TGR_10042_BSA_TMTPro0_CID_reshoot_formated.csv";
         //MzXMLFile runMZXML = new MzXMLFile(runFile);
         //Visualization.spectrumPlotter(runMZXML, 10);
         //DnD.willNimaDie(100000000);
         //RandomTools.ms1PrecursorInfoAdvanced(peptidePath, runPath);
         //Benenodin.twoRotaxaneMassCreator(massListPath, false,2);
         //Benenodin.fragmentAnalyzerLumos(runPath, massListPath);
-        XMLModifier.mzXMLModifier(runPath);
+        XMLModifier.mzXMLModifierTest(runPath);
         //RandomTools.fixTMTproCOutput(resultFile);
+        //TMTProC.tmtproCCLusterID(runPath, resultFile, 10,true, "NEM");
 
 
 
