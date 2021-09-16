@@ -27,15 +27,15 @@ public class Main {
 
 
         String runPath = "C:\\Programmingfolder\\Rawdata2.mzXML";
-        String resultFile = "D:\\Michi PC backup Princeton\\Programmingfolder\\Targeted\\TGR_10042_BSA_TMTPro0_CID_reshoot_formated.csv";
+        String resultFile = "E:\\Google Drive\\PostDoc\\Projects\\SuperResolution\\SR2\\Analysis spectroswiss files\\TMTproC output files\\TGR_10805_transients_aFT_SN0p8_centroid_SR_mzXMLFilesSpectroswiss.csv";
         //MzXMLFile runMZXML = new MzXMLFile(runFile);
         //Visualization.spectrumPlotter(runMZXML, 10);
         //DnD.willNimaDie(100000000);
         //RandomTools.ms1PrecursorInfoAdvanced(peptidePath, runPath);
         //Benenodin.twoRotaxaneMassCreator(massListPath, false,2);
         //Benenodin.fragmentAnalyzerLumos(runPath, massListPath);
-        XMLModifier.mzXMLPrecursorMatcher(runPath);
-        //RandomTools.fixTMTproCOutput(resultFile);
+        //XMLModifier.mzXMLPrecursorMatcher(runPath);
+        RandomTools.fixTMTproCOutput(resultFile);
         //TMTProC.tmtproCCLusterID(runPath, resultFile, 10,true, "NEM");
 
 
