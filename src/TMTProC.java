@@ -190,8 +190,12 @@ public class TMTProC {
             Scan precursorScan = run.getScanByNum((long) previousMS1ScanNumber);
             Scan msNScan = run.getScanByNum((long) currentScanNumber);
 
-            double ms1IT = precursorScan.getIonInjectionTime();
-            double msnIT = msNScan.getIonInjectionTime();
+
+            //TODO: to fix things, get collision energies. This IS WRONG, but fixing one thing at a time
+            //double ms1IT = precursorScan.getIonInjectionTime();
+            //double msnIT = msNScan.getIonInjectionTime();
+            double ms1IT = precursorScan.getBasePeakIntensity();
+            double msnIT = msNScan.getBasePeakIntensity();
             //for precursor SN, transform to MySpectrum
             MySpectrum precursorSpectrum;
             try {

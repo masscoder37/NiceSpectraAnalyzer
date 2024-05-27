@@ -45,7 +45,8 @@ public class MzXMLReadIn {
         Map<Double, Double> mzXMLPeakList = currentSpectrum.getPeakList();
         //also get noise information if present
         //if not, null is returned
-        Map<Double, Double> mzXMLNoiseList = currentSpectrum.getNoiseList();
+        //TODO: noise list not implemented currently. Just a copy of the peak list
+        Map<Double, Double> mzXMLNoiseList = currentSpectrum.getPeakList();
         boolean noisePresent = false;
         if (mzXMLNoiseList != null)
             noisePresent = true;
@@ -104,7 +105,8 @@ public class MzXMLReadIn {
         Map<Double, Double> mzXMLPeakList = currentSpectrum.getPeakList();
         //also get noise information if present
         //if not, null is returned
-        Map<Double, Double> mzXMLNoiseList = currentSpectrum.getNoiseList();
+        //TODO: noise list not supported currently. Just a copy of the peak list
+        Map<Double, Double> mzXMLNoiseList = currentSpectrum.getPeakList();
         boolean noisePresent = false;
         if (mzXMLNoiseList != null)
             noisePresent = true;

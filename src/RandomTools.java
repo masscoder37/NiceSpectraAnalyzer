@@ -415,7 +415,10 @@ public class RandomTools {
                     continue;
                 //get Scan for injection time
                 Scan mzXMLScan = run.getScanByNum((long) scan);
-                double injectionTime = mzXMLScan.getIonInjectionTime();
+                //TODO: injection time not currently supported. Will be fixed later
+                //double injectionTime = mzXMLScan.getIonInjectionTime();
+                //TODO: this is WRONG, but trying to fix one thing at a time
+                double injectionTime = mzXMLScan.getCollisionEnergy();
                 Duration d = mzXMLScan.getRetentionTime();
                 String rt = d.toString();
                 rt = rt.replace("PT", "");

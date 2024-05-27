@@ -239,7 +239,8 @@ public class ExtractSpectrumData {
             //fragmentation energy
             sb.append(Math.round(currentScan.getCollisionEnergy())).append(",");
             //Scan description
-            sb.append(currentScan.getDescription()).append(",");
+            //TODO: the scan description is not supported in jmzreader natively and therefore is not used to get things running
+            sb.append(",");
             //picked precursor M/Z
             sb.append(twoDec.format(currentPrecursor)).append(",");
             //precursor z
@@ -306,7 +307,9 @@ public class ExtractSpectrumData {
             } catch (MzXMLParsingException e) {
                 continue;
             }
-            sb.append(currentScan.getDescription()).append(",\n");
+            //TODO: this is not working currently
+            //sb.append(currentScan.getDescription()).append(",\n");
+            sb.append(",\n");
             pw.write(sb.toString());
             pw.flush();
             sb.setLength(0);
@@ -350,7 +353,9 @@ public class ExtractSpectrumData {
                 continue;
             }
             //read out the ITT
-            double ionInjectionTime = currentScan.getIonInjectionTime();
+            //todo: not working right now
+            //double ionInjectionTime = currentScan.getIonInjectionTime();
+            double ionInjectionTime = currentScan.getCollisionEnergy();
             sb.append(i + 1).append(",").append(fourDec.format(ionInjectionTime)).append(",\n");
             pw.write(sb.toString());
             pw.flush();

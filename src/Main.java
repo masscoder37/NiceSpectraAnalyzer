@@ -7,6 +7,7 @@ import uk.ac.ebi.pride.tools.mzxml_parser.mzxml.model.Peaks;
 import uk.ac.ebi.pride.tools.mzxml_parser.mzxml.model.Scan;
 
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.SchemaOutputResolver;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -25,18 +26,18 @@ public class Main {
         DecimalFormat twoDec = new DecimalFormat("0.00");
         DecimalFormat xDec = new DecimalFormat("0.000000000");
 
+        File runFile = new File("D:\\Programmingfolder\\TGR_08914.mzXML");
+        MzXMLFile runMZXML = new MzXMLFile(runFile);
 
-        String runPath = "C:\\Programmingfolder\\Rawdata2.mzXML";
-        String resultFile = "E:\\Google Drive\\PostDoc\\Projects\\SuperResolution\\SR2\\Analysis spectroswiss files\\TMTproC output files\\TGR_10805_transients_aFT_SN0p8_centroid_SR_mzXMLFilesSpectroswiss.csv";
-        //MzXMLFile runMZXML = new MzXMLFile(runFile);
+        System.out.println("Number of Scans: "+runMZXML.getMS1ScanCount());
+
         //Visualization.spectrumPlotter(runMZXML, 10);
-        //DnD.willNimaDie(100000000);
-        //RandomTools.ms1PrecursorInfoAdvanced(peptidePath, runPath);
-        //Benenodin.twoRotaxaneMassCreator(massListPath, false,2);
-        //Benenodin.fragmentAnalyzerLumos(runPath, massListPath);
-        //XMLModifier.mzXMLPrecursorMatcher(runPath);
-        RandomTools.fixTMTproCOutput(resultFile);
-        //TMTProC.tmtproCCLusterID(runPath, resultFile, 10,true, "NEM");
+
+        Spectrum currentSpectrum = runMZXML.getSpectrumById("272");
+        System.out.println("bla");
+
+
+
 
 
 
